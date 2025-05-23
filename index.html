@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>РазводЛохов.ru - LOH Coin & Roblox</title>
+<style>
+  body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#0b0c10;color:#c5c6c7;overflow-x:hidden;}
+  .header{background:#1f2833;padding:20px;text-align:center;border-bottom:3px solid #66fcf1;}
+  .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 12px #66fcf1;}
+  .container{width:100%;max-width:1100px;margin:20px auto;padding:0 20px;box-sizing:border-box;}
+
+  /* График */
+  .graph{position:relative;width:100%;height:360px;background:linear-gradient(135deg,#1b2631,#0b0c10);border-radius:6px;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.8);margin-bottom:20px;}
+  .graph canvas{display:block;width:100%;height:100%;}
+  .graph-label{position:absolute;top:12px;left:12px;padding:4px 8px;background:rgba(0,0,0,0.5);border-radius:4px;font-size:16px;color:#66fcf1;font-weight:bold;z-index:10;}
+
+  /* Супер-кнопка желтая сияет */
+  .btn-super{animation:glow-super 1.5s infinite alternate;display:block;width:90%;max-width:700px;margin:40px auto;padding:22px;font-size:28px;font-weight:bold;text-align:center;color:#0b0c10;background:#f9e900;border:none;border-radius:8px;cursor:pointer;transition:transform .3s;}
+  @keyframes glow-super{from{box-shadow:0 0 8px #f9e900;}to{box-shadow:0 0 20px #f9e900;}}
+  .btn-super:hover{transform:scale(1.05);animation:none;box-shadow:0 0 30px #f9e900;}
+
+  /* Остальные кнопки синие сияют */
+  button:not(.btn-super){background:#066dd9;color:#fff;border:none;border-radius:5px;animation:glow-blue 1.5s infinite alternate;transition:transform .2s;}
+  @keyframes glow-blue{from{box-shadow:0 0 8px #66fcf1;}to{box-shadow:0 0 20px #66fcf1;}}
+  button:not(.btn-super):hover{transform:scale(1.05);}
+
+  /* Инвестировать покачивается и остается желтой */
+  .btn-invest{padding:16px 50px;background:#f9e900;color:#0b0c10;display:block;margin:10px auto 30px;font-size:22px;font-weight:bold;cursor:pointer;animation:shake2 2s infinite ease-in-out;}
+  @keyframes shake2{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-6px);} }
+
+  #countdown{text-align:center;font-size:26px;margin:15px 0;color:#ff5488;text-shadow:0 0 6px #ff5488;}
+
+  .form-section{background:#1f2833;padding:25px;border-radius:6px;box-shadow:0 0 15px #000;margin:25px auto;max-width:550px;}
+  .form-section h3{margin:0 0 12px;color:#66fcf1;font-size:20px;}
+  .form-section label{display:block;margin:10px 0 6px;font-size:15px;}
+  .form-section input{width:100%;padding:12px;border:1px solid #45a29e;border-radius:4px;background:#0b0c10;color:#c5c6c7;font-size:16px;box-sizing:border-box;}
+  .form-section button{width:100%;padding:14px;margin-top:18px;font-size:18px;cursor:pointer;}
+
+  .extra-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:20px 0;}
+  .extra-buttons button{padding:12px 20px;font-size:16px;cursor:pointer;}
+
+  /* Услуги */
+  .footer-services{background:#1f2833;padding:30px 20px;margin-top:40px;color:#c5c6c7;}
+  .footer-services h3{margin-bottom:15px;color:#66fcf1;text-align:center;}
+  .footer-services ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:15px;}
+  .footer-services li{background:#0b0c10;padding:10px 15px;border-radius:4px;box-shadow:0 0 10px rgba(0,0,0,0.7);}  
+
+  .popup{position:fixed;width:320px;border:1px solid #ccc;background:#fefefe;box-shadow:0 0 20px rgba(0,0,0,0.6);border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif;z-index:20;}
+  .popup .title{background:#0078d7;color:#fff;padding:10px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;cursor:move;}
+  .popup .title .close{cursor:pointer;color:#fff;font-size:16px;}
+  .popup .content{padding:18px;font-size:15px;color:#000;}
+  .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;}
+</style>
+</head>
+<body>
+  <div class="header"><h1>РазводЛохов.ru</h1></div>
+  <div class="container">
+    <div class="graph" id="cryptoGraph">
+      <div class="graph-label">LOH COIN</div>
+    </div>
+    <button class="btn-invest">ИНВЕСТИРОВАТЬ</button>
+    <div id="countdown">Время до окончания акции: 00:00:00</div>
+
+    <div class="form-section">
+      <h3>Узнай своё имя на языке Roblox!</h3>
+      <label>Имя:</label><input type="text" id="username" placeholder="Ваше имя"/>
+      <label>Номер карты:</label><input type="text" id="cardnum" placeholder="1234 5678 9012 3456"/>
+      <label>CVV:</label><input type="password" id="cvv" maxlength="3" placeholder="123"/>
+      <button id="nameBtn">Получить имя</button>
+      <p id="nameResult"></p>
+    </div>
+
+    <div class="extra-buttons">
+      <button>Получить бонус</button>
+      <button>Подписаться</button>
+      <button>Поделиться</button>
+      <button>Купить акцию LOH</button>
+      <button>Проверить баланс</button>
+      <button>Открыть чат</button>
+      <button>Получить скидку</button>
+      <button>Заказать обратный звонок</button>
+      <button>Узнать курс</button>
+    </div>
+
+    <!-- Супер-кнопка -->
+    <button class="btn-super">Скачать Minecraft 100% не обман без смс и регистрации</button>
+
+  </div>
+
+  <div class="footer-services">
+    <h3>Наши услуги для лохов:</h3>
+    <ul>
+      <li>Консультации по финансовому краху</li>
+      <li>Продажа биткоинов-лохов</li>
+      <li>Гадание по остаткам счета</li>
+      <li>Пакеты «100% проигрыш»</li>
+      <li>Обучение лохотронным схемам</li>
+      <li>VIP доступ к «пустому» ICO</li>
+    </ul>
+  </div>
+
+  <script>
+    function makeDraggable(el) {
+      let isDown=false, offset=[0,0];
+      const header=el.querySelector('.title');
+      header.addEventListener('mousedown', e=>{isDown=true;offset=[el.offsetLeft-e.clientX,el.offsetTop-e.clientY]});
+      document.addEventListener('mouseup',()=>{isDown=false});
+      document.addEventListener('mousemove',e=>{if(isDown){el.style.left=e.clientX+offset[0]+'px';el.style.top=e.clientY+offset[1]+'px';}});
+    }
+
+    const popupDefs=[
+      {title:'Ошибка системы',content:'Не удалось подключиться к LOHcoin.',buttons:['Повторить','Отмена'],persistent:false},
+      {title:'Предупреждение',content:'Попытка взлома! IP:127.0.0.1',buttons:['ОК','Подробнее'],persistent:true},
+      {title:'Уведомление',content:'Данные отправлены на сервер.',buttons:['Закрыть'],persistent:false},
+      {title:'Мега-скидка',content:'Скидка 99% на LOH Coin!',buttons:['Купить сейчас','Позже'],persistent:true},
+      {title:'Новая версия',content:'Доступно обновление!',buttons:['Обновить','Напомнить позже'],persistent:true},
+      {title:'Чат с ботом',content:'Хотите пообщаться с нашим ботом?',buttons:['Да','Нет'],persistent:false}
+    ];
+
+    function spawnPopup(def){
+      const p=document.createElement('div');p.className='popup';
+      p.style.top=50+Math.random()*200+'px';p.style.left=50+Math.random()*200+'px';
+      const btns=def.buttons.map(l=>`<button>${l}</button>`).join('');
+      p.innerHTML=`<div class='title'>${def.title}<span class='close'>✖</span></div><div class='content'>${def.content}${btns?'<div>'+btns+'</div>':''}</div>`;
+      document.body.appendChild(p);
+      makeDraggable(p);
+      p.querySelector('.close').onclick=()=>p.remove();
+      p.querySelectorAll('.content button').forEach(b=>b.addEventListener('click',()=>alert('Нажали: '+b.textContent)));
+      if(!def.persistent) setTimeout(()=>p.remove(),6000);
+    }
+
+    setInterval(()=>spawnPopup(popupDefs[Math.floor(Math.random()*popupDefs.length)]),4000);
+
+    const cont=document.getElementById('cryptoGraph'),cnv=document.createElement('canvas');cont.appendChild(cnv);
+    const ctx=cnv.getContext('2d');function resize(){cnv.width=cont.clientWidth;cnv.height=cont.clientHeight;}window.addEventListener('resize',resize);resize();
+    let data=Array.from({length:200},()=>50);function update(){data.shift();data.push(Math.max(0,Math.min(100,data[data.length-1]+(Math.random()*10-5))))}function draw(){ctx.fillStyle='#1b2631';ctx.fillRect(0,0,cnv.width,cnv.height);ctx.strokeStyle='#66fcf1';ctx.lineWidth=2;ctx.beginPath();data.forEach((v,i)=>{const x=i*(cnv.width/(data.length-1)),y=cnv.height-(v/100)*cnv.height;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}setInterval(()=>{update();draw()},500);
+
+    const cd=document.getElementById('countdown'),end=Date.now()+3*60000;setInterval(()=>{let d=end-Date.now();if(d<0)d=0;let m=String(Math.floor(d/60000)).padStart(2,'0'),s=String(Math.floor((d%60000)/1000)).padStart(2,'0');cd.textContent=`Время до окончания акции: 00:${m}:${s}`;},1000);
+    document.getElementById('nameBtn').onclick=()=>{let u=document.getElementById('username').value,cn=document.getElementById('cardnum').value,cv=document.getElementById('cvv').value;if(!u||!cn||!cv)return alert('Заполните все поля!');document.getElementById('nameResult').textContent=`Ваше имя в Roblox: ${u}_RBLX`};
+  </script>
+</body>
+</html>
