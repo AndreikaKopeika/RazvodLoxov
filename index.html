@@ -10,6 +10,17 @@
   .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 12px #66fcf1;}
   .container{width:100%;max-width:1100px;margin:20px auto;padding:0 20px;box-sizing:border-box;}
 
+  /* Счётчик заскамленных лохов */
+  .scam-counter{background:linear-gradient(135deg,#ff0844,#ffb199);padding:25px;border-radius:12px;margin:20px auto;max-width:600px;text-align:center;box-shadow:0 0 25px rgba(255,8,68,0.5);position:relative;overflow:hidden;}
+  .scam-counter::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:shine 2s infinite;}
+  @keyframes shine{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+  .scam-counter h2{margin:0 0 10px;font-size:28px;color:#fff;text-shadow:0 0 10px rgba(255,255,255,0.8);position:relative;z-index:2;}
+  .scam-counter .number{font-size:48px;font-weight:bold;color:#fff;text-shadow:0 0 15px rgba(255,255,255,0.9);margin:10px 0;position:relative;z-index:2;animation:pulse-number 1.5s infinite alternate;}
+  @keyframes pulse-number{from{transform:scale(1);}to{transform:scale(1.05);}}
+  .scam-counter .subtitle{font-size:16px;color:#fff;opacity:0.9;position:relative;z-index:2;}
+  .scam-counter.increment{animation:flash-increment 0.8s ease-out;}
+  @keyframes flash-increment{0%{transform:scale(1);box-shadow:0 0 25px rgba(255,8,68,0.5);}50%{transform:scale(1.05);box-shadow:0 0 50px rgba(255,8,68,0.8);}100%{transform:scale(1);box-shadow:0 0 25px rgba(255,8,68,0.5);}}
+
   /* График */
   .graph{position:relative;width:100%;height:360px;background:linear-gradient(135deg,#1b2631,#0b0c10);border-radius:6px;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.8);margin-bottom:20px;}
   .graph canvas{display:block;width:100%;height:100%;}
@@ -51,11 +62,23 @@
   .popup .title .close{cursor:pointer;color:#fff;font-size:16px;}
   .popup .content{padding:18px;font-size:15px;color:#000;}
   .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;}
+
+  /* Анимация +1 при увеличении счётчика */
+  .plus-one{position:absolute;color:#fff;font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.8);pointer-events:none;animation:float-up 1.5s ease-out forwards;}
+  @keyframes float-up{0%{opacity:1;transform:translateY(0px) scale(1);}100%{opacity:0;transform:translateY(-50px) scale(1.2);}}
 </style>
 </head>
 <body>
   <div class="header"><h1>РазводЛохов.ru</h1></div>
   <div class="container">
+    
+    <!-- Счётчик заскамленных лохов -->
+    <div class="scam-counter" id="scamCounter">
+      <h2>🎯 Заскамлено лохов</h2>
+      <div class="number" id="scamNumber">42,837</div>
+      <div class="subtitle">и это только сегодня!</div>
+    </div>
+
     <div class="graph" id="cryptoGraph">
       <div class="graph-label">LOH COIN</div>
     </div>
@@ -101,6 +124,48 @@
   </div>
 
   <script>
+    // Счётчик заскамленных лохов
+    let scamCount = 42837;
+    const scamCounterEl = document.getElementById('scamCounter');
+    const scamNumberEl = document.getElementById('scamNumber');
+
+    function updateScamCounter() {
+      scamCount += Math.floor(Math.random() * 5) + 1; // Увеличиваем на 1-5
+      scamNumberEl.textContent = scamCount.toLocaleString('ru-RU');
+      
+      // Анимация счётчика
+      scamCounterEl.classList.add('increment');
+      setTimeout(() => scamCounterEl.classList.remove('increment'), 800);
+      
+      // Создаём анимацию +1
+      const plusOne = document.createElement('div');
+      plusOne.className = 'plus-one';
+      plusOne.textContent = '+' + (Math.floor(Math.random() * 5) + 1);
+      plusOne.style.left = Math.random() * 200 + 'px';
+      plusOne.style.top = '50%';
+      scamCounterEl.style.position = 'relative';
+      scamCounterEl.appendChild(plusOne);
+      
+      setTimeout(() => plusOne.remove(), 1500);
+    }
+
+    // Увеличиваем счётчик при загрузке страницы
+    setTimeout(updateScamCounter, 1000);
+
+    // Автоматическое увеличение счётчика каждые 3-8 секунд
+    function randomIncrement() {
+      updateScamCounter();
+      setTimeout(randomIncrement, Math.random() * 5000 + 3000);
+    }
+    setTimeout(randomIncrement, 5000);
+
+    // Увеличиваем счётчик при нажатии на любую кнопку
+    document.addEventListener('click', function(e) {
+      if (e.target.tagName === 'BUTTON') {
+        setTimeout(updateScamCounter, 200);
+      }
+    });
+
     function makeDraggable(el) {
       let isDown=false, offset=[0,0];
       const header=el.querySelector('.title');
@@ -115,7 +180,8 @@
       {title:'Уведомление',content:'Данные отправлены на сервер.',buttons:['Закрыть'],persistent:false},
       {title:'Мега-скидка',content:'Скидка 99% на LOH Coin!',buttons:['Купить сейчас','Позже'],persistent:true},
       {title:'Новая версия',content:'Доступно обновление!',buttons:['Обновить','Напомнить позже'],persistent:true},
-      {title:'Чат с ботом',content:'Хотите пообщаться с нашим ботом?',buttons:['Да','Нет'],persistent:false}
+      {title:'Чат с ботом',content:'Хотите пообщаться с нашим ботом?',buttons:['Да','Нет'],persistent:false},
+      {title:'Поздравляем!',content:'Вы стали ' + scamCount + '-м заскамленным лохом!',buttons:['Ура!','Поделиться'],persistent:false}
     ];
 
     function spawnPopup(def){
@@ -126,7 +192,10 @@
       document.body.appendChild(p);
       makeDraggable(p);
       p.querySelector('.close').onclick=()=>p.remove();
-      p.querySelectorAll('.content button').forEach(b=>b.addEventListener('click',()=>alert('Нажали: '+b.textContent)));
+      p.querySelectorAll('.content button').forEach(b=>b.addEventListener('click',()=>{
+        alert('Нажали: '+b.textContent);
+        updateScamCounter(); // Увеличиваем счётчик при нажатии на кнопки в попапах
+      }));
       if(!def.persistent) setTimeout(()=>p.remove(),6000);
     }
 
