@@ -9,7 +9,7 @@
 <style>
   body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#0b0c10;color:#c5c6c7;overflow-x:hidden;}
   .header{background:#1f2833;padding:20px;text-align:center;border-bottom:3px solid #66fcf1;}
-  .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 8px #66fcf1;} /* Уменьшено свечение */
+  .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 8px #66fcf1;}
   .container{width:100%;max-width:1100px;margin:20px auto;padding:0 20px;box-sizing:border-box;}
 
   /* Счётчик заскамленных лохов */
@@ -106,22 +106,20 @@
     border-radius: 8px;
     box-shadow: 0 0 25px rgba(102, 252, 241, 0.35);
     margin: 40px auto;
-    max-width: 800px; /* Можно ограничить ширину для лучшего вида одной карточки */
-    overflow: hidden; /* Скрываем то, что выходит за пределы секции (важно для слайдера) */
+    max-width: 800px;
+    overflow: hidden;
   }
   .reviews-section h3 {
     color: #66fcf1;
     text-align: center;
     font-size: 28px;
     margin-bottom: 35px;
-    text-shadow: 0 0 6px #66fcf1, 0 0 12px rgba(102, 252, 241, 0.7); /* Уменьшено свечение */
+    text-shadow: 0 0 6px #66fcf1, 0 0 12px rgba(102, 252, 241, 0.7);
   }
   .reviews-container {
-    position: relative; /* Для абсолютного позиционирования карточек внутри */
+    position: relative;
     width: 100%;
-    min-height: 220px; /* Примерная минимальная высота, чтобы контейнер не схлопывался до загрузки JS или если карточки пустые. Отрегулируйте по необходимости. */
-                    /* Высота будет подстраиваться под активную карточку с помощью JS, если карточки разной высоты. */
-                    /* Либо можно задать фиксированную высоту, если все карточки примерно одинаковы. */
+    min-height: 220px;
   }
   .review-card {
     background: #0b0c10;
@@ -129,21 +127,21 @@
     border-radius: 8px;
     padding: 22px;
     box-shadow: 0 0 12px rgba(69, 162, 158, 0.5);
-    display: flex; /* Используем flex для внутреннего контента */
+    display: flex;
     flex-direction: column;
-    position: absolute; /* Все карточки накладываются друг на друга */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
-    /* Убрали hover transform, т.к. слайдер */
+    box-sizing: border-box; /* --- ДОБАВЛЕНО --- */
   }
   .review-card.active {
     opacity: 1;
     visibility: visible;
-    position: relative; /* Активная карточка становится "видимой" для потока и определяет высоту контейнера */
+    position: relative;
   }
   .review-header {
     display: flex;
@@ -170,7 +168,7 @@
     font-size: 0.95em;
     line-height: 1.65;
     font-style: italic;
-    flex-grow: 1; /* Позволяет тексту занимать доступное пространство */
+    flex-grow: 1;
     margin-top: 5px;
   }
   @media (max-width: 768px) {
@@ -186,7 +184,7 @@
           padding: 18px;
       }
       .reviews-container {
-          min-height: 250px; /* Может понадобиться больше для мобильных */
+          min-height: 250px;
       }
   }
 
@@ -815,13 +813,13 @@
     const reviewCards = Array.from(reviewsContainerEl.querySelectorAll('.review-card'));
     let currentReviewIndex = 0;
     let reviewInterval;
+    const REVIEW_INTERVAL_TIME = 5000; // 5 секунд
 
     function showReview(index) {
         reviewCards.forEach((card, i) => {
             if (i === index) {
                 card.classList.add('active');
                 // Динамически устанавливаем высоту контейнера по высоте активной карточки
-                // Это нужно, если карточки могут иметь разную высоту
                 reviewsContainerEl.style.minHeight = card.offsetHeight + 'px';
             } else {
                 card.classList.remove('active');
@@ -834,15 +832,26 @@
         showReview(currentReviewIndex);
     }
 
+    function startReviewSlider() {
+        if (reviewInterval) clearInterval(reviewInterval); // Очищаем предыдущий интервал, если он был
+        reviewInterval = setInterval(nextReview, REVIEW_INTERVAL_TIME);
+    }
+
+    function stopReviewSlider() {
+        clearInterval(reviewInterval);
+    }
+
     if (reviewCards.length > 0) {
         showReview(currentReviewIndex); // Показать первый отзыв
-        reviewInterval = setInterval(nextReview, 5000); // Переключать каждые 5 секунд
-         reviewsContainerEl.addEventListener('mouseenter', () => {
-             clearInterval(reviewInterval);
-         });
-         reviewsContainerEl.addEventListener('mouseleave', () => {
-             reviewInterval = setInterval(nextReview, 5000);
-         });
+        startReviewSlider(); // Запустить слайдер
+
+        // Остановка/возобновление слайдера при наведении/уходе мыши
+        reviewsContainerEl.addEventListener('mouseenter', () => {
+            stopReviewSlider();
+        });
+        reviewsContainerEl.addEventListener('mouseleave', () => {
+            startReviewSlider();
+        });
     }
 
   </script>
