@@ -470,7 +470,7 @@
     async function periodicUpdate() {
       const data = await fetchScamCount();
       updateScamCounter(data);
-      setTimeout(periodicUpdate, 100);
+      setTimeout(periodicUpdate, 1000);
     }
 
     document.addEventListener('click', async function(e) {
@@ -488,7 +488,7 @@
     });
 
     initializeCounter();
-    setTimeout(periodicUpdate, 10000);
+    setTimeout(periodicUpdate, 1000);
 
     function getCurrentSiteUrl() {
       return window.location.origin + window.location.pathname;
