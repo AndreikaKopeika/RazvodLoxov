@@ -837,8 +837,6 @@
     if (reviewCards.length > 0) {
         showReview(currentReviewIndex); // Показать первый отзыв
         reviewInterval = setInterval(nextReview, 5000); // Переключать каждые 5 секунд
-
-        Опционально: останавливать/возобновлять слайдер при наведении/уходе мыши
          reviewsContainerEl.addEventListener('mouseenter', () => {
              clearInterval(reviewInterval);
          });
