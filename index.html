@@ -59,26 +59,17 @@
   .extra-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:20px 0;}
   .extra-buttons button{padding:12px 20px;font-size:16px;cursor:pointer;}
 
-  /* Услуги */
-  .footer-services{background:#1f2833;padding:30px 20px;margin-top:40px;color:#c5c6c7;}
-  .footer-services h3{margin-bottom:15px;color:#66fcf1;text-align:center;}
-  .footer-services ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:15px;}
-  .footer-services li{background:#0b0c10;padding:10px 15px;border-radius:4px;box-shadow:0 0 10px rgba(0,0,0,0.7);}
-
   .popup{position:fixed;width:320px;border:1px solid #ccc;background:#fefefe;box-shadow:0 0 20px rgba(0,0,0,0.6);border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif;z-index:20;}
   .popup .title{background:#0078d7;color:#fff;padding:10px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;cursor:move;}
   .popup .title .close{cursor:pointer;color:#fff;font-size:16px;}
   .popup .content{padding:18px;font-size:15px;color:#000;}
-  .popup .content .buttons{margin-top:15px;text-align:right;} /* Added for button alignment */
-  .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;background:#ddd;color:#333;border:1px solid #bbb; border-radius:3px; animation:none;box-shadow:none;} /* Reset button styles for popup */
+  .popup .content .buttons{margin-top:15px;text-align:right;}
+  .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;background:#ddd;color:#333;border:1px solid #bbb; border-radius:3px; animation:none;box-shadow:none;}
   .popup button:hover{background:#ccc;transform:none;}
 
-
-  /* Анимация +1 при увеличении счётчика */
   .plus-one{position:absolute;color:#fff;font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.8);pointer-events:none;animation:float-up 1.5s ease-out forwards;}
   @keyframes float-up{0%{opacity:1;transform:translateY(0px) scale(1);}100%{opacity:0;transform:translateY(-50px) scale(1.2);}}
 
-  /* Модальное окно для бесплатного коина */
   .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:none;animation:fadeIn 0.3s ease-out;}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
@@ -107,6 +98,89 @@
   /* Сообщение о разводе */
   .scam-reveal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ff0844,#ff6b6b);color:#fff;padding:40px;border-radius:15px;text-align:center;font-size:28px;font-weight:bold;z-index:2000;box-shadow:0 0 50px rgba(255,8,68,0.8);animation:scamReveal 0.6s ease-out;display:none;}
   @keyframes scamReveal{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-10deg);}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);}}
+
+  /* Отзывы */
+  .reviews-section {
+    background: #1f2833;
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 25px rgba(102, 252, 241, 0.35);
+    margin: 40px auto;
+    max-width: 1100px;
+  }
+  .reviews-section h3 {
+    color: #66fcf1;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 35px;
+    text-shadow: 0 0 8px #66fcf1, 0 0 15px #66fcf1, 0 0 25px #66fcf1;
+  }
+  .reviews-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+  }
+  .review-card {
+    background: #0b0c10;
+    border: 1px solid #45a29e;
+    border-radius: 8px;
+    padding: 22px;
+    box-shadow: 0 0 12px rgba(69, 162, 158, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .review-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.7);
+  }
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed rgba(102, 252, 241, 0.4);
+    padding-bottom: 10px;
+  }
+  .review-author {
+    color: #66fcf1;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px rgba(102, 252, 241, 0.7);
+  }
+  .review-stars {
+    color: #f9e900;
+    font-size: 1.3em;
+    letter-spacing: 2px;
+    text-shadow: 0 0 6px #f9e900, 0 0 12px rgba(249, 233, 0, 0.5);
+  }
+  .review-text {
+    color: #c5c6c7;
+    font-size: 0.95em;
+    line-height: 1.65;
+    font-style: italic;
+    flex-grow: 1;
+    margin-top: 5px;
+  }
+  @media (max-width: 360px) {
+      .reviews-container {
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 15px;
+      }
+      .review-card {
+          padding: 18px;
+      }
+      .reviews-section h3 {
+          font-size: 24px;
+      }
+  }
+
+  /* Услуги */
+  .footer-services{background:#1f2833;padding:30px 20px;margin-top:40px;color:#c5c6c7;}
+  .footer-services h3{margin-bottom:15px;color:#66fcf1;text-align:center;}
+  .footer-services ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:15px;}
+  .footer-services li{background:#0b0c10;padding:10px 15px;border-radius:4px;box-shadow:0 0 10px rgba(0,0,0,0.7);}
+
 </style>
 </head>
 <body>
@@ -121,8 +195,8 @@
       <div class="subtitle">и это только сегодня!</div>
     </div>
 
-    <div class="graph" id="cryptoGraphContainer"> <!-- Changed ID to avoid conflict with variable -->
-      <canvas id="cryptoGraphCanvas"></canvas> <!-- Added canvas element -->
+    <div class="graph" id="cryptoGraphContainer">
+      <canvas id="cryptoGraphCanvas"></canvas>
       <div class="graph-label">LOH COIN</div>
     </div>
     <button class="btn-invest">ИНВЕСТИРОВАТЬ</button>
@@ -153,12 +227,68 @@
     <!-- Супер-кнопка -->
     <button class="btn-super">Скачать Minecraft 100% не обман без смс и регистрации</button>
 
+    <!-- Отзывы -->
+    <div class="reviews-section">
+      <h3>🌟 Реальные Отзывы от Счастливых Лохов 🌟</h3>
+      <div class="reviews-container">
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Миша Потапович</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Ура меня развели я всегда об этом мечтал!! Заберите мои последние деньги! Пять звёзд, однозначно! Сайт топ, всем советую!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Анонимный Инвестор</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Этот LOH Coin - лучшее, что случалось с моим кошельком... он стал таким лёгким! Спасибо, РазводЛохов.ru! Чувствую себя свободным!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Бабушка Галя</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Внучек показал этот сайт, я вложила всю пенсию. Теперь сижу, жду свой миллиард! Сказали, скоро придёт. Очень надёжно! Рекомендую!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Счастливый Неудачник</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Наконец-то я нашёл место, где мои деньги исчезают быстрее, чем я успеваю их заработать! Рекомендую всем ло... эээ... инвесторам! Это просто магия!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Просто Вася из Гаражей</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Я думал, это шутка, но нет! Мой баланс реально обнулился! Круто! Хочу ещё! Как купить LOH Coin оптом? Адреналин зашкаливает!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Любитель Острых Ощущений</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Если вы устали от скучной финансовой стабильности, то LOH Coin - ваш выбор! Гарантированный адреналин и пустой счёт. Пять звёзд!"</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-author">Эльвира Криптовалютовна</span>
+            <div class="review-stars">★★★★★</div>
+          </div>
+          <p class="review-text">"Инвестировала сбережения на черный день. Кажется, он наступил! Но зато какой опыт! Курс LOH COIN просто космос... или дно, я уже запуталась. Главное - весело!"</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Модальное окно для бесплатного коина -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <button class="close-modal" id="closeModalBtn">✖</button> <!-- Changed ID -->
+      <button class="close-modal" id="closeModalBtn">✖</button>
       <h3>🎁 Получи бесплатный ЛОХ коин!</h3>
       <p>Отправь друзьям эту ссылку и получи бесплатный ЛОХ коин, если они зайдут по ней!</p>
       <div class="link-container">
@@ -188,55 +318,42 @@
 
   <script>
     // Конфигурация API
-    // --- Исправлено API_BASE_URL ---
-    const API_BASE_URL = "https://razvodlohov.pythonanywhere.com"; // Используем https и полное доменное имя
-    // Для локального тестирования API, если вы запускаете Flask локально:
+    const API_BASE_URL = "https://razvodlohov.pythonanywhere.com";
     // const API_BASE_URL = "http://127.0.0.1:5000";
 
 
     let isOnline = false;
     let syncRetryCount = 0;
-    const MAX_RETRY_COUNT = 5; // Увеличил количество попыток
+    const MAX_RETRY_COUNT = 5;
 
-    // Элементы интерфейса
     const scamCounterEl = document.getElementById('scamCounter');
     const scamNumberEl = document.getElementById('scamNumber');
     const syncStatusEl = document.getElementById('syncStatus');
 
-    // Локальный счётчик (fallback)
     let localScamCount = 42837;
 
-    // Функция для обновления статуса синхронизации
     function updateSyncStatus(status, text) {
       syncStatusEl.className = `sync-status ${status}`;
       syncStatusEl.textContent = text;
     }
 
-    // Функция для форматирования числа
     function formatNumber(num) {
       return num.toLocaleString('ru-RU');
     }
 
-    // API функции
     async function fetchScamCount() {
       try {
         updateSyncStatus('loading', 'Синхронизация...');
-        // Симуляция для GitHub Pages убрана, т.к. теперь есть настоящий API
-        // if (window.location.hostname === "andreikakopeika.github.io" || window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") { ... }
-
         const response = await fetch(`${API_BASE_URL}/api/scam-count`);
-
         if (!response.ok) {
           throw new Error(`HTTP ${response.status} - ${response.statusText}`);
         }
-
         const data = await response.json();
-
         if (data.success && typeof data.count === 'number') {
           isOnline = true;
           syncRetryCount = 0;
           updateSyncStatus('online', 'Онлайн');
-          return { success: true, count: data.count }; // Возвращаем объект
+          return { success: true, count: data.count };
         } else {
           throw new Error(data.error || 'Некорректный ответ от API');
         }
@@ -244,7 +361,6 @@
         console.warn('Ошибка получения счётчика:', error);
         isOnline = false;
         syncRetryCount++;
-
         if (syncRetryCount >= MAX_RETRY_COUNT) {
           updateSyncStatus('offline', 'Офлайн (превышены попытки)');
         } else {
@@ -256,8 +372,6 @@
 
     async function incrementScamCount(increment = 1) {
       try {
-        // Симуляция для GitHub Pages убрана
-
         const response = await fetch(`${API_BASE_URL}/api/scam-count/increment`, {
           method: 'POST',
           headers: {
@@ -265,39 +379,31 @@
           },
           body: JSON.stringify({ increment })
         });
-
         if (!response.ok) {
           throw new Error(`HTTP ${response.status} - ${response.statusText}`);
         }
-
         const data = await response.json();
-
         if (data.success && typeof data.count === 'number') {
-          isOnline = true; // Если инкремент успешен, считаем, что мы онлайн
+          isOnline = true;
           syncRetryCount = 0;
           updateSyncStatus('online', 'Онлайн');
-          return { success: true, count: data.count }; // Возвращаем объект
+          return { success: true, count: data.count };
         } else {
           throw new Error(data.error || 'Некорректный ответ от API при инкременте');
         }
       } catch (error) {
         console.warn('Ошибка увеличения счётчика:', error);
-        // isOnline не меняем сразу на false, т.к. это может быть временная ошибка
-        // Fallback: увеличиваем локальный счётчик
         localScamCount += increment;
-        updateSyncStatus('offline', 'Офлайн (ошибка инкремента)'); // Или 'loading' если хотим повторить
-        return { success: false, count: localScamCount, error: error.message }; // Возвращаем объект с ошибкой
+        updateSyncStatus('offline', 'Офлайн (ошибка инкремента)');
+        return { success: false, count: localScamCount, error: error.message };
       }
     }
 
-
-    function updateScamCounter(data) { // data теперь всегда объект {success, count} или null
+    function updateScamCounter(data) {
         let newCount;
         if (data && data.success && typeof data.count === 'number') {
             newCount = data.count;
         } else {
-            // Если API вернуло ошибку или некорректные данные, используем локальный счетчик
-            // или последний известный хороший счетчик
             newCount = localScamCount;
             if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
                 updateSyncStatus('offline', 'Офлайн');
@@ -322,28 +428,24 @@
             scamCounterEl.appendChild(plusAnimation);
             setTimeout(() => plusAnimation.remove(), 1500);
         } else if (newCount < currentScamNumber && isOnline) {
-            // Если серверный счетчик меньше (например, после сброса), и мы онлайн, обновляем
             scamNumberEl.textContent = formatNumber(newCount);
         } else if (newCount === currentScamNumber) {
-            // Ничего не делаем, если счетчик не изменился
+            // Ничего не делаем
         } else {
-            // Если newCount меньше, но мы оффлайн, остаемся на текущем локальном значении
-            // или обновляем на newCount, если он выше localScamCount
             if (newCount > localScamCount) {
                  scamNumberEl.textContent = formatNumber(newCount);
             } else {
                  scamNumberEl.textContent = formatNumber(localScamCount);
             }
         }
-        localScamCount = newCount; // Всегда синхронизируем localScamCount с последним полученным/установленным значением
+        localScamCount = newCount;
     }
-
 
     async function initializeCounter() {
       const data = await fetchScamCount();
-      updateScamCounter(data); // updateScamCounter обработает null или объект
-      if (!data || !data.success) { // Если первая загрузка не удалась
-          scamNumberEl.textContent = formatNumber(localScamCount); // Показать локальный
+      updateScamCounter(data);
+      if (!data || !data.success) {
+          scamNumberEl.textContent = formatNumber(localScamCount);
           if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
              updateSyncStatus('offline', 'Офлайн');
           } else if (!isOnline) {
@@ -355,14 +457,14 @@
     async function periodicUpdate() {
       const data = await fetchScamCount();
       updateScamCounter(data);
-      setTimeout(periodicUpdate, Math.random() * 1000 + 800); // 8-18 секунд
+      setTimeout(periodicUpdate, Math.random() * 10000 + 8000); // 8-18 секунд
     }
 
     document.addEventListener('click', async function(e) {
       if (e.target.tagName === 'BUTTON' &&
           e.target.id !== 'freeCoinBtn' &&
           e.target.id !== 'copyBtn' &&
-          e.target.id !== 'closeModalBtn' && // Исправлен ID
+          e.target.id !== 'closeModalBtn' &&
           !e.target.closest('.popup') &&
           e.target.id !== 'nameBtn'
          ) {
@@ -381,7 +483,7 @@
 
     const freeCoinBtn = document.getElementById('freeCoinBtn');
     const modalOverlay = document.getElementById('modalOverlay');
-    const closeModalButton = document.getElementById('closeModalBtn'); // Исправлен ID
+    const closeModalButton = document.getElementById('closeModalBtn');
     const copyBtn = document.getElementById('copyBtn');
     const scamReveal = document.getElementById('scamReveal');
     const shareLinkEl = document.getElementById('shareLink');
@@ -395,7 +497,7 @@
       updateScamCounter(newData);
     });
 
-    closeModalButton.addEventListener('click', function() { // Исправлен обработчик
+    closeModalButton.addEventListener('click', function() {
       modalOverlay.style.display = 'none';
       if (modalClosedByCopy) {
         showScamReveal();
@@ -479,7 +581,6 @@
       {title:'Чат с ботом-мошенником',content:'Хотите пообщаться с нашим опытным ботом-разводилой? Он поможет вам потерять еще больше денег!',buttons:['Да, хочу!','Нет, спасибо'],persistent:false},
       {title:'Поздравляем!',content:'Вы успешно стали очередным заскамленным лохом! Ваши друзья будут гордиться вами.',buttons:['Ура!','Поделиться с друзьями'],persistent:false},
       {title:'Внимание',content:'Вас заскамили!',buttons:['Спасибо','Я лох'],persistent:true},
-      // --- Новые уведомления ---
       {title:'Эксклюзивное предложение!', content:'Введите данные своей карты и получите шанс выиграть НИЧЕГО! Гарантированный проигрыш!', buttons:['Ввести данные','Нет, я не лох (пока)'], persistent:false},
       {title:'Критическая ошибка!', content:'Ваш антивирус устарел! Срочно установите наш "LohDefender" для полной "защиты" ваших средств.', buttons:['Установить LohDefender','Я доверяю своему старому'], persistent:true},
       {title:'Секретная информация', content:'Мы знаем ваш самый большой страх... это остаться без LOH Coin! Инвестируйте сейчас!', buttons:['Инвестировать всё!','Расскажите мой страх'], persistent:false},
@@ -603,7 +704,7 @@
     let cryptoChart;
     let lastPrice = 50 + Math.random() * 50;
 
-    function createOrUpdateChart() { // Убрал аргумент newDataPoint, будем брать из lastPrice
+    function createOrUpdateChart() {
         const labels = cryptoChart ? cryptoChart.data.labels : [];
         const data = cryptoChart ? cryptoChart.data.datasets[0].data : [];
 
@@ -611,15 +712,15 @@
         const timeLabel = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
         labels.push(timeLabel);
-        data.push(lastPrice.toFixed(2)); // Используем глобальный lastPrice
+        data.push(lastPrice.toFixed(2));
 
-        if (labels.length > 30) { // Увеличил количество точек на графике
+        if (labels.length > 30) {
             labels.shift();
             data.shift();
         }
 
         if (cryptoChart) {
-            cryptoChart.update('none'); // 'none' для более плавного обновления без анимации по умолчанию
+            cryptoChart.update('none');
         } else {
             cryptoChart = new Chart(ctx, {
                 type: 'line',
@@ -629,30 +730,29 @@
                         label: 'LOH COIN Price',
                         data: data,
                         borderColor: '#66fcf1',
-                        backgroundColor: 'rgba(102, 252, 241, 0.2)', // Чуть больше заливки
-                        tension: 0.3, // Немного сглаживания
+                        backgroundColor: 'rgba(102, 252, 241, 0.2)',
+                        tension: 0.3,
                         fill: true,
-                        pointRadius: 2, // Уменьшил точки
+                        pointRadius: 2,
                         pointBackgroundColor: '#66fcf1',
-                        borderWidth: 2 // Увеличил толщину линии
+                        borderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 400, // Плавная анимация для новых данных
+                        duration: 400,
                         easing: 'linear'
                     },
                     scales: {
                         y: {
-                            // beginAtZero: false, // Можно раскомментировать если цены будут сильно падать
-                            ticks: { color: '#c5c6c7', precision: 0 }, // precision 0 для целых чисел на оси Y если хотите
-                            grid: { color: 'rgba(197, 198, 199, 0.15)' } // Менее заметная сетка
+                            ticks: { color: '#c5c6c7', precision: 0 },
+                            grid: { color: 'rgba(197, 198, 199, 0.15)' }
                         },
                         x: {
                             ticks: { color: '#c5c6c7', maxRotation: 0, autoSkipPadding: 15 },
-                            grid: { display: false } // Убрал вертикальную сетку для чистоты
+                            grid: { display: false }
                         }
                     },
                     plugins: {
@@ -660,7 +760,7 @@
                     },
                     elements: {
                         line: {
-                            cubicInterpolationMode: 'monotone' // Для более гладких кривых
+                            cubicInterpolationMode: 'monotone'
                         }
                     }
                 }
@@ -668,35 +768,31 @@
         }
     }
 
-    // Инициализация графика с несколькими начальными точками
     for(let i=0; i<10; i++){
-        lastPrice += (Math.random() - 0.4) * 5 + (isOnline ? 0.5 : 0.1); // Небольшой начальный рост
+        lastPrice += (Math.random() - 0.4) * 5 + (isOnline ? 0.5 : 0.1);
         lastPrice = Math.max(10, lastPrice);
-        createOrUpdateChart(); // Добавляем точку без передачи аргумента
+        createOrUpdateChart();
     }
 
     setInterval(() => {
         let priceChange;
         if (isOnline) {
-            // Более сильный рост, если онлайн, с редкими небольшими коррекциями
-            priceChange = (Math.random() - 0.35) * 30 + 2; // от ~ -5 до ~15, но в среднем положительный
+            priceChange = (Math.random() - 0.35) * 30 + 2;
         } else {
-            // Меньший рост или стагнация, если оффлайн
-            priceChange = (Math.random() - 0.45) * 8 + 0.5; // от ~ -3 до ~5, в среднем небольшой рост
+            priceChange = (Math.random() - 0.45) * 8 + 0.5;
         }
         lastPrice += priceChange;
 
-        // Шанс на большой памп или дамп
-        if (Math.random() < 0.10 && isOnline) { // 3% шанс если онлайн
-            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8); // +30% или -20%
+        if (Math.random() < 0.10 && isOnline) {
+            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8);
             console.log("LOH COIN PUMP/DUMP ACTION!");
         }
 
-        lastPrice = Math.max(5, lastPrice); // Минимальная цена 5
-        lastPrice = Math.min(100000, lastPrice); // Максимальная цена (чтобы не улетел в космос)
+        lastPrice = Math.max(5, lastPrice);
+        lastPrice = Math.min(100000, lastPrice);
 
-        createOrUpdateChart(); // Обновляем график
-    }, 1000); // Обновление каждые 2 секунды
+        createOrUpdateChart();
+    }, 1000);
 
   </script>
 </body>
