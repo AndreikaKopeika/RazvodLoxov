@@ -1,3 +1,9 @@
+Да, вы абсолютно правы! Моя огромная ошибка, и я очень прошу прощения за доставленные неудобства и потраченное время. Я должен был сразу предоставить полный, единый и рабочий код.
+
+Давайте это исправим раз и навсегда. Я сейчас соберу абсолютно весь HTML, CSS и JavaScript в один файл, учтя все последние пожелания: сильное вращение, динамичный фон, указатель справа и корректное определение приза.
+
+Вот полностью готовый код prize.html:
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -26,7 +32,7 @@
       --pointer-width-mobile: 28px;
       --pointer-height-mobile: 24px;
       
-      --spin-duration: 7.5s;
+      --spin-duration: 5.5s; /* Уменьшил немного для ощущения скорости */
       --spin-ease-out: cubic-bezier(0.15, 0.85, 0.25, 1);
 
       /* Цвета сегментов и текста (8) */
@@ -54,7 +60,7 @@
       padding: 20px;
       box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
-      background-color: #080915;
+      background-color: #05060d;
       position: relative;
       color: #e8efff;
       display: flex;
@@ -68,38 +74,42 @@
     body::before {
         content: '';
         position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
         z-index: -2;
-        background: linear-gradient(45deg, 
-            hsl(260, 60%, 10%), 
-            hsl(220, 70%, 8%), 
-            hsl(300, 60%, 10%), 
-            hsl(180, 70%, 8%));
-        background-size: 400% 400%;
-        animation: gradientBG 25s ease infinite;
+        background: radial-gradient(ellipse at center, hsla(260, 80%, 30%, 0.3) 0%, hsla(260, 80%, 10%, 0) 60%),
+                    radial-gradient(ellipse at 70% 30%, hsla(180, 70%, 40%, 0.25) 0%, hsla(180, 70%, 10%, 0) 50%),
+                    radial-gradient(ellipse at 30% 70%, hsla(320, 70%, 40%, 0.25) 0%, hsla(320, 70%, 10%, 0) 50%);
+        animation: dynamicBgSlow 35s linear infinite alternate;
     }
     body::after {
         content: '';
         position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
         z-index: -1;
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1c29' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        background: radial-gradient(ellipse at 20% 80%, hsla(220, 80%, 50%, 0.18) 0%, hsla(220, 80%, 15%, 0) 40%),
+                    radial-gradient(ellipse at 80% 20%, hsla(0, 80%, 50%, 0.18) 0%, hsla(0, 80%, 15%, 0) 40%);
+        animation: dynamicBgFast 22s linear infinite alternate;
         opacity: 0.7;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes dynamicBgSlow {
+        0% { transform: translate(0,0) rotate(0deg); }
+        100% { transform: translate(8%, 4%) rotate(12deg); }
     }
-
+    @keyframes dynamicBgFast {
+        0% { transform: translate(0,0) rotate(0deg); }
+        100% { transform: translate(-6%, -2%) rotate(-8deg); }
+    }
+    
     .content-wrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
-        animation: fadeIn 1s ease-out;
+        animation: fadeIn 1s 0.2s ease-out backwards;
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px)} to { opacity: 1; transform: translateY(0px)} }
 
@@ -126,33 +136,34 @@
       position: relative;
       display: flex;
       align-items: center;
+      justify-content: center; /* Чтобы колесо было по центру, а указатель абсолютно позиционировался */
       margin-bottom: 40px;
+      width: calc(var(--current-wheel-size) + var(--current-pointer-width) + 20px); /* Ширина для указателя и колеса */
     }
 
     .pointer {
       width: var(--current-pointer-height); 
       height: var(--current-pointer-width); 
-      background: linear-gradient(135deg, #ffe040, #ffc107);
-      clip-path: polygon(100% 50%, 0 0, 0 100%); /* Треугольник, указывающий ВЛЕВО */
+      background: linear-gradient(45deg, #ffe040, #ffab00);
+      clip-path: polygon(0% 50%, 100% 0%, 100% 100%); /* Указывает влево */
       position: absolute;
-      /* Сдвигаем стрелку правее колеса, чтобы она указывала НА колесо */
-      right: calc( (var(--current-pointer-height) / 2 ) * -1 - var(--wheel-border-width) - 5px ); /* 5px - доп. отступ */
+      /* ПОЗИЦИОНИРУЕМ СПРАВА */
+      right: calc( (var(--current-pointer-height) / 2 ) * -1 + 5px); /* 5px отступ от края контейнера колеса */
       top: 50%;
-      transform: translateY(-50%) rotate(180deg); /* Поворачиваем, чтобы острый конец был к колесу */
+      transform: translateY(-50%) rotate(180deg); /* Поворачиваем, чтобы указывал НА колесо */
       z-index: 10;
       filter: 
-        drop-shadow(2px 0px 6px rgba(0,0,0,0.3)) /* Тень теперь справа */
-        drop-shadow(0 0 8px #ffe040)
-        drop-shadow(0 0 12px #fff59d);
+        drop-shadow(3px 0px 7px rgba(0,0,0,0.35)) 
+        drop-shadow(0 0 10px #ffe040)
+        drop-shadow(0 0 18px #fff59d);
       border-top-left-radius: 3px;
       border-bottom-left-radius: 3px;
     }
 
-
     .wheel-container {
       width: var(--current-wheel-size);
       height: var(--current-wheel-size);
-      position: relative;
+      position: relative; /* Изменено с absolute для корректного потока в .wheel-assembly */
       border-radius: 50%;
       padding: var(--wheel-border-width);
       background: linear-gradient(145deg, #2a2f4a, #1c1e2e);
@@ -172,6 +183,7 @@
       transition: transform var(--spin-duration) var(--spin-ease-out);
       transform: translateZ(0) rotate(0deg);
       will-change: transform;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.3), inset 0 0 45px rgba(0,0,0,0.65);
     }
     
     .segment-line {
@@ -210,7 +222,7 @@
     }
 
     .btn-spin {
-      padding: 18px 45px; font-size: 1.9em; font-weight: 900; font-family: 'Orbitron', sans-serif;
+      padding: 20px 50px; font-size: 2em; font-weight: 900; font-family: 'Orbitron', sans-serif;
       color: #fff; background: linear-gradient(145deg, #ff4081, #f50057);
       border: none; border-radius: 50px; cursor: pointer;
       box-shadow: 0 5px 15px rgba(245, 0, 87, 0.4), 0 0 25px rgba(255, 64, 129, 0.5), inset 0 -3px 5px rgba(0,0,0,0.2);
@@ -223,7 +235,7 @@
     
     .result-popup {
       position: fixed; top: 50%; left: 50%; width: 90%; max-width: 480px; box-sizing: border-box;
-      transform: translate(-50%, -150%) scale(0.7);
+      transform: translate(-50%, -50%) scale(0.5) rotate(10deg);
       background: linear-gradient(145deg, #2a2c3c, #181a28);
       border: 3px solid;
       border-image-slice: 1;
@@ -231,16 +243,16 @@
       border-radius: 15px; padding: 35px 40px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255, 64, 129,0.2), 0 0 30px rgba(0, 229, 255,0.2) ;
       z-index: 1000; text-align: center; opacity: 0; visibility: hidden;
-      transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.4s ease-out;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease-out;
     }
-    .result-popup.show { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
+    .result-popup.show { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; visibility: visible; }
     .result-popup h2 {
-      color: #ffe040; text-shadow: 0 0 8px #ffe040, 0 0 15px #fff59d; margin-top: 0; font-size: 2.2em;
+      color: #ffe040; text-shadow: 0 0 8px #ffe040, 0 0 15px #fff59d; margin-top: 0; font-size: 2.5em;
       font-family: 'Orbitron', sans-serif;
     }
-    .result-popup p { font-size: 1.4em; color: #e8efff; margin-bottom: 25px; line-height: 1.5; }
+    .result-popup p { font-size: 1.5em; color: #e8efff; margin-bottom: 25px; line-height: 1.5; }
     .result-popup .close-popup {
-      padding: 14px 28px; font-size: 1.15em; font-weight: bold;
+      padding: 15px 30px; font-size: 1.2em; font-weight: bold;
       background: linear-gradient(135deg, #f4511e, #ff7043);
       color: white; border: none; border-radius: 8px; cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -256,24 +268,13 @@
     }
     .back-link:hover { background-color: #00e5ff; color: #0c0d1f; text-shadow: none; }
 
-    .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; } /* Позади body::before/after */
-    .star {
-      position: absolute; background-color: rgba(220,225,255,0.6); border-radius: 50%;
-      animation: twinkle-star-anim linear infinite;
-      transform: translateZ(0); will-change: transform, opacity;
-    }
-    @keyframes twinkle-star-anim {
-      0%, 100% { opacity: 0; transform: scale(0.3) translateY(20px); }
-      50% { opacity: 0.8; transform: scale(1) translateY(0px); }
-    }
-
     @media (max-width: 768px) {
       :root {
         --current-wheel-size: var(--wheel-size-tablet);
         --current-hub-size: var(--hub-size-tablet);
         --current-pointer-width: var(--pointer-width-tablet);
         --current-pointer-height: var(--pointer-height-tablet);
-        --spin-duration: 7s;
+        --spin-duration: 5s;
       }
       .header-title { font-size: 2.6em; } .sub-title { font-size: 1.3em; }
       .segment-text { font-size: 0.7em; }
@@ -286,13 +287,13 @@
         --current-hub-size: var(--hub-size-mobile);
         --current-pointer-width: var(--pointer-width-mobile);
         --current-pointer-height: var(--pointer-height-mobile);
-        --spin-duration: 6.5s;
+        --spin-duration: 4.5s;
       }
       body { padding: 15px; }
       .title-area { margin-bottom: 25px; }
       .header-title { font-size: 2em; } .sub-title { font-size: 1.05em; }
       .wheel-assembly { margin-bottom: 30px; }
-      .segment-text { font-size: 0.62em; max-width: calc(var(--current-wheel-size) * 0.38); } /* Чуть больше места тексту */
+      .segment-text { font-size: 0.62em; max-width: calc(var(--current-wheel-size) * 0.38); }
       .btn-spin { font-size: 1.35em; padding: 14px 30px; margin-top: 20px; }
       .result-popup { padding: 25px 20px; }
       .result-popup h2 { font-size: 1.6em; } .result-popup p { font-size: 1.05em; }
@@ -301,7 +302,7 @@
   </style>
 </head>
 <body>
-  <div class="stars-bg" id="starsContainer"></div>
+  <!-- <div class="stars-bg" id="starsContainer"></div> --><!-- Если нужны звезды, раскомментировать и JS для них -->
   <div class="content-wrapper">
     <div class="title-area">
       <h1 class="header-title">СУПЕР ПРИЗ!</h1>
@@ -335,7 +336,7 @@
     const prizeResultText = document.getElementById('prizeResultText');
     const closeResultPopup = document.getElementById('closeResultPopup');
     const root = document.documentElement;
-    const starsContainer = document.getElementById('starsContainer');
+    // const starsContainer = document.getElementById('starsContainer'); // Если звезды используются
 
     const segmentPrizes = [
       "Дырка от бублика", "Поездка в Магадан", "Ведро слёз", "Сертификат ЛОХА",
@@ -380,11 +381,11 @@
         
         const fragmentTexts = document.createDocumentFragment();
         const fragmentLines = document.createDocumentFragment();
-        // Задержка для получения offsetWidth, если он не сразу доступен
-        requestAnimationFrame(() => {
+        
+        requestAnimationFrame(() => { // Откладываем расчеты до следующего кадра анимации
             const wheelRadius = wheelElement.offsetWidth / 2;
-            if (wheelRadius === 0) { // Если радиус все еще 0, попробуем через небольшую задержку
-                setTimeout(placeElementsOnWheel, 50);
+            if (wheelRadius === 0) { 
+                setTimeout(placeElementsOnWheel, 50); // Если размеры еще не применились
                 return;
             }
             const textDistanceFactor = 0.68; 
@@ -430,19 +431,22 @@
       if (isSpinning) return;
       isSpinning = true;
       spinButton.disabled = true;
-      resultPopup.classList.remove('show'); // Используем .show класс
+      resultPopup.classList.remove('show');
 
-      let randomFullSpins = (Math.floor(Math.random() * 8) + 18); // 18-25 оборотов
-      if (window.innerWidth <= 480) {
-          randomFullSpins = (Math.floor(Math.random() * 6) + 15); // 15-20
+      let baseSpins = 180; // Базовое количество для десктопа (~18 * 10)
+      if (window.innerWidth <= 768 && window.innerWidth > 480) {
+          baseSpins = 150; 
+      } else if (window.innerWidth <= 480) {
+          baseSpins = 120; 
       }
-      const totalRandomSpinsAngle = randomFullSpins * 360;
-      const randomPartialSpinAngle = Math.floor(Math.random() * 360);
-      
-      // Добавляем небольшую случайность к конечной позиции для "реализма"
-      const finalJitter = (Math.random() - 0.5) * (segmentAngleDegrees * 0.4); // +/- 20% ширины сегмента
+      const extraRandomFullSpins = (Math.floor(Math.random() * 50) + 80); // 80-129 доп. оборотов
+      const randomFullSpins = (baseSpins + extraRandomFullSpins) * 360;
 
-      const targetRotation = accumulatedRotation + totalRandomSpinsAngle + randomPartialSpinAngle + finalJitter;
+
+      const randomPartialSpinAngle = Math.floor(Math.random() * 360);
+      const finalJitter = (Math.random() - 0.5) * (segmentAngleDegrees * 0.3);
+
+      const targetRotation = accumulatedRotation + randomFullSpins + randomPartialSpinAngle + finalJitter;
       accumulatedRotation = targetRotation;
       
       wheelElement.style.transform = `rotate(${accumulatedRotation}deg)`;
@@ -451,19 +455,26 @@
 
       setTimeout(() => {
         isSpinning = false;
-        // spinButton.disabled = false; // Если разрешены повторы
+        // spinButton.disabled = false;
 
-        const pointerEffectiveAngle = 270; // Указатель слева
-        const finalWheelShift = accumulatedRotation % 360;
+        const pointerEffectiveAngle = 0; // Указатель справа
         
+        const finalWheelShift = accumulatedRotation % 360;
         let anglePointedByArrow = (pointerEffectiveAngle - finalWheelShift + 360) % 360;
         
         let landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
+        // Коррекция для случая, когда anglePointedByArrow почти 360 (или 0) и может дать неверный индекс
+        if (Math.abs(anglePointedByArrow - 360) < 0.1 || (Math.abs(anglePointedByArrow) < 0.1 && landedSegmentIndex === numSegments) ) {
+             landedSegmentIndex = 0;
+        } else {
+            landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
+        }
         landedSegmentIndex = Math.max(0, Math.min(numSegments - 1, landedSegmentIndex));
+
 
         const prizeWon = segmentPrizes[landedSegmentIndex];
         prizeResultText.textContent = `Твой "приз": ${prizeWon}!`;
-        resultPopup.classList.add('show'); // Используем .show класс
+        resultPopup.classList.add('show');
         
         launchConfetti();
 
@@ -478,58 +489,33 @@
     });
 
     closeResultPopup.addEventListener('click', () => {
-        resultPopup.classList.remove('show'); // Используем .show класс
+        resultPopup.classList.remove('show');
     });
     
     function launchConfetti() {
       if (typeof confetti !== 'function') { return; }
       const duration = 2.5 * 1000; const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1001, scalar: 1 };
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1001, scalar: 1.1 }; // Увеличил scalar
       function randomInRange(min, max) { return Math.random() * (max - min) + min; }
       const interval = setInterval(function() {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) { return clearInterval(interval); }
-        const particleCount = 40 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.2, 0.4), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.6, 0.8), y: Math.random() - 0.2 } }));
-      }, 200);
-    }
-
-    function createStars(count) {
-        if (!starsContainer) return;
-        const numStarsToCreate = window.innerWidth <= 480 ? Math.floor(count * 0.6) : count;
-        const fragment = document.createDocumentFragment();
-        for (let i = 0; i < numStarsToCreate; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            const size = Math.random() * (window.innerWidth <= 480 ? 1.2 : 1.8) + 0.4;
-            star.style.width = `${size}px`; star.style.height = `${size}px`;
-            star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`;
-            star.style.animationDuration = `${Math.random() * 8 + 6}s`; 
-            star.style.animationDelay = `${Math.random() * 10}s`;
-            if (Math.random() < 0.2) {
-                const colors = ['#ff4081', '#00e5ff', '#ffe040', 'rgba(220,225,255,0.6)'];
-                star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                if (size > 0.8) { star.style.boxShadow = `0 0 ${size*2}px ${size*3}px ${star.style.backgroundColor.replace(')', ', 0.3)').replace('rgb(','rgba(')}`; }
-            }
-            fragment.appendChild(star);
+        const particleCount = 50 * (timeLeft / duration); // Чуть больше частиц
+        // Стреляем из разных мест для объемного эффекта
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        if (Math.random() > 0.6) { // Иногда стреляем из центра
+             confetti(Object.assign({}, defaults, { particleCount: particleCount / 2, origin: { x: 0.5, y: 0.4 } }));
         }
-        starsContainer.innerHTML = ''; 
-        starsContainer.appendChild(fragment);
+      }, 200);
     }
 
     // Инициализация
     window.addEventListener('resize', () => {
-        requestAnimationFrame(() => { // Используем rAF и здесь для консистентности
-            placeElementsOnWheel();
-            createStars(30); 
-        });
+        requestAnimationFrame(placeElementsOnWheel);
     });
     
-    requestAnimationFrame(() => {
-        placeElementsOnWheel();
-        createStars(30);
-    });
+    requestAnimationFrame(placeElementsOnWheel);
 
   </script>
 </body>
