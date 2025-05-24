@@ -355,7 +355,7 @@
     async function periodicUpdate() {
       const data = await fetchScamCount();
       updateScamCounter(data);
-      setTimeout(periodicUpdate, Math.random() * 10000 + 8000); // 8-18 секунд
+      setTimeout(periodicUpdate, Math.random() * 1000 + 800); // 8-18 секунд
     }
 
     document.addEventListener('click', async function(e) {
@@ -478,7 +478,19 @@
       {title:'Новая версия',content:'Доступно обновление системы "РазводЛохов v2.0"! Требуется перезагрузка и повторный ввод всех данных.',buttons:['Обновить','Напомнить позже'],persistent:true},
       {title:'Чат с ботом-мошенником',content:'Хотите пообщаться с нашим опытным ботом-разводилой? Он поможет вам потерять еще больше денег!',buttons:['Да, хочу!','Нет, спасибо'],persistent:false},
       {title:'Поздравляем!',content:'Вы успешно стали очередным заскамленным лохом! Ваши друзья будут гордиться вами.',buttons:['Ура!','Поделиться с друзьями'],persistent:false},
-      {title:'Внимание',content:'Вас заскамили!',buttons:['Спасибо','Я лох'],persistent:true}
+      {title:'Внимание',content:'Вас заскамили!',buttons:['Спасибо','Я лох'],persistent:true},
+      // --- Новые уведомления ---
+      {title:'Эксклюзивное предложение!', content:'Введите данные своей карты и получите шанс выиграть НИЧЕГО! Гарантированный проигрыш!', buttons:['Ввести данные','Нет, я не лох (пока)'], persistent:false},
+      {title:'Критическая ошибка!', content:'Ваш антивирус устарел! Срочно установите наш "LohDefender" для полной "защиты" ваших средств.', buttons:['Установить LohDefender','Я доверяю своему старому'], persistent:true},
+      {title:'Секретная информация', content:'Мы знаем ваш самый большой страх... это остаться без LOH Coin! Инвестируйте сейчас!', buttons:['Инвестировать всё!','Расскажите мой страх'], persistent:false},
+      {title:'Проверка безопасности', content:'Для подтверждения, что вы не робот, пожалуйста, переведите 1 LOH Coin на этот адрес: LoHoTrOnXxX...', buttons:['Перевести','Я не робот-лох'], persistent:true},
+      {title:'Обновление аккаунта', content:'Для продолжения использования сервиса, пожалуйста, подтвердите ваш пароль от банковского приложения.', buttons:['Подтвердить','Это подозрительно'], persistent:false},
+      {title:'Вы выиграли приз!', content:'Вы выиграли бесплатную подписку на "Уроки финансового краха"! Поздравляем!', buttons:['Забрать приз','Отказаться'], persistent:false},
+      {title:'Опрос для лохов', content:'Как часто вы попадаетесь на уловки мошенников? 1. Часто 2. Очень часто 3. Постоянно', buttons:['1','2','3'], persistent:true},
+      {title:'Техническая поддержка', content:'Наш специалист по разводам готов вам помочь! Опишите вашу проблему (и приложите номер карты).', buttons:['Написать в поддержку','Сам справлюсь'], persistent:false},
+      {title:'Партнерская программа', content:'Приведи друга-лоха и получи бонус - чувство удовлетворения от его провала!', buttons:['Пригласить друга','У меня нет друзей-лохов'], persistent:false},
+      {title:'Гарантия возврата', content:'Мы гарантируем возврат ваших средств... если вы сможете нас найти! Ха-ха!', buttons:['Верните деньги!','Понятно'], persistent:true},
+      {title:'Защита данных', content:'Ваши данные надежно сохранены на нашем сервере... и доступны всем желающим за небольшую плату.', buttons:['Удалить данные','Сколько стоит доступ?'], persistent:false}
     ];
 
     function spawnPopup(def){
@@ -519,9 +531,9 @@
             const randomDef = popupDefs[Math.floor(Math.random() * popupDefs.length)];
             spawnPopup(randomDef);
         }
-        setTimeout(randomPopupSpawner, Math.random() * 20000 + 10000);
+        setTimeout(randomPopupSpawner, Math.random() * 12000 + 5000);
     }
-    setTimeout(randomPopupSpawner, 7000);
+    setTimeout(randomPopupSpawner, 5000);
 
     const countdownEl = document.getElementById('countdown');
     let timeLeft = 3600 * 2 + 1800 + 45;
@@ -667,7 +679,7 @@
         let priceChange;
         if (isOnline) {
             // Более сильный рост, если онлайн, с редкими небольшими коррекциями
-            priceChange = (Math.random() - 0.35) * 20 + 2; // от ~ -5 до ~15, но в среднем положительный
+            priceChange = (Math.random() - 0.35) * 30 + 2; // от ~ -5 до ~15, но в среднем положительный
         } else {
             // Меньший рост или стагнация, если оффлайн
             priceChange = (Math.random() - 0.45) * 8 + 0.5; // от ~ -3 до ~5, в среднем небольшой рост
@@ -675,16 +687,16 @@
         lastPrice += priceChange;
 
         // Шанс на большой памп или дамп
-        if (Math.random() < 0.03 && isOnline) { // 3% шанс если онлайн
+        if (Math.random() < 0.10 && isOnline) { // 3% шанс если онлайн
             lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8); // +30% или -20%
             console.log("LOH COIN PUMP/DUMP ACTION!");
         }
 
         lastPrice = Math.max(5, lastPrice); // Минимальная цена 5
-        lastPrice = Math.min(10000, lastPrice); // Максимальная цена (чтобы не улетел в космос)
+        lastPrice = Math.min(100000, lastPrice); // Максимальная цена (чтобы не улетел в космос)
 
         createOrUpdateChart(); // Обновляем график
-    }, 2000); // Обновление каждые 2 секунды
+    }, 1000); // Обновление каждые 2 секунды
 
   </script>
 </body>
