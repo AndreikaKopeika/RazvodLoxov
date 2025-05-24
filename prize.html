@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>СУПЕР ПРИЗ! - РазводЛохов.ru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background: #0b0c10;
+      color: #c5c6c7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .header-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5em;
+      color: #ff00ff; /* Neon Pink */
+      text-shadow: 0 0 10px #ff00ff,
+                   0 0 20px #ff00ff,
+                   0 0 30px #ff00ff,
+                   0 0 40px #ff45a2,
+                   0 0 70px #ff45a2,
+                   0 0 80px #ff45a2,
+                   0 0 100px #ff45a2,
+                   0 0 150px #ff45a2;
+      margin-bottom: 20px;
+      animation: flicker-title 1.5s infinite alternate;
+    }
+
+    @keyframes flicker-title {
+      0%, 100% { opacity: 1; text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff45a2, 0 0 70px #ff45a2; }
+      50% { opacity: 0.8; text-shadow: 0 0 10px #ff00ff, 0 0 25px #ff00ff, 0 0 35px #ff45a2, 0 0 60px #ff45a2; }
+    }
+
+    .sub-title {
+      font-size: 1.8em;
+      color: #66fcf1; /* Neon Cyan */
+      text-shadow: 0 0 5px #66fcf1, 0 0 10px #66fcf1, 0 0 15px #45a29e;
+      margin-bottom: 40px;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 350px;
+      height: 350px;
+      margin-bottom: 40px;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(
+        #ff00ff 0% 12.5%, /* Neon Pink */
+        #00ffff 12.5% 25%, /* Neon Cyan */
+        #00ff00 25% 37.5%, /* Neon Green */
+        #ffff00 37.5% 50%, /* Neon Yellow */
+        #ff8000 50% 62.5%, /* Neon Orange */
+        #ff0000 62.5% 75%, /* Neon Red */
+        #8000ff 75% 87.5%, /* Neon Purple */
+        #0080ff 87.5% 100% /* Neon Blue */
+      );
+      box-shadow: 0 0 20px rgba(0,0,0,0.5),
+                  0 0 30px #ff00ff,
+                  0 0 40px #00ffff,
+                  0 0 50px #00ff00,
+                  inset 0 0 20px rgba(0,0,0,0.7);
+      transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth spin */
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wheel-segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 0;
+      left: 25%;
+      transform-origin: 50% 100%;
+      display: flex;
+      align-items: flex-start; /* Text at the top of segment */
+      justify-content: center;
+      padding-top: 15px;
+      box-sizing: border-box;
+      font-weight: bold;
+      font-size: 0.8em;
+      color: rgba(0,0,0,0.8);
+      text-shadow: 0 0 2px white;
+    }
+    /* Positioning segments (8 segments = 360/8 = 45 deg each) */
+    .wheel-segment:nth-child(1) { transform: rotate(0deg); }
+    .wheel-segment:nth-child(2) { transform: rotate(45deg); }
+    .wheel-segment:nth-child(3) { transform: rotate(90deg); }
+    .wheel-segment:nth-child(4) { transform: rotate(135deg); }
+    .wheel-segment:nth-child(5) { transform: rotate(180deg); }
+    .wheel-segment:nth-child(6) { transform: rotate(225deg); }
+    .wheel-segment:nth-child(7) { transform: rotate(270deg); }
+    .wheel-segment:nth-child(8) { transform: rotate(315deg); }
+
+
+    .pointer {
+      position: absolute;
+      top: -25px; /* Position above the wheel */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-top: 30px solid #f9e900; /* Bright Yellow Pointer */
+      filter: drop-shadow(0px -2px 5px rgba(249,233,0,0.8));
+      z-index: 10;
+    }
+
+    .btn-spin {
+      padding: 20px 40px;
+      font-size: 1.8em;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      color: #0b0c10;
+      background: linear-gradient(135deg, #f9e900, #ffc500); /* Yellow/Gold */
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #f9e900, 0 0 25px #ffc500, inset 0 0 8px rgba(255,255,255,0.5);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-spin:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #f9e900, 0 0 40px #ffc500, inset 0 0 12px rgba(255,255,255,0.7);
+    }
+    .btn-spin:active {
+      transform: scale(1.05);
+    }
+    .btn-spin:disabled {
+      background: linear-gradient(135deg, #777, #555);
+      color: #aaa;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .result-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      background: linear-gradient(145deg, #1f2833, #0b0c10);
+      border: 3px solid #66fcf1;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 0 50px rgba(102,252,241,0.6);
+      z-index: 100;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s;
+    }
+    .result-popup.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+    .result-popup h2 {
+      color: #f9e900;
+      text-shadow: 0 0 10px #f9e900;
+      margin-top: 0;
+      font-size: 2em;
+    }
+    .result-popup p {
+      font-size: 1.5em;
+      color: #c5c6c7;
+      margin-bottom: 30px;
+    }
+    .result-popup .close-popup {
+      padding: 10px 20px;
+      font-size: 1em;
+      background: #ff416c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Decorative elements */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+        radial-gradient(2px 2px at 80% 40%, #fff, transparent),
+        radial-gradient(1px 1px at 50% 60%, #ccc, transparent),
+        radial-gradient(1px 1px at 10% 80%, #ccc, transparent),
+        radial-gradient(2px 2px at 90% 10%, #fff, transparent),
+        radial-gradient(3px 3px at 40% 15%, #66fcf1, transparent),
+        radial-gradient(2px 2px at 70% 85%, #ff00ff, transparent);
+      background-size: 100% 100%;
+      animation: twinkle-stars 10s linear infinite;
+    }
+    @keyframes twinkle-stars {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); } /* Subtle movement */
+    }
+
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <h1 class="header-title">ВАУ! ВЫ ВЫИГРАЛИ ПРИЗ!</h1>
+  <p class="sub-title">Покрутите Колесо Удачи и Заберите Его!</p>
+
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div class="wheel" id="prizeWheel">
+      <!-- Segments with prizes (text will be slightly rotated) -->
+      <div class="wheel-segment"><span>НИЧЕГО</span></div>
+      <div class="wheel-segment"><span>+1 LOH Coin</span></div>
+      <div class="wheel-segment"><span>Долг 1000 LOH</span></div>
+      <div class="wheel-segment"><span>Супер ЛОХ Статус</span></div>
+      <div class="wheel-segment"><span>Бан на сайте</span></div>
+      <div class="wheel-segment"><span>Ещё раз НИЧЕГО</span></div>
+      <div class="wheel-segment"><span>-5 LOH Coin</span></div>
+      <div class="wheel-segment"><span>Приз "Утешение"</span></div>
+    </div>
+  </div>
+
+  <button class="btn-spin" id="spinButton">КРУТИТЬ!</button>
+
+  <div class="result-popup" id="resultPopup">
+    <h2>Поздравляем! (или нет)</h2>
+    <p id="prizeResultText"></p>
+    <button class="close-popup" id="closeResultPopup">Закрыть</button>
+  </div>
+
+  <script>
+    const wheel = document.getElementById('prizeWheel');
+    const spinButton = document.getElementById('spinButton');
+    const resultPopup = document.getElementById('resultPopup');
+    const prizeResultText = document.getElementById('prizeResultText');
+    const closeResultPopup = document.getElementById('closeResultPopup');
+
+    const segments = [
+      "НИЧЕГО (ха-ха!)",
+      "+1 LOH Coin (бесполезный)",
+      "Долг в 1000 LOH Coin (вы нам должны!)",
+      "Почётный статус 'Супер-ЛОХ'",
+      "Бан на сайте (шутка... может быть)",
+      "Опять НИЧЕГО (невезучий!)",
+      "-5 LOH Coin (да, мы забираем!)",
+      "Приз 'Утешение' (ещё одна порция обмана)"
+    ];
+    const numSegments = segments.length;
+    const segmentAngle = 360 / numSegments;
+    let currentRotation = 0;
+    let isSpinning = false;
+
+    spinButton.addEventListener('click', () => {
+      if (isSpinning) return;
+      isSpinning = true;
+      spinButton.disabled = true;
+
+      // Random spins (3-7 full rotations) + random final segment
+      const randomSpins = Math.floor(Math.random() * 5) + 3;
+      const randomSegmentIndex = Math.floor(Math.random() * numSegments);
+      const targetRotation = (randomSpins * 360) + (randomSegmentIndex * segmentAngle) - (currentRotation % 360);
+      // Ensure it always spins forward and points to the top (pointer position)
+      // The pointer is at the top, so the winning segment needs to align with 0 degrees.
+      // We calculate the offset to make the chosen segment land at the top.
+      const finalAngle = currentRotation + targetRotation - (segmentAngle / 2) + (Math.random() * segmentAngle * 0.8 - segmentAngle * 0.4); // Add slight randomness to final position
+
+      currentRotation += targetRotation;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinning = false;
+        spinButton.disabled = false; // Re-enable after a delay if needed, or remove for one-time spin
+
+        // Calculate the actual landed segment based on the final rotation
+        // Normalize rotation to 0-360
+        const normalizedRotation = (360 - (currentRotation % 360) + (segmentAngle / 2)) % 360;
+        const landedSegmentIndex = Math.floor(normalizedRotation / segmentAngle) % numSegments;
+
+
+        prizeResultText.textContent = `Вы выиграли: ${segments[landedSegmentIndex]}!`;
+        resultPopup.classList.add('show');
+
+        // --- SCAM REVEAL after prize ---
+        // You can link this back to your main site's scam counter if desired
+        // For now, just a console log or another local effect
+        console.log("Prize 'won': " + segments[landedSegmentIndex]);
+        // Potentially send an event to an analytics or increment a local "prizes claimed" counter
+
+      }, 5500); // Match CSS transition duration + a bit
+    });
+
+    closeResultPopup.addEventListener('click', () => {
+      resultPopup.classList.remove('show');
+      // Optionally, redirect back or offer another spin
+      // spinButton.disabled = false; // if you want them to spin again
+    });
+
+  </script>
+</body>
+</html>
