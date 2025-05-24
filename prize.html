@@ -1,296 +1,561 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>СУПЕР ПРИЗ! - РазводЛохов.ru</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <style>
-    :root {
-      --wheel-size-desktop: 360px;
-      --wheel-size-tablet: 300px;
-      --wheel-size-mobile: 270px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Колесо Фортуны v2.0: Неоновый Апгрейд</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #39ff14;
+            --dark-bg: #0d0d1a; /* Еще темнее для контраста */
+            --mid-bg: #1a1a2e;
+            --light-text: #f0f0f0;
+            --border-color: #4a4a8a;
+        }
 
-      --wheel-border-width: 8px;
-      --hub-size-desktop: 55px; /* Чуть меньше */
-      --hub-size-tablet: 45px;
-      --hub-size-mobile: 40px;
-
-      --pointer-width-desktop: 30px; /* Ширина основания */
-      --pointer-height-desktop: 40px; /* "Длина" стрелки */
-      --pointer-width-tablet: 26px;
-      --pointer-height-tablet: 35px;
-      --pointer-width-mobile: 22px;
-      --pointer-height-mobile: 30px;
-      
-      --spin-duration: 4.5s; /* Еще быстрее */
-      --spin-ease-out: cubic-bezier(0.1, 0.95, 0.15, 1); /* Очень резкий старт, долгое затухание */
-
-      /* Цвета сегментов и текста (8) */
-      --c1: hsl(330, 100%, 58%); --t1: #fff;
-      --c2: hsl(22, 100%, 55%);  --t2: #fff;
-      --c3: hsl(48, 100%, 53%);  --t3: #1a1a1a;
-      --c4: hsl(140, 90%, 50%); --t4: #1a1a1a;
-      --c5: hsl(190, 100%, 50%); --t5: #1a1a1a;
-      --c6: hsl(255, 100%, 65%); --t6: #fff;
-      --c7: hsl(285, 100%, 60%); --t7: #fff;
-      --c8: hsl(345, 100%, 62%); --t8: #fff;
-
-      --text-shadow-light: 0 1px 1px rgba(255,255,255,0.7);
-      --text-shadow-dark: 0 1px 2px rgba(0,0,0,0.5);
-
-      /* Для JS */
-      --current-wheel-size: var(--wheel-size-desktop);
-      --current-hub-size: var(--hub-size-desktop);
-      --current-pointer-width: var(--pointer-width-desktop);
-      --current-pointer-height: var(--pointer-height-desktop);
-    }
-
-    /* ... Стили body, body::before, body::after, @keyframes dynamicBg*, .content-wrapper, .title-area, .header-title, .sub-title ... */
-    /* Они остаются такими же, как в предыдущем ПОЛНОМ коде */
-    body { margin: 0; padding: 20px; box-sizing: border-box; font-family: 'Roboto', sans-serif; background-color: #05060d; position: relative; color: #e8efff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; text-align: center; } body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -2; background: radial-gradient(ellipse at center, hsla(260, 80%, 30%, 0.3) 0%, hsla(260, 80%, 10%, 0) 60%), radial-gradient(ellipse at 70% 30%, hsla(180, 70%, 40%, 0.25) 0%, hsla(180, 70%, 10%, 0) 50%), radial-gradient(ellipse at 30% 70%, hsla(320, 70%, 40%, 0.25) 0%, hsla(320, 70%, 10%, 0) 50%); animation: dynamicBgSlow 35s linear infinite alternate; } body::after { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1; background: radial-gradient(ellipse at 20% 80%, hsla(220, 80%, 50%, 0.18) 0%, hsla(220, 80%, 15%, 0) 40%), radial-gradient(ellipse at 80% 20%, hsla(0, 80%, 50%, 0.18) 0%, hsla(0, 80%, 15%, 0) 40%); animation: dynamicBgFast 22s linear infinite alternate; opacity: 0.7; } @keyframes dynamicBgSlow { 0% { transform: translate(0,0) rotate(0deg); } 100% { transform: translate(8%, 4%) rotate(12deg); } } @keyframes dynamicBgFast { 0% { transform: translate(0,0) rotate(0deg); } 100% { transform: translate(-6%, -2%) rotate(-8deg); } } .content-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; animation: fadeIn 1s 0.2s ease-out backwards; } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px)} to { opacity: 1; transform: translateY(0px)} } .title-area { margin-bottom: 35px; filter: drop-shadow(0 0 20px rgba(255, 64, 129, 0.4)); } .header-title { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 3.5em; color: #ff4081; text-shadow: 0 0 8px #fff, 0 0 18px #ff4081, 0 0 30px #ff4081, 0 0 45px #f50057, 0 0 75px #f50057; margin: 0 0 10px 0; } .sub-title { font-size: 1.6em; color: #00e5ff; text-shadow: 0 0 5px #fff, 0 0 12px #00e5ff, 0 0 20px #00b8d4; margin: 0; }
+        @font-face { /* Подключаем Orbitron локально или через CDN */
+            font-family: 'Orbitron';
+            src: url('https://fonts.gstatic.com/s/orbitron/v25/yMJRMIlzdpvBhQQL_Qq7dy0.woff2') format('woff2'); /* Пример */
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Orbitron';
+            src: url('https://fonts.gstatic.com/s/orbitron/v25/yMJWMIlzdpvBhQQL_Qrc3HlBY_c.woff2') format('woff2'); /* Пример */
+            font-weight: 700;
+        }
 
 
-    .wheel-assembly {
-      position: relative;
-      /* display: flex; align-items: center; justify-content: center; Не нужно для стрелки сверху */
-      margin-bottom: 40px;
-      width: var(--current-wheel-size); /* Теперь ширина равна колесу, стрелка над ним */
-      height: calc(var(--current-wheel-size) + var(--current-pointer-height) + 10px); /* Высота для колеса и стрелки */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--dark-bg);
+            font-family: 'Orbitron', sans-serif;
+            color: var(--light-text);
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
 
-    .pointer {
-      width: var(--current-pointer-width); 
-      height: var(--current-pointer-height); 
-      background: linear-gradient(180deg, #ffe040, #ffab00); /* Градиент для стрелки вниз */
-      clip-path: polygon(50% 100%, 0 0, 100% 0); /* Треугольник, указывающий ВНИЗ */
-      /* position: absolute; Убрал, т.к. теперь в потоке flex */
-      /* top: calc( (var(--current-pointer-height) / 2) * -1 - var(--wheel-border-width) - 5px); */ /* Позиционируем НАД колесом */
-      /* left: 50%; */
-      /* transform: translateX(-50%); */
-      z-index: 10;
-      filter: 
-        drop-shadow(0px 3px 7px rgba(0,0,0,0.35)) 
-        drop-shadow(0 0 10px #ffe040)
-        drop-shadow(0 0 18px #fff59d);
-      margin-bottom: calc( (var(--current-pointer-height) / 2) * -1 + 3px ); /* Сдвигаем стрелку немного на колесо */
-    }
+        /* Анимированный фон с технологичными элементами */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(0deg, transparent 0%, rgba(0, 242, 255, 0.03) 50%, transparent 100%),
+                linear-gradient(90deg, transparent 0%, rgba(255, 0, 255, 0.03) 50%, transparent 100%);
+            background-size: 50px 50px, 50px 50px;
+            animation: bgGrid 10s linear infinite;
+            z-index: -2;
+        }
+        body::after { /* Эффект сканлайнов */
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+            background-size: 100% 4px;
+            opacity: 0.7;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes bgGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+
+        .fortune-wheel-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 35px;
+            background-color: rgba(15, 15, 30, 0.85); /* Полупрозрачный фон */
+            border-radius: 25px;
+            border: 3px solid var(--neon-blue);
+            box-shadow:
+                0 0 20px var(--neon-blue),
+                0 0 40px var(--neon-blue),
+                0 0 60px var(--neon-pink),
+                inset 0 0 15px rgba(0, 242, 255, 0.5),
+                inset 0 0 5px rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px); /* Эффект матового стекла */
+        }
+
+        h1 {
+            color: var(--neon-pink);
+            text-shadow:
+                0 0 5px var(--neon-pink),
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 30px #fff,
+                0 0 45px #ff00de;
+            margin-bottom: 35px;
+            font-size: 2.6em; /* Чуть меньше для баланса */
+            letter-spacing: 3px;
+            border-bottom: 2px solid rgba(255,0,255,0.5);
+            padding-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 380px; /* Увеличим размер колеса */
+            height: 380px;
+            margin-bottom: 35px;
+            filter: drop-shadow(0 0 15px var(--neon-blue));
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #111;
+            border: 8px solid var(--neon-blue);
+            box-shadow:
+                0 0 30px var(--neon-blue),
+                0 0 50px rgba(0, 242, 255, 0.8),
+                inset 0 0 25px rgba(0, 242, 255, 0.7),
+                inset 0 0 10px rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+            transition: transform 7s cubic-bezier(0.2, 0.95, 0.25, 1); /* Более "уверенная" остановка */
+        }
+
+        /* Декоративные кольца на колесе */
+        .wheel::before, .wheel::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .wheel::before { /* Внутреннее пульсирующее кольцо */
+            width: calc(100% - 40px);
+            height: calc(100% - 40px);
+            border: 2px dashed var(--neon-green);
+            opacity: 0.6;
+            animation: rotateRing 20s linear infinite, pulseRing 2s infinite ease-in-out;
+        }
+        .wheel::after { /* Внешние "зубцы" или точки */
+             width: calc(100% + 12px); /* За пределы основной рамки */
+             height: calc(100% + 12px);
+             border: 2px dotted var(--neon-pink);
+             opacity: 0.7;
+             animation: rotateRing 25s linear infinite reverse;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes pulseRing {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        .sector { /* Стили для секторов теперь более детальные */
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right; /* Изменено для skewY */
+            /* background будет устанавливаться в JS с градиентом */
+            border: 1px solid rgba(0,0,0,0.3); /* Тонкая граница между секторами */
+            overflow: hidden; /* Чтобы текст не вылезал */
+        }
+
+        .prize-label { /* Стили для текста на секторах */
+            display: block;
+            position: absolute;
+            /* Размеры и позиционирование будут точнее настроены в JS */
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff; /* Базовый цвет, будет перезаписан */
+            text-shadow: 0 0 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+            white-space: normal;
+            word-break: break-word;
+            padding: 2px;
+            line-height: 1.2;
+        }
 
 
-    .wheel-container {
-      width: var(--current-wheel-size);
-      height: var(--current-wheel-size);
-      position: relative;
-      border-radius: 50%;
-      padding: var(--wheel-border-width);
-      background: linear-gradient(145deg, #2a2f4a, #1c1e2e);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3), 
-                  inset 0 0 15px rgba(0,0,0,0.5),
-                  0 0 50px rgba(255, 64, 129, 0.15), 
-                  0 0 70px rgba(0, 229, 255, 0.15);
-    }
-    /* ... Остальные стили для .wheel, .segment-line, .segment-text, .wheel-hub, .btn-spin, .result-popup, .back-link как в предыдущем ПОЛНОМ коде ... */
-    .wheel { width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden; background-image: conic-gradient( var(--c1) 0deg 45deg, var(--c2) 45deg 90deg, var(--c3) 90deg 135deg, var(--c4) 135deg 180deg, var(--c5) 180deg 225deg, var(--c6) 225deg 270deg, var(--c7) 270deg 315deg, var(--c8) 315deg 360deg ); transition: transform var(--spin-duration) var(--spin-ease-out); transform: translateZ(0) rotate(0deg); will-change: transform; box-shadow: inset 0 0 15px rgba(0,0,0,0.3), inset 0 0 45px rgba(0,0,0,0.65); } .segment-line { position: absolute; width: 2px; height: 50%; background-color: rgba(0,0,0,0.25); left: calc(50% - 1px); top: 0; transform-origin: 50% 100%; z-index: 1; } .segment-text { position: absolute; font-size: 0.78em; font-weight: 700; padding: 2px 4px; z-index: 2; pointer-events: none; white-space: normal; text-align: center; line-height: 1.15; max-width: calc(var(--current-wheel-size) * 0.32); transform-origin: center center; } .wheel-hub { width: var(--current-hub-size); height: var(--current-hub-size); background: radial-gradient(circle, #4a5070 0%, #22273d 70%); border-radius: 50%; border: calc(var(--wheel-border-width) * 0.55) solid #303550; box-shadow: 0 0 8px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.45); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3; } .wheel-hub::before { content: ''; position: absolute; top: 10%; left: 20%; width: 60%; height: 30%; background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, transparent 70%); border-radius: 50%; transform: rotate(-30deg); } .btn-spin { padding: 20px 50px; font-size: 2em; font-weight: 900; font-family: 'Orbitron', sans-serif; color: #fff; background: linear-gradient(145deg, #ff4081, #f50057); border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(245, 0, 87, 0.4), 0 0 25px rgba(255, 64, 129, 0.5), inset 0 -3px 5px rgba(0,0,0,0.2); transition: all 0.2s ease-out; text-transform: uppercase; letter-spacing: 1px; margin-top: 25px; } .btn-spin:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 20px rgba(245, 0, 87, 0.5), 0 0 30px rgba(255, 64, 129, 0.6), inset 0 -2px 4px rgba(0,0,0,0.1); } .btn-spin:active:not(:disabled) { transform: translateY(0px) scale(1); box-shadow: 0 3px 10px rgba(245, 0, 87, 0.3), 0 0 15px rgba(255, 64, 129, 0.4), inset 0 -1px 3px rgba(0,0,0,0.3); } .btn-spin:disabled { background: linear-gradient(145deg, #5c5c5c, #424242); color: #9e9e9e; cursor: not-allowed; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); transform: scale(1); } .result-popup { position: fixed; top: 50%; left: 50%; width: 90%; max-width: 480px; box-sizing: border-box; transform: translate(-50%, -50%) scale(0.5) rotate(10deg); background: linear-gradient(145deg, #2a2c3c, #181a28); border: 3px solid; border-image-slice: 1; border-image-source: linear-gradient(to left, #ff4081, #00e5ff); border-radius: 15px; padding: 35px 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255, 64, 129,0.2), 0 0 30px rgba(0, 229, 255,0.2) ; z-index: 1000; text-align: center; opacity: 0; visibility: hidden; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease-out; } .result-popup.show { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; visibility: visible; } .result-popup h2 { color: #ffe040; text-shadow: 0 0 8px #ffe040, 0 0 15px #fff59d; margin-top: 0; font-size: 2.5em; font-family: 'Orbitron', sans-serif; } .result-popup p { font-size: 1.5em; color: #e8efff; margin-bottom: 25px; line-height: 1.5; } .result-popup .close-popup { padding: 15px 30px; font-size: 1.2em; font-weight: bold; background: linear-gradient(135deg, #f4511e, #ff7043); color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 3px 10px rgba(255, 112, 67, 0.4); } .result-popup .close-popup:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 112, 67, 0.6); } .back-link { display: inline-block; margin-top: 25px; color: #00e5ff; text-decoration: none; font-size: 1.1em; padding: 8px 15px; border: 1px solid #00e5ff; border-radius: 5px; transition: background-color 0.3s, color 0.3s, text-shadow 0.3s; text-shadow: 0 0 5px rgba(0, 229, 255, 0.5); } .back-link:hover { background-color: #00e5ff; color: #0c0d1f; text-shadow: none; }
+        .wheel-center {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--mid-bg) 30%, var(--dark-bg) 70%);
+            border-radius: 50%;
+            border: 5px solid var(--neon-pink);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                0 0 15px var(--neon-pink),
+                0 0 30px var(--neon-pink),
+                inset 0 0 15px rgba(255, 0, 255, 0.6);
+            z-index: 2;
+        }
+        .wheel-center::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: var(--neon-blue);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue), 0 0 3px #fff;
+            animation: pulseDot 1.5s infinite ease-in-out;
+        }
 
-    @media (max-width: 768px) { :root { --current-wheel-size: var(--wheel-size-tablet); --current-hub-size: var(--hub-size-tablet); --current-pointer-width: var(--pointer-width-tablet); --current-pointer-height: var(--pointer-height-tablet); --spin-duration: 4.5s; } .header-title { font-size: 2.6em; } .sub-title { font-size: 1.3em; } .segment-text { font-size: 0.7em; } .btn-spin { font-size: 1.6em; padding: 16px 35px; } .result-popup h2 { font-size: 2em; } .result-popup p { font-size: 1.25em; } }
-    @media (max-width: 480px) { :root { --current-wheel-size: var(--wheel-size-mobile); --current-hub-size: var(--hub-size-mobile); --current-pointer-width: var(--pointer-width-mobile); --current-pointer-height: var(--pointer-height-mobile); --spin-duration: 4s; } body { padding: 15px; } .title-area { margin-bottom: 25px; } .header-title { font-size: 2em; } .sub-title { font-size: 1.05em; } .wheel-assembly { margin-bottom: 30px; height: calc(var(--current-wheel-size) + var(--current-pointer-height) + 5px); } .segment-text { font-size: 0.62em; max-width: calc(var(--current-wheel-size) * 0.38); } .btn-spin { font-size: 1.35em; padding: 14px 30px; margin-top: 20px; } .result-popup { padding: 25px 20px; } .result-popup h2 { font-size: 1.6em; } .result-popup p { font-size: 1.05em; } .back-link { font-size: 1em; } }
+        @keyframes pulseDot {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue); }
+            50% { transform: translate(-50%, -50%) scale(1.4); box-shadow: 0 0 12px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 5px #fff; }
+        }
 
-  </style>
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 45px solid var(--neon-pink);
+            filter: drop-shadow(0 -4px 10px var(--neon-pink)) drop-shadow(0 0 5px #fff);
+            z-index: 3;
+            transition: transform 0.3s ease-out; /* Для "отдачи" */
+        }
+        .pointer::after { /* Стилизация указателя */
+            content: '';
+            position: absolute;
+            bottom: 5px; /* Внутри основной части */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 10px;
+            background-color: rgba(255,255,255,0.7);
+            border-radius: 2px;
+            box-shadow: 0 0 5px #fff;
+        }
+
+        .spin-button {
+            padding: 18px 40px;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--light-text);
+            background: linear-gradient(145deg, var(--neon-pink), #c000c0);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow:
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 30px rgba(255, 0, 255, 0.8),
+                inset 0 0 8px rgba(255, 255, 255, 0.5),
+                0 2px 5px rgba(0,0,0,0.3);
+            transition: all 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+            margin-top: 25px;
+        }
+        .spin-button:before { /* Эффект при наведении/клике */
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.5s ease-out;
+            opacity: 0;
+        }
+        .spin-button:hover:not(:disabled):before {
+            width: 250%;
+            height: 250%;
+            opacity: 1;
+        }
+        .spin-button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #ff1aff, #d000d0);
+            box-shadow:
+                0 0 15px var(--neon-pink),
+                0 0 30px var(--neon-pink),
+                0 0 50px #fff,
+                inset 0 0 10px rgba(255, 255, 255, 0.8),
+                0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+        .spin-button:active:not(:disabled) {
+            transform: translateY(0px) scale(0.97);
+            box-shadow:
+                0 0 5px var(--neon-pink),
+                0 0 10px var(--neon-pink),
+                inset 0 0 10px rgba(0,0,0,0.4);
+        }
+        .spin-button:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .result-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            padding: 40px 55px;
+            background-color: rgba(20, 20, 35, 0.97);
+            border: 3px solid var(--neon-blue);
+            border-radius: 20px;
+            box-shadow:
+                0 0 35px var(--neon-blue),
+                0 0 60px var(--neon-pink),
+                0 0 80px rgba(0, 242, 255, 0.6);
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out;
+        }
+        .result-popup.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .result-popup h2 {
+            color: var(--neon-green);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 15px #fff;
+        }
+        .result-popup p {
+            font-size: 1.5em;
+            color: var(--light-text);
+            margin-bottom: 30px;
+            min-height: 40px;
+        }
+        .result-popup button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--dark-bg);
+            background: linear-gradient(145deg, var(--neon-blue), #00c0c0);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            box-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue), 0 2px 3px rgba(0,0,0,0.2);
+        }
+        .result-popup button:hover {
+            background: linear-gradient(145deg, #33ffff, #00dede);
+            box-shadow: 0 0 12px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 5px #fff;
+            transform: translateY(-1px);
+        }
+        .result-popup button:active {
+            transform: translateY(0px) scale(0.98);
+        }
+
+    </style>
 </head>
 <body>
-  <!-- <div class="stars-bg" id="starsContainer"></div> -->
-  <div class="content-wrapper">
-    <div class="title-area">
-      <h1 class="header-title">СУПЕР ПРИЗ!</h1>
-      <p class="sub-title">Крути Колесо Удачи, Лох!</p>
-    </div>
-
-    <div class="wheel-assembly">
-      <div class="pointer"></div> <!-- Стрелка теперь сверху благодаря flex-direction: column у родителя -->
-      <div class="wheel-container">
-        <div class="wheel" id="prizeWheel">
-          <div class="wheel-hub"></div>
+    <div class="fortune-wheel-container">
+        <h1>НЕОНОВЫЙ РОЗЫГРЫШ</h1>
+        <div class="wheel-wrapper">
+            <div class="wheel" id="wheel">
+                <!-- Сектора будут добавлены через JavaScript -->
+            </div>
+            <div class="wheel-center"></div>
+            <div class="pointer" id="pointer"></div>
         </div>
-      </div>
+        <button class="spin-button" id="spinButton">КРУТАНУТЬ!</button>
     </div>
 
-    <button class="btn-spin" id="spinButton">ИСПЫТАТЬ УДАЧУ!</button>
-    
     <div class="result-popup" id="resultPopup">
-      <h2>Вот это удача!</h2>
-      <p id="prizeResultText"></p>
-      <button class="close-popup" id="closeResultPopup">Закрыть</button>
+        <h2>ТВОЙ "ПРИЗ"!</h2>
+        <p id="prizeText"></p>
+        <button id="closePopup">ПРИНЯТО (С БОЛЬЮ)</button>
     </div>
-    <a href="index.html" class="back-link">На главную (если не страшно)</a>
-  </div>
 
-  <script>
-    const wheelElement = document.getElementById('prizeWheel');
-    const spinButton = document.getElementById('spinButton');
-    const resultPopup = document.getElementById('resultPopup');
-    const prizeResultText = document.getElementById('prizeResultText');
-    const closeResultPopup = document.getElementById('closeResultPopup');
-    const root = document.documentElement;
+    <script>
+        const wheel = document.getElementById('wheel');
+        const spinButton = document.getElementById('spinButton');
+        const pointer = document.getElementById('pointer');
+        const resultPopup = document.getElementById('resultPopup');
+        const prizeText = document.getElementById('prizeText');
+        const closePopupButton = document.getElementById('closePopup');
 
-    const segmentPrizes = [
-      "Дырка от бублика", "Поездка в Магадан", "Ведро слёз", "Сертификат ЛОХА",
-      "Минус счёт", "Пустота в душе", "Вечный бан", "Почётное НИЧЕГО"
-    ];
-    const segmentTextColorsCssVars = ['--t1', '--t2', '--t3', '--t4', '--t5', '--t6', '--t7', '--t8'];
-    const lightSegmentIndices = [2, 3, 4]; 
+        const prizes = [
+            { text: "Вечный бан в TikTok", color: "#FF3E96", textColor: "#fff" },
+            { text: "Курс 'Как дышать воздухом'", color: "#FF8C00", textColor: "#fff" },
+            { text: "Золотой Доширак (пустой)", color: "#FFD700", textColor: "#222" },
+            { text: "Подписка на мемы с баянами", color: "#32CD32", textColor: "#fff" },
+            { text: "Фантомная SMS от банка", color: "#1E90FF", textColor: "#fff" },
+            { text: "Набор невидимых инструментов", color: "#9370DB", textColor: "#fff" },
+            { text: "Сертификат 'Король Френдзоны'", color: "#FF1493", textColor: "#fff" },
+            { text: "Билет на концерт тишины", color: "#00CED1", textColor: "#fff" },
+            { text: "Wi-Fi пароль от соседа (неверный)", color: "#FF4500", textColor: "#fff" },
+            { text: "Книга '1001 способ прокрастинировать'", color: "#ADFF2F", textColor: "#222" },
+            { text: "Почётный диплом 'Мастер Неловких Пауз'", color: "#BA55D3", textColor: "#fff" },
+            { text: "Поездка в Матрицу (без возврата)", color: "#6A5ACD", textColor: "#fff" }
+        ];
 
-    const numSegments = segmentPrizes.length;
-    const segmentAngleDegrees = 360 / numSegments;
+        let numSectors = prizes.length;
+        let anglePerSector = 360 / numSectors;
+        let currentRotation = 0;
+        let spinning = false;
 
-    let accumulatedRotation = 0;
-    let isSpinning = false;
-
-    function updateCssVariablesForDevice() { /* ... как в предыдущем ... */ }
-
-    function placeElementsOnWheel() {
-        updateCssVariablesForDevice();
-        wheelElement.querySelectorAll('.segment-text, .segment-line').forEach(el => el.remove());
-        
-        const fragmentTexts = document.createDocumentFragment();
-        const fragmentLines = document.createDocumentFragment();
-        
-        requestAnimationFrame(() => {
-            const wheelRadius = wheelElement.offsetWidth / 2;
-            if (wheelRadius === 0) { 
-                setTimeout(placeElementsOnWheel, 50);
-                return;
-            }
-            // Увеличиваем textDistanceFactor, чтобы текст был "выше" (дальше от центра)
-            const textDistanceFactor = 0.72; // Было 0.68, теперь текст будет ближе к краю
-
-            for (let i = 0; i < numSegments; i++) {
-                // Линии
-                const lineDiv = document.createElement('div');
-                lineDiv.classList.add('segment-line');
-                lineDiv.style.transform = `rotate(${i * segmentAngleDegrees}deg)`; 
-                fragmentLines.appendChild(lineDiv);
-
-                // Текст
-                const textElement = document.createElement('span');
-                textElement.classList.add('segment-text');
-                textElement.textContent = segmentPrizes[i];
-                
-                textElement.style.color = `var(${segmentTextColorsCssVars[i]})`;
-                textElement.style.textShadow = lightSegmentIndices.includes(i) ? 'var(--text-shadow-light)' : 'var(--text-shadow-dark)';
-
-                const angleToCenterRad = ((i * segmentAngleDegrees) + (segmentAngleDegrees / 2)) * (Math.PI / 180);
-                
-                const textCenterX = wheelRadius + wheelRadius * textDistanceFactor * Math.cos(angleToCenterRad);
-                const textCenterY = wheelRadius + wheelRadius * textDistanceFactor * Math.sin(angleToCenterRad);
-                
-                textElement.style.left = `${textCenterX}px`;
-                textElement.style.top = `${textCenterY}px`;
-                
-                // Текст "ногами" к центру, сам текст горизонтально (относительно зрителя)
-                let textRotationDegrees = angleToCenterRad * (180 / Math.PI) + 90; 
-                // Переворачиваем текст, если он вверх ногами (для левой половины колеса)
-                 if (textRotationDegrees > 90 && textRotationDegrees < 270) { // Не совсем 90 и 270, а скорее 90+epsilon и 270-epsilon
-                     textRotationDegrees += 180;
-                 } else if (textRotationDegrees >=270 || textRotationDegrees <=90) {
-                     // Текст уже правильно ориентирован или почти (правая половина)
-                 }
-                // Коррекция для вертикальных сегментов (верх/низ), чтобы они не были боком
-                const cssAngle = angleToCenterRad * (180 / Math.PI); // Угол сегмента в CSS градусах (0 сверху)
-                if (Math.abs(cssAngle - 90) < 10 || Math.abs(cssAngle - 270) < 10 ) { // Сегменты слева/справа
-                    // Для них текст должен быть повернут на 0 или 180 от textRotationDegrees
-                    // Этот блок можно усложнить для идеального выравнивания, но пока оставим так
-                } else if (Math.abs(cssAngle) < 10 || Math.abs(cssAngle - 180) < 10 ||  Math.abs(cssAngle - 360) < 10) { // Сегменты сверху/снизу
-                     textRotationDegrees = (angleToCenterRad * (180 / Math.PI)) + 180 + 90; // Чтобы текст был "ногами" к центру, но правильно ориентирован
-                     if (textRotationDegrees > 90 && textRotationDegrees < 270) textRotationDegrees +=180; // перевернуть если что
-                }
-
-
-                textElement.style.transform = `translate(-50%, -50%) rotate(${textRotationDegrees % 360}deg)`;
-                
-                fragmentTexts.appendChild(textElement);
-            }
-            const hub = wheelElement.querySelector('.wheel-hub');
-            wheelElement.insertBefore(fragmentLines, hub);
-            wheelElement.insertBefore(fragmentTexts, hub);
-        });
-    }
-    
-    spinButton.addEventListener('click', () => {
-      if (isSpinning) return;
-      isSpinning = true;
-      spinButton.disabled = true;
-      resultPopup.classList.remove('show');
-
-      // ЗНАЧИТЕЛЬНО УСИЛЕНО ВРАЩЕНИЕ
-      let baseSpinMultiplier = 200; // Базовое количество для десктопа (~20 * 10)
-      if (window.innerWidth <= 768 && window.innerWidth > 480) { // Tablet
-          baseSpinMultiplier = 180; 
-      } else if (window.innerWidth <= 480) { // Mobile
-          baseSpinMultiplier = 150; 
-      }
-      const extraRandomFullSpins = (Math.floor(Math.random() * 100) + 150); // 150-249 доп. оборотов
-      const randomFullSpins = (baseSpinMultiplier + extraRandomFullSpins) * 360;
-
-
-      const randomPartialSpinAngle = Math.floor(Math.random() * 360);
-      const finalJitter = (Math.random() - 0.5) * (segmentAngleDegrees * 0.2);
-
-      const targetRotation = accumulatedRotation + randomFullSpins + randomPartialSpinAngle + finalJitter;
-      accumulatedRotation = targetRotation;
-      
-      wheelElement.style.transform = `rotate(${accumulatedRotation}deg)`;
-
-      const spinDurationMs = parseFloat(getComputedStyle(root).getPropertyValue('--spin-duration').trim()) * 1000;
-
-      setTimeout(() => {
-        isSpinning = false;
-        // spinButton.disabled = false;
-
-        // УКАЗАТЕЛЬ СВЕРХУ. В conic-gradient и наших расчетах текста 0 градусов - это ВЕРХ.
-        const pointerEffectiveAngle = 0; 
-        
-        const finalWheelShift = accumulatedRotation % 360;
-        // Какой угол *колеса* сейчас находится под указателем (на позиции 0 градусов).
-        let anglePointedByArrow = (pointerEffectiveAngle - finalWheelShift + 360) % 360;
-        
-        let landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
-        
-        if ( (anglePointedByArrow > (360 - segmentAngleDegrees / 2)) || (anglePointedByArrow < (segmentAngleDegrees / 2) && anglePointedByArrow >= 0) ) {
-            if(anglePointedByArrow > 360 - (segmentAngleDegrees / 2)) { 
-                 landedSegmentIndex = 0;
-            } else if (anglePointedByArrow < segmentAngleDegrees / 2) { 
-                 landedSegmentIndex = 0;
-            } else { 
-                 landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
-            }
-        } else {
-            landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
+        // Helper function to lighten/darken a hex color
+        function adjustColor(hex, percent) {
+            hex = hex.replace(/#/g, '');
+            const num = parseInt(hex, 16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) + amt,
+            G = (num >> 8 & 0x00FF) + amt,
+            B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
         }
-        landedSegmentIndex = Math.max(0, Math.min(numSegments - 1, landedSegmentIndex));
 
-        const prizeWon = segmentPrizes[landedSegmentIndex];
-        prizeResultText.textContent = `Твой "приз": ${prizeWon}!`;
-        resultPopup.classList.add('show');
-        
-        launchConfetti();
-        console.log(`Accumulated: ${accumulatedRotation}, FinalWheelShift: ${finalWheelShift}, AnglePointedByArrow: ${anglePointedByArrow}, Index: ${landedSegmentIndex}`);
-        try { /* localStorage update */ } catch (e) { console.error("LS error:", e); }
-      }, spinDurationMs + 150); 
-    });
 
-    closeResultPopup.addEventListener('click', () => { /* ... как раньше ... */ });
-    function launchConfetti() { /* ... как раньше ... */ }
-    
-    // Инициализация
-    window.addEventListener('resize', () => { requestAnimationFrame(placeElementsOnWheel); });
-    requestAnimationFrame(placeElementsOnWheel);
+        function createSectors() {
+            wheel.innerHTML = '';
+            const wheelRadius = wheel.offsetWidth / 2;
 
-  </script>
+            prizes.forEach((prize, i) => {
+                const sector = document.createElement('div');
+                sector.classList.add('sector');
+
+                const color1 = prize.color;
+                const color2 = adjustColor(prize.color, -20); // Затемняем для градиента
+
+                sector.style.background = `linear-gradient(to bottom right, ${color1}, ${color2})`;
+                // Установка transform-origin и transform для создания клина
+                // Этот метод использует skewY. Сектора создаются как прямоугольники,
+                // затем искажаются и поворачиваются.
+                sector.style.transformOrigin = '100% 100%'; // bottom right
+                sector.style.transform = `rotate(${i * anglePerSector}deg) skewY(${-(90 - anglePerSector)}deg)`;
+                sector.style.width = '50%'; // Ширина относительно родителя (колеса)
+                sector.style.height = '50%'; // Высота относительно родителя
+                sector.style.left = '50%'; // От центра
+                sector.style.top = '0';   // От центра
+
+
+                const prizeLabel = document.createElement('div');
+                prizeLabel.classList.add('prize-label');
+                prizeLabel.textContent = prize.text;
+                prizeLabel.style.color = prize.textColor || '#fff';
+
+                // Позиционирование и поворот текста
+                const labelRotation = anglePerSector / 2; // Поворот для центрирования в секторе
+                const textDistance = wheelRadius * 0.65; // Расстояние от центра колеса
+
+                prizeLabel.style.width = `${wheelRadius * 0.8}px`; // Ширина текста
+                prizeLabel.style.position = 'absolute';
+                // Пересчитываем позиционирование для skewY метода
+                // Текст должен быть "внутри" искаженного прямоугольника
+                prizeLabel.style.right = `${wheelRadius * 0.05}px`; // от правого края сектора (до искажения)
+                prizeLabel.style.bottom = `${wheelRadius * 0.25}px`; // от нижнего края сектора (до искажения)
+                prizeLabel.style.transformOrigin = 'center';
+                prizeLabel.style.transform = `skewY(${90 - anglePerSector}deg) rotate(${-labelRotation}deg)`;
+
+
+                sector.appendChild(prizeLabel);
+                wheel.appendChild(sector);
+            });
+        }
+
+
+        function spinWheel() {
+            if (spinning) return;
+            spinning = true;
+            spinButton.disabled = true;
+            pointer.style.transform = 'translateX(-50%) rotate(0deg)'; // Сброс указателя
+
+            const totalSpins = Math.floor(Math.random() * 4) + 8; // от 8 до 11 полных оборотов для "солидности"
+            const randomStopOffset = Math.random() * anglePerSector * 0.8 - (anglePerSector * 0.4); // Небольшой случайный сдвиг от центра сектора
+            const winningAngleIndex = Math.floor(Math.random() * numSectors); // Сразу выбираем выигрышный сектор
+            // Угол остановки так, чтобы указатель был на центре выигрышного сектора
+            // Указатель наверху (270 градусов). Сектор 0 справа.
+            // Чтобы сектор `winningAngleIndex` был наверху, колесо должно повернуться на:
+            // `-(winningAngleIndex * anglePerSector + anglePerSector / 2 - 90)`
+            // `finalRotationTarget` - это куда должно указывать колесо (относительно 0)
+            // `currentRotation` - текущее положение.
+
+            // Определяем целевой угол, чтобы выигрышный сектор был под указателем (270 градусов)
+            // Угол середины i-го сектора: i * anglePerSector + anglePerSector / 2
+            // Чтобы эта середина оказалась под указателем (270 deg), колесо должно повернуться на:
+            // -(середина_сектора - 270)
+            const targetSectorMiddleAngle = winningAngleIndex * anglePerSector + anglePerSector / 2;
+            const rotationToAlign = (270 - targetSectorMiddleAngle + 360) % 360; // На сколько повернуть, чтобы целевой сектор был вверху
+
+            currentRotation = (currentRotation % 360) ; // Нормализуем текущее вращение
+            const finalRotation = (totalSpins * 360) + rotationToAlign + randomStopOffset - (currentRotation % 360);
+
+
+            wheel.style.transition = `transform ${6 + Math.random()*2}s cubic-bezier(0.2, 0.95, 0.25, 1.0)`;
+            wheel.style.transform = `rotate(${currentRotation + finalRotation}deg)`;
+            currentRotation += finalRotation;
+
+            wheel.addEventListener('transitionend', () => {
+                wheel.style.transition = 'none'; // Убираем transition для мгновенной коррекции если надо
+
+                // Нормализуем итоговый угол, чтобы указатель был точно по центру
+                const actualFinalAngle = currentRotation % 360;
+                const correctedAngle = (270 - (winningAngleIndex * anglePerSector + anglePerSector/2) + 360 ) % 360;
+                // wheel.style.transform = `rotate(${correctedAngle}deg)`; // Мгновенная коррекция, если анимация неточна. Обычно не нужна с предвыбором.
+
+                prizeText.textContent = prizes[winningAngleIndex].text;
+                resultPopup.classList.add('show');
+
+                // Анимация "отдачи" указателя
+                pointer.style.transform = 'translateX(-50%) rotate(-15deg)';
+                setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(10deg)', 150);
+                setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(-5deg)', 300);
+                setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(0deg)', 450);
+
+                spinning = false;
+                // Кнопка разблокируется при закрытии попапа
+            }, { once: true });
+        }
+
+        closePopupButton.addEventListener('click', () => {
+            resultPopup.classList.remove('show');
+            spinButton.disabled = false;
+        });
+
+        spinButton.addEventListener('click', spinWheel);
+
+        // Инициализация
+        // Таймаут, чтобы дать шрифтам и DOM загрузиться для правильных расчетов offsetWidth
+        setTimeout(() => {
+            createSectors();
+             // Убедимся, что колесо отрисовано перед первым вращением
+            wheel.style.transform = `rotate(0deg)`;
+        }, 100);
+
+        window.addEventListener('resize', () => {
+            // Можно добавить пересоздание секторов для адаптивности, если размеры меняются сильно
+            // createSectors();
+        });
+
+    </script>
 </body>
 </html>
