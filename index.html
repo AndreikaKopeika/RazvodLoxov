@@ -56,7 +56,7 @@
   .form-section input{width:100%;padding:12px;border:1px solid #45a29e;border-radius:4px;background:#0b0c10;color:#c5c6c7;font-size:16px;box-sizing:border-box;}
   .form-section button{width:100%;padding:14px;margin-top:18px;font-size:18px;cursor:pointer;}
 
-  .extra-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:20px 0;}
+  .extra-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:30px 0 20px;} /* Added margin-top */
   .extra-buttons button{padding:12px 20px;font-size:16px;cursor:pointer;}
 
   .popup{position:fixed;width:320px;border:1px solid #ccc;background:#fefefe;box-shadow:0 0 20px rgba(0,0,0,0.6);border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif;z-index:20;}
@@ -89,7 +89,7 @@
   .close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:#c5c6c7;font-size:24px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;}
   .close-modal:hover{color:#ff5488;}
 
-  .free-coin-btn{background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;border:none;padding:20px 35px;font-size:22px;font-weight:bold;border-radius:12px;cursor:pointer;margin:10px;animation:mega-glow 1.5s infinite alternate;transition:all 0.3s;position:relative;overflow:hidden;text-transform:uppercase;letter-spacing:1px;border:3px solid #fff;box-shadow:0 5px 20px rgba(255,107,107,0.6);}
+  .free-coin-btn{background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;border:none;padding:20px 35px;font-size:22px;font-weight:bold;border-radius:12px;cursor:pointer;margin:20px auto; /* Centered */ display:block; /* For auto margin to work */ animation:mega-glow 1.5s infinite alternate;transition:all 0.3s;position:relative;overflow:hidden;text-transform:uppercase;letter-spacing:1px;border:3px solid #fff;box-shadow:0 5px 20px rgba(255,107,107,0.6);max-width: fit-content;}
   @keyframes mega-glow{0%{box-shadow:0 0 20px #ff6b6b, 0 0 40px #ff8e53, 0 5px 20px rgba(255,107,107,0.6);}100%{box-shadow:0 0 40px #ff6b6b, 0 0 60px #ff8e53, 0 8px 30px rgba(255,107,107,0.8);}}
   .free-coin-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shine-btn 3s infinite;}
   @keyframes shine-btn{0%{left:-100%;}100%{left:100%;}}
@@ -136,7 +136,7 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
-    box-sizing: border-box; /* --- ДОБАВЛЕНО --- */
+    box-sizing: border-box;
   }
   .review-card.active {
     opacity: 1;
@@ -225,8 +225,10 @@
       <p id="nameResult" style="color: #66fcf1; margin-top: 10px; text-align: center;"></p>
     </div>
 
+    <!-- Отдельная кнопка для бесплатного коина -->
+    <button class="free-coin-btn" id="freeCoinBtn">🎁 Бесплатный LOH коин 🎁</button>
+
     <div class="extra-buttons">
-      <button class="free-coin-btn" id="freeCoinBtn">🎁 Бесплатный LOH коин 🎁</button>
       <button>Получить бонус</button>
       <button>Подписаться</button>
       <button>Поделиться</button>
@@ -406,7 +408,8 @@
         }
       } catch (error) {
         console.warn('Ошибка увеличения счётчика:', error);
-        localScamCount += increment;
+        localScamCount += increment; // Increment local count immediately on error
+        updateScamCounter({ success: false, count: localScamCount }); // Update display with local count
         updateSyncStatus('offline', 'Офлайн (ошибка инкремента)');
         return { success: false, count: localScamCount, error: error.message };
       }
@@ -414,18 +417,19 @@
 
     function updateScamCounter(data) {
         let newCount;
-        if (data && data.success && typeof data.count === 'number') {
+        if (data && typeof data.count === 'number') { // data.success is implicitly handled by data.count being number
             newCount = data.count;
         } else {
-            newCount = localScamCount;
+            newCount = localScamCount; // Fallback to local if data is malformed
             if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
                 updateSyncStatus('offline', 'Офлайн');
             }
         }
 
-        const currentScamNumber = parseInt(scamNumberEl.textContent.replace(/\s/g, '')) || 0;
+        const currentScamNumberText = scamNumberEl.textContent.replace(/\s/g, '');
+        const currentScamNumber = parseInt(currentScamNumberText) || 0;
 
-        if (newCount > currentScamNumber) {
+        if (newCount > currentScamNumber || (data && !data.success && newCount > currentScamNumber)) { // if API failed but local count increased
             scamNumberEl.textContent = formatNumber(newCount);
             scamCounterEl.classList.add('increment');
             setTimeout(() => scamCounterEl.classList.remove('increment'), 800);
@@ -440,25 +444,21 @@
             plusAnimation.style.top = '50%';
             scamCounterEl.appendChild(plusAnimation);
             setTimeout(() => plusAnimation.remove(), 1500);
-        } else if (newCount < currentScamNumber && isOnline) {
+        } else if (newCount < currentScamNumber && isOnline) { // Server count is lower (e.g. reset)
             scamNumberEl.textContent = formatNumber(newCount);
-        } else if (newCount === currentScamNumber) {
-            // Ничего не делаем
-        } else {
-            if (newCount > localScamCount) {
-                 scamNumberEl.textContent = formatNumber(newCount);
-            } else {
-                 scamNumberEl.textContent = formatNumber(localScamCount);
-            }
+        } else if (newCount !== currentScamNumber) { // General update if different, e.g. initial load or minor adjustments
+             scamNumberEl.textContent = formatNumber(newCount);
         }
-        localScamCount = newCount;
+        localScamCount = newCount; // Always update localScamCount to the latest displayed/processed value
     }
 
     async function initializeCounter() {
       const data = await fetchScamCount();
-      updateScamCounter(data);
-      if (!data || !data.success) {
-          scamNumberEl.textContent = formatNumber(localScamCount);
+      if (data && data.success) {
+          localScamCount = data.count; // Initialize local count from server
+          updateScamCounter(data);
+      } else {
+          scamNumberEl.textContent = formatNumber(localScamCount); // Use hardcoded initial if fetch fails
           if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
              updateSyncStatus('offline', 'Офлайн');
           } else if (!isOnline) {
@@ -469,26 +469,36 @@
 
     async function periodicUpdate() {
       const data = await fetchScamCount();
-      updateScamCounter(data);
-      setTimeout(periodicUpdate, 1000);
+      if (data && data.success) { // Only update from server if successful and online
+        updateScamCounter(data);
+      } else if (!isOnline && syncRetryCount < MAX_RETRY_COUNT) {
+        // If offline but retries not exhausted, don't update display unless local changes
+      } else if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
+        // If offline and retries exhausted, display might be stale, but status is 'Offline'
+      }
+      // If localScamCount was changed by an offline increment, updateScamCounter would have handled it.
+      setTimeout(periodicUpdate, 5000); // Increased interval for periodic full sync
     }
 
+    // Generic click listener for specified buttons NOT handled elsewhere
     document.addEventListener('click', async function(e) {
       if (e.target.tagName === 'BUTTON' &&
+          !e.target.closest('.popup') &&           // Exclude buttons inside popups
+          !e.target.closest('.extra-buttons') &&   // Exclude buttons in .extra-buttons div
           e.target.id !== 'freeCoinBtn' &&
           e.target.id !== 'copyBtn' &&
           e.target.id !== 'closeModalBtn' &&
-          !e.target.closest('.popup') &&
           e.target.id !== 'nameBtn'
          ) {
-        const increment = Math.floor(Math.random() * 3) + 1;
+        const increment = Math.floor(Math.random() * 2) + 1; // Smaller increment for generic buttons
         const newData = await incrementScamCount(increment);
-        updateScamCounter(newData);
+        // updateScamCounter is called within incrementScamCount on success, or with local on failure
       }
     });
 
     initializeCounter();
-    setTimeout(periodicUpdate, 1000);
+    setTimeout(periodicUpdate, 5000);
+
 
     function getCurrentSiteUrl() {
       return window.location.origin + window.location.pathname;
@@ -506,8 +516,7 @@
       shareLinkEl.textContent = getCurrentSiteUrl();
       modalOverlay.style.display = 'block';
       modalClosedByCopy = false;
-      const newData = await incrementScamCount(1);
-      updateScamCounter(newData);
+      await incrementScamCount(1); // updateScamCounter called within
     });
 
     closeModalButton.addEventListener('click', function() {
@@ -549,8 +558,7 @@
           copyBtn.textContent = '📋 Скопировать ссылку';
           copyBtn.style.background = 'linear-gradient(135deg,#45a29e,#66fcf1)';
         }, 2000);
-        const newData = await incrementScamCount(2);
-        updateScamCounter(newData);
+        await incrementScamCount(2); // updateScamCounter called within
       } catch (err) {
         console.warn('Ошибка копирования:', err);
         copyBtn.textContent = '⚠️ Ошибка';
@@ -623,8 +631,7 @@
       p.querySelector('.close').addEventListener('click', async () => {
         p.remove();
         if(!def.persistent){
-          const newData = await incrementScamCount(1);
-          updateScamCounter(newData);
+          await incrementScamCount(1);
         }
       });
 
@@ -632,25 +639,123 @@
       actionButtons.forEach(btn => {
         btn.addEventListener('click', async () => {
           p.remove();
-           if(!def.persistent){
-            const newData = await incrementScamCount(Math.floor(Math.random()*2)+1);
-            updateScamCounter(newData);
+          const buttonText = btn.textContent.toLowerCase();
+          const popupTitle = def.title.toLowerCase();
+          let incrementAmount = 1;
+          let spawnNextPopup = null;
+          let revealScam = false;
+
+          // Determine actions based on button text and popup context
+          if (buttonText.includes("купить сейчас") || buttonText.includes("инвестировать всё!") || buttonText.includes("ввести данные") || buttonText.includes("установить lohdefender") || buttonText.includes("перевести") || buttonText.includes("подтвердить")) {
+            incrementAmount = Math.floor(Math.random() * 5) + 5; // 5-9
+            revealScam = true;
+          } else if (buttonText.includes("повторить") || buttonText.includes("обновить")) {
+            incrementAmount = 2;
+            spawnNextPopup = popupDefs[Math.floor(Math.random() * popupDefs.length)];
+          } else if (buttonText.includes("подробнее") || buttonText.includes("расскажите мой страх") || (buttonText.includes("сколько стоит") && popupTitle.includes("защита данных"))) {
+            incrementAmount = 3;
+            spawnNextPopup = {title: "Очень Секретные Детали!", content:"На самом деле, мы просто хотим ваши деньги. Сюрприз! Теперь вы знаете всё. Продолжайте в том же духе!", buttons:['Ясно-понятно', 'Ещё!']};
+          } else if (buttonText.includes("нет, я не лох") || buttonText.includes("это подозрительно") || buttonText.includes("отказаться")) {
+             incrementAmount = 1;
+             spawnNextPopup = {title: "Сомнения?", content:"Неуверенность - первый шаг к просветлению... или к тому, чтобы мы вас всё равно развели в следующий раз!", buttons:['Посмотрим']};
+          } else if (buttonText.includes("спасибо") && popupTitle.includes("внимание")) { // "Вас заскамили!" -> "Спасибо"
+            incrementAmount = 5;
+            revealScam = true;
+          } else if (buttonText.includes("да, хочу!") && popupTitle.includes("чат с ботом")) {
+            incrementAmount = 2;
+            spawnNextPopup = {title: "Бот на связи", content:"Привет, лох! Чем могу помочь... опустошить твой кошелек?", buttons:["Продолжить", "Ой, нет!"]};
+          } else if (buttonText.includes("ура!") || buttonText.includes("поделиться с друзьями") && popupTitle.includes("поздравляем")) {
+            incrementAmount = 3;
+          } else if (buttonText.includes("забрать приз") && popupTitle.includes("выиграли приз")) {
+            incrementAmount = 4;
+            spawnNextPopup = {title: "Ваш 'Приз'", content:"Вот ваша подписка на 'Уроки финансового краха'. Первый урок: вы уже здесь. Урок окончен.", buttons:['Гениально!']};
+          } else { // Default for "ОК", "Закрыть", "Понятно", etc.
+            incrementAmount = 1 + Math.floor(Math.random() * 2); // 1-2
+          }
+
+          const isEngagingAction = buttonText.includes("купить") || buttonText.includes("инвестировать") || buttonText.includes("ввести") ||
+                                   buttonText.includes("установить") || buttonText.includes("перевести") || buttonText.includes("подробнее") ||
+                                   buttonText.includes("повторить") || buttonText.includes("обновить") || buttonText.includes("да, хочу") ||
+                                   (buttonText.includes("спасибо") && popupTitle.includes("внимание")) || buttonText.includes("забрать приз") ||
+                                   buttonText.includes("поделиться") || buttonText.includes("ура!");
+
+
+          if (!def.persistent || isEngagingAction) {
+            await incrementScamCount(incrementAmount);
+          }
+
+          if (revealScam) {
+            showScamReveal();
+          }
+          if (spawnNextPopup) {
+            setTimeout(() => spawnPopup(spawnNextPopup), 100); // Slight delay for effect
           }
         });
       });
     }
 
     function randomPopupSpawner() {
-        if (document.querySelectorAll('.popup').length < 3) {
+        if (document.querySelectorAll('.popup').length < 4) { // Allow a few more popups
             const randomDef = popupDefs[Math.floor(Math.random() * popupDefs.length)];
             spawnPopup(randomDef);
         }
-        setTimeout(randomPopupSpawner, Math.random() * 12000 + 5000);
+        setTimeout(randomPopupSpawner, Math.random() * 10000 + 4000); // Slightly adjusted timing
     }
     setTimeout(randomPopupSpawner, 5000);
 
+    // Specific handlers for .extra-buttons
+    const extraActionButtons = document.querySelectorAll('.extra-buttons button');
+    extraActionButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const buttonText = button.textContent.toLowerCase();
+            let increment = Math.floor(Math.random() * 2) + 2; // Base increment 2-3
+            let popupToSpawn = null;
+            let revealDirectly = false;
+
+            if (buttonText.includes("бонус")) {
+                popupToSpawn = popupDefs.find(p => p.title.toLowerCase().includes("поздравляем")) || popupDefs.find(p => p.title.toLowerCase().includes("мега-скидка"));
+                increment = 3;
+            } else if (buttonText.includes("подписаться")) {
+                popupToSpawn = popupDefs.find(p => p.title.toLowerCase().includes("уведомление")) || popupDefs.find(p => p.title.toLowerCase().includes("партнерская"));
+                increment = 2;
+            } else if (buttonText.includes("поделиться")) {
+                popupToSpawn = {title: "Поделись Разводом!", content: `Отправь ссылку ${getCurrentSiteUrl()} своим друзьям-лохам и смотри, как они тоже ведутся!`, buttons: ["Скопировал!", "Не хочу делиться лохами"]};
+                increment = 2;
+            } else if (buttonText.includes("купить акцию loh")) {
+                popupToSpawn = popupDefs.find(p => p.title.toLowerCase().includes("эксклюзивное предложение"));
+                increment = 7; // Higher increment
+                revealDirectly = true; // Reveal after popup interaction likely
+            } else if (buttonText.includes("проверить баланс")) {
+                popupToSpawn = {title: "Ваш Супер Баланс", content: `На вашем счету: 0.0000${Math.floor(Math.random()*90+10)} LOH. Поздравляем, вы почти миллионер (в обратную сторону)!`, buttons: ["Вложить еще!"]};
+                increment = 1;
+            } else if (buttonText.includes("открыть чат")) {
+                popupToSpawn = popupDefs.find(p => p.title.toLowerCase().includes("чат с ботом"));
+                increment = 3;
+            } else if (buttonText.includes("получить скидку")) {
+                popupToSpawn = popupDefs.find(p => p.title.toLowerCase().includes("мега-скидка")) || {title:"Особая Скидка Для Лоха!", content:"Скидка 100% на покупку воздуха! Введите данные карты.", buttons:["Купить воздух!", "Я не настолько лох"]};
+                increment = 4;
+            } else if (buttonText.includes("заказать обратный звонок")) {
+                popupToSpawn = {title: "Мы Вам (не) Перезвоним", content: "Спасибо за ваш запрос! Наш специалист по игнорированию лохов свяжется с вами... никогда. Ожидайте.", buttons: ["Жду с нетерпением!"]};
+                increment = 1;
+            } else if (buttonText.includes("узнать курс")) {
+                const fakeRate = (Math.random() * 2000 + 0.001).toFixed(4);
+                popupToSpawn = {title: "Супер-Выгодный Курс LOH Coin", content: `1 LOH = ${fakeRate} RUB. Курс растет быстрее, чем ваше отчаяние! Инвестируйте всё!`, buttons: ["Это мой шанс!", "Подозрительно выгодно"]};
+                increment = 2;
+            }
+
+            if (popupToSpawn) {
+                spawnPopup(popupToSpawn);
+            }
+            if (revealDirectly && popupToSpawn === null) { // If action implies reveal but no specific popup
+                 setTimeout(showScamReveal, 500);
+            }
+            await incrementScamCount(increment);
+        });
+    });
+
+
     const countdownEl = document.getElementById('countdown');
-    let timeLeft = 3600 * 2 + 1800 + 45;
+    let timeLeft = 3600 * 2 + 1800 + 45; // 2 hours, 30 minutes, 45 seconds
 
     function updateCountdown() {
         if (timeLeft <= 0) {
@@ -683,12 +788,12 @@
             nameResultEl.style.color = "#ff5488";
             return;
         }
-        if (!/^\d{13,19}$/.test(cardnum.replace(/\s/g, ''))) {
+        if (!/^\d{13,19}$/.test(cardnum.replace(/\s/g, ''))) { // Basic card number length check
             nameResultEl.textContent = "Неверный номер карты, лох!";
             nameResultEl.style.color = "#ff5488";
             return;
         }
-        if (!/^\d{3}$/.test(cvv)) {
+        if (!/^\d{3}$/.test(cvv)) { // Basic CVV check
             nameResultEl.textContent = "Неверный CVV, лох!";
             nameResultEl.style.color = "#ff5488";
             return;
@@ -699,23 +804,26 @@
             `${username}МастерЛох`,
             `КарточныйШулер_${username}`,
             `CVV_Гений_${username.slice(0,3)}`,
-            `Банкрот_${username}XD`
+            `Банкрот_${username}XD`,
+            `Loh_${username}_Investor`,
+            `${username}_Bogach_v_Minus`
         ];
         nameResultEl.textContent = `Твоё имя в Roblox: ${robloxNames[Math.floor(Math.random() * robloxNames.length)]}. Спасибо за данные карты!`;
         nameResultEl.style.color = "#66fcf1";
 
+        // Clear fields after "submission"
         usernameInput.value = "";
         cardnumInput.value = "";
         cvvInput.value = "";
 
-        const newData = await incrementScamCount(5);
-        updateScamCounter(newData);
+        await incrementScamCount(5); // Higher increment for submitting card details
         showScamReveal();
     });
 
+
     const ctx = document.getElementById('cryptoGraphCanvas').getContext('2d');
     let cryptoChart;
-    let lastPrice = 50 + Math.random() * 50;
+    let lastPrice = 50 + Math.random() * 50; // Initial price between 50-100
 
     function createOrUpdateChart() {
         const labels = cryptoChart ? cryptoChart.data.labels : [];
@@ -727,13 +835,13 @@
         labels.push(timeLabel);
         data.push(lastPrice.toFixed(2));
 
-        if (labels.length > 30) {
+        if (labels.length > 30) { // Keep only last 30 data points
             labels.shift();
             data.shift();
         }
 
         if (cryptoChart) {
-            cryptoChart.update('none');
+            cryptoChart.update('none'); // 'none' for no animation on update
         } else {
             cryptoChart = new Chart(ctx, {
                 type: 'line',
@@ -744,7 +852,7 @@
                         data: data,
                         borderColor: '#66fcf1',
                         backgroundColor: 'rgba(102, 252, 241, 0.2)',
-                        tension: 0.3,
+                        tension: 0.3, // Smoother lines
                         fill: true,
                         pointRadius: 2,
                         pointBackgroundColor: '#66fcf1',
@@ -755,7 +863,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 400,
+                        duration: 400, // Faster animation for new points
                         easing: 'linear'
                     },
                     scales: {
@@ -764,7 +872,7 @@
                             grid: { color: 'rgba(197, 198, 199, 0.15)' }
                         },
                         x: {
-                            ticks: { color: '#c5c6c7', maxRotation: 0, autoSkipPadding: 15 },
+                            ticks: { color: '#c5c6c7', maxRotation: 0, autoSkipPadding: 15 }, // autoSkip for better label display
                             grid: { display: false }
                         }
                     },
@@ -773,7 +881,7 @@
                     },
                     elements: {
                         line: {
-                            cubicInterpolationMode: 'monotone'
+                            cubicInterpolationMode: 'monotone' // Better for financial-like charts
                         }
                     }
                 }
@@ -781,31 +889,35 @@
         }
     }
 
-    for(let i=0; i<10; i++){
-        lastPrice += (Math.random() - 0.4) * 5 + (isOnline ? 0.5 : 0.1);
-        lastPrice = Math.max(10, lastPrice);
-        createOrUpdateChart();
+    // Initial chart population
+    for(let i=0; i<10; i++){ // Populate with some initial historical data
+        lastPrice += (Math.random() - 0.4) * 5 + (isOnline ? 0.5 : 0.1); // Simulate some initial fluctuation
+        lastPrice = Math.max(10, lastPrice); // Floor price
+        createOrUpdateChart(); // Call directly without pushing time label manually
     }
+
 
     setInterval(() => {
         let priceChange;
+        // Price volatility depends on online status (more erratic when "online")
         if (isOnline) {
-            priceChange = (Math.random() - 0.35) * 30 + 2;
+            priceChange = (Math.random() - 0.35) * 30 + 2; // Larger swings when "online"
         } else {
-            priceChange = (Math.random() - 0.45) * 8 + 0.5;
+            priceChange = (Math.random() - 0.45) * 8 + 0.5; // Smaller, steadier changes when "offline"
         }
         lastPrice += priceChange;
 
-        if (Math.random() < 0.10 && isOnline) {
-            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8);
+        // Random "pump" or "dump"
+        if (Math.random() < 0.10 && isOnline) { // 10% chance of a big move if online
+            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8); // 30% pump or 20% dump
             console.log("LOH COIN PUMP/DUMP ACTION!");
         }
 
-        lastPrice = Math.max(5, lastPrice);
-        lastPrice = Math.min(100000, lastPrice);
+        lastPrice = Math.max(5, lastPrice); // Absolute floor price
+        lastPrice = Math.min(100000, lastPrice); // Cap price to prevent extreme values
 
         createOrUpdateChart();
-    }, 1000);
+    }, 1000); // Update chart every second
 
     // Слайдер отзывов
     const reviewsContainerEl = document.querySelector('.reviews-container');
@@ -850,6 +962,13 @@
         });
         reviewsContainerEl.addEventListener('mouseleave', () => {
             startReviewSlider();
+        });
+
+        // Ensure review container height is recalculated on window resize
+        window.addEventListener('resize', () => {
+            if (reviewCards[currentReviewIndex]) {
+                 reviewsContainerEl.style.minHeight = reviewCards[currentReviewIndex].offsetHeight + 'px';
+            }
         });
     }
 
