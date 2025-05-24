@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>РазводЛохов.ru - LOH Coin & Roblox</title>
 <script defer data-domain="andreikakopeika.github.io/razvodloxov" src="https://plausible.io/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Added Chart.js library -->
 <style>
   body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#0b0c10;color:#c5c6c7;overflow-x:hidden;}
   .header{background:#1f2833;padding:20px;text-align:center;border-bottom:3px solid #66fcf1;}
@@ -22,9 +23,15 @@
   .scam-counter.increment{animation:flash-increment 0.8s ease-out;}
   @keyframes flash-increment{0%{transform:scale(1);box-shadow:0 0 25px rgba(255,8,68,0.5);}50%{transform:scale(1.05);box-shadow:0 0 50px rgba(255,8,68,0.8);}100%{transform:scale(1);box-shadow:0 0 25px rgba(255,8,68,0.5);}}
 
+  /* Статус синхронизации */
+  .sync-status{position:absolute;top:10px;right:10px;padding:5px 10px;border-radius:15px;font-size:12px;font-weight:bold;z-index:3;}
+  .sync-status.online{background:#4CAF50;color:#fff;}
+  .sync-status.offline{background:#f44336;color:#fff;}
+  .sync-status.loading{background:#ff9800;color:#fff;}
+
   /* График */
   .graph{position:relative;width:100%;height:360px;background:linear-gradient(135deg,#1b2631,#0b0c10);border-radius:6px;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.8);margin-bottom:20px;}
-  .graph canvas{display:block;width:100%;height:100%;}
+  .graph canvas{display:block;width:100%!important;height:100%!important;} /* Ensure canvas takes full space */
   .graph-label{position:absolute;top:12px;left:12px;padding:4px 8px;background:rgba(0,0,0,0.5);border-radius:4px;font-size:16px;color:#66fcf1;font-weight:bold;z-index:10;}
 
   /* Супер-кнопка желтая сияет */
@@ -33,9 +40,9 @@
   .btn-super:hover{transform:scale(1.05);animation:none;box-shadow:0 0 30px #f9e900;}
 
   /* Остальные кнопки синие сияют */
-  button:not(.btn-super){background:#066dd9;color:#fff;border:none;border-radius:5px;animation:glow-blue 1.5s infinite alternate;transition:transform .2s;}
+  button:not(.btn-super):not(.free-coin-btn):not(.copy-btn):not(.close-modal){background:#066dd9;color:#fff;border:none;border-radius:5px;animation:glow-blue 1.5s infinite alternate;transition:transform .2s;}
   @keyframes glow-blue{from{box-shadow:0 0 8px #66fcf1;}to{box-shadow:0 0 20px #66fcf1;}}
-  button:not(.btn-super):hover{transform:scale(1.05);}
+  button:not(.btn-super):not(.free-coin-btn):not(.copy-btn):not(.close-modal):hover{transform:scale(1.05);}
 
   /* Инвестировать покачивается и остается желтой */
   .btn-invest{padding:16px 50px;background:#f9e900;color:#0b0c10;display:block;margin:10px auto 30px;font-size:22px;font-weight:bold;cursor:pointer;animation:shake2 2s infinite ease-in-out;}
@@ -62,7 +69,10 @@
   .popup .title{background:#0078d7;color:#fff;padding:10px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;cursor:move;}
   .popup .title .close{cursor:pointer;color:#fff;font-size:16px;}
   .popup .content{padding:18px;font-size:15px;color:#000;}
-  .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;}
+  .popup .content .buttons{margin-top:15px;text-align:right;} /* Added for button alignment */
+  .popup button{margin:8px 4px 4px 0;padding:6px 10px;cursor:pointer;font-weight:bold;background:#ddd;color:#333;border:1px solid #bbb; border-radius:3px; animation:none;box-shadow:none;} /* Reset button styles for popup */
+  .popup button:hover{background:#ccc;transform:none;}
+
 
   /* Анимация +1 при увеличении счётчика */
   .plus-one{position:absolute;color:#fff;font-size:24px;font-weight:bold;text-shadow:0 0 10px rgba(255,255,255,0.8);pointer-events:none;animation:float-up 1.5s ease-out forwards;}
@@ -105,12 +115,14 @@
     
     <!-- Счётчик заскамленных лохов -->
     <div class="scam-counter" id="scamCounter">
+      <div class="sync-status loading" id="syncStatus">Загрузка...</div>
       <h2>🎯 Заскамлено лохов</h2>
       <div class="number" id="scamNumber">42,837</div>
       <div class="subtitle">и это только сегодня!</div>
     </div>
 
-    <div class="graph" id="cryptoGraph">
+    <div class="graph" id="cryptoGraphContainer"> <!-- Changed ID to avoid conflict with variable -->
+      <canvas id="cryptoGraphCanvas"></canvas> <!-- Added canvas element -->
       <div class="graph-label">LOH COIN</div>
     </div>
     <button class="btn-invest">ИНВЕСТИРОВАТЬ</button>
@@ -118,11 +130,11 @@
 
     <div class="form-section">
       <h3>Узнай своё имя на языке Roblox!</h3>
-      <label>Имя:</label><input type="text" id="username" placeholder="Ваше имя"/>
-      <label>Номер карты:</label><input type="text" id="cardnum" placeholder="1234 5678 9012 3456"/>
-      <label>CVV:</label><input type="password" id="cvv" maxlength="3" placeholder="123"/>
+      <label for="username">Имя:</label><input type="text" id="username" placeholder="Ваше имя"/>
+      <label for="cardnum">Номер карты:</label><input type="text" id="cardnum" placeholder="1234 5678 9012 3456"/>
+      <label for="cvv">CVV:</label><input type="password" id="cvv" maxlength="3" placeholder="123"/>
       <button id="nameBtn">Получить имя</button>
-      <p id="nameResult"></p>
+      <p id="nameResult" style="color: #66fcf1; margin-top: 10px; text-align: center;"></p>
     </div>
 
     <div class="extra-buttons">
@@ -150,7 +162,7 @@
       <h3>🎁 Получи бесплатный ЛОХ коин!</h3>
       <p>Отправь друзьям эту ссылку и получи бесплатный ЛОХ коин, если они зайдут по ней!</p>
       <div class="link-container">
-        <div class="link-text" id="shareLink">https://andreikakopeika.github.io/RazvodLoxov/</div>
+        <div class="link-text" id="shareLink"></div>
         <button class="copy-btn" id="copyBtn">📋 Скопировать ссылку</button>
       </div>
       <p style="font-size:14px;opacity:0.8;">Чем больше друзей перейдёт - тем больше коинов получишь!</p>
@@ -175,64 +187,249 @@
   </div>
 
   <script>
-    // Счётчик заскамленных лохов
-    let scamCount = 42837;
+    // Конфигурация API
+    const API_BASE_URL = window.location.origin; // Автоматически определяем базовый URL
+    let isOnline = false;
+    let syncRetryCount = 0;
+    const MAX_RETRY_COUNT = 3;
+
+    // Элементы интерфейса
     const scamCounterEl = document.getElementById('scamCounter');
     const scamNumberEl = document.getElementById('scamNumber');
+    const syncStatusEl = document.getElementById('syncStatus');
 
-    function updateScamCounter() {
-      scamCount += Math.floor(Math.random() * 5) + 1; // Увеличиваем на 1-5
-      scamNumberEl.textContent = scamCount.toLocaleString('ru-RU');
-      
-      // Анимация счётчика
-      scamCounterEl.classList.add('increment');
-      setTimeout(() => scamCounterEl.classList.remove('increment'), 800);
-      
-      // Создаём анимацию +1
-      const plusOne = document.createElement('div');
-      plusOne.className = 'plus-one';
-      plusOne.textContent = '+' + (Math.floor(Math.random() * 5) + 1);
-      plusOne.style.left = Math.random() * 200 + 'px';
-      plusOne.style.top = '50%';
-      scamCounterEl.style.position = 'relative';
-      scamCounterEl.appendChild(plusOne);
-      
-      setTimeout(() => plusOne.remove(), 1500);
+    // Локальный счётчик (fallback)
+    let localScamCount = 42837;
+
+    // Функция для обновления статуса синхронизации
+    function updateSyncStatus(status, text) {
+      syncStatusEl.className = `sync-status ${status}`;
+      syncStatusEl.textContent = text;
     }
 
-    // Увеличиваем счётчик при загрузке страницы
-    setTimeout(updateScamCounter, 1000);
-
-    // Автоматическое увеличение счётчика каждые 3-8 секунд
-    function randomIncrement() {
-      updateScamCounter();
-      setTimeout(randomIncrement, Math.random() * 5000 + 3000);
+    // Функция для форматирования числа
+    function formatNumber(num) {
+      return num.toLocaleString('ru-RU');
     }
-    setTimeout(randomIncrement, 5000);
 
-    // Увеличиваем счётчик при нажатии на любую кнопку
-    document.addEventListener('click', function(e) {
-      if (e.target.tagName === 'BUTTON' && e.target.id !== 'freeCoinBtn') {
-        setTimeout(updateScamCounter, 200);
+    // API функции
+    async function fetchScamCount() {
+      try {
+        updateSyncStatus('loading', 'Синхронизация...');
+        // Simulate API call for GitHub Pages or local environment
+        if (window.location.hostname === "andreikakopeika.github.io" || window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
+            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+            if (Math.random() > 0.1) { // 90% success rate
+                 isOnline = true;
+                 syncRetryCount = 0;
+                 updateSyncStatus('online', 'Онлайн');
+                 return { success: true, count: localScamCount + Math.floor(Math.random() * 10) };
+            } else {
+                 throw new Error("Simulated API error");
+            }
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/api/scam-count`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          isOnline = true;
+          syncRetryCount = 0;
+          updateSyncStatus('online', 'Онлайн');
+          return data.count;
+        } else {
+          throw new Error(data.error || 'Неизвестная ошибка');
+        }
+      } catch (error) {
+        console.warn('Ошибка получения счётчика:', error);
+        isOnline = false;
+        syncRetryCount++;
+        
+        if (syncRetryCount >= MAX_RETRY_COUNT) {
+          updateSyncStatus('offline', 'Офлайн');
+        } else {
+          updateSyncStatus('loading', `Повтор ${syncRetryCount}/${MAX_RETRY_COUNT}...`);
+        }
+        
+        return null; // Return null if fetch fails, not an object
+      }
+    }
+
+    async function incrementScamCount(increment = 1) {
+      try {
+         // Simulate API call for GitHub Pages or local environment
+        if (window.location.hostname === "andreikakopeika.github.io" || window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
+            await new Promise(resolve => setTimeout(resolve, 200)); // Simulate network delay
+            if (Math.random() > 0.05) { // 95% success rate
+                localScamCount += increment;
+                isOnline = true;
+                syncRetryCount = 0;
+                updateSyncStatus('online', 'Онлайн');
+                return { success: true, count: localScamCount };
+            } else {
+                 throw new Error("Simulated API increment error");
+            }
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/scam-count/increment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ increment })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          isOnline = true;
+          syncRetryCount = 0;
+          updateSyncStatus('online', 'Онлайн');
+          return data.count; // Return data.count directly
+        } else {
+          throw new Error(data.error || 'Неизвестная ошибка');
+        }
+      } catch (error) {
+        console.warn('Ошибка увеличения счётчика:', error);
+        isOnline = false;
+        
+        // Fallback: увеличиваем локальный счётчик
+        localScamCount += increment;
+        updateSyncStatus('offline', 'Офлайн');
+        return { success: true, count: localScamCount }; // Return an object with count
+      }
+    }
+
+    // Функция обновления счетчика с анимацией
+    function updateScamCounter(newCountData) {
+      if (newCountData === null || newCountData === undefined || typeof newCountData.count !== 'number') {
+        // If API fails and returns null, or if data.count is not a number, use localScamCount
+        scamNumberEl.textContent = formatNumber(localScamCount);
+        if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
+            updateSyncStatus('offline', 'Офлайн');
+        }
+        return;
+      }
+
+      const newCount = newCountData.count;
+      const currentCount = parseInt(scamNumberEl.textContent.replace(/\s/g, '')) || localScamCount;
+      
+      if (newCount > currentCount) {
+        scamNumberEl.textContent = formatNumber(newCount);
+        
+        // Анимация счётчика
+        scamCounterEl.classList.add('increment');
+        setTimeout(() => scamCounterEl.classList.remove('increment'), 800);
+        
+        // Создаём анимацию +N
+        const plusAnimation = document.createElement('div');
+        plusAnimation.className = 'plus-one';
+        plusAnimation.textContent = `+${newCount - currentCount}`;
+        // Ensure scamCounterEl has position relative for plus-one to be positioned correctly
+        if (getComputedStyle(scamCounterEl).position === 'static') {
+            scamCounterEl.style.position = 'relative';
+        }
+        plusAnimation.style.left = Math.random() * (scamCounterEl.offsetWidth - 50) + 'px'; // Random horizontal position within counter
+        plusAnimation.style.top = '50%';
+        scamCounterEl.appendChild(plusAnimation);
+        
+        setTimeout(() => plusAnimation.remove(), 1500);
+      } else if (newCount < currentCount) {
+          // If fetched count is less (e.g., server reset), just update
+          scamNumberEl.textContent = formatNumber(newCount);
+      }
+       // If newCount is the same, do nothing to avoid animation on simple refresh
+      
+      // Обновляем локальный счётчик (always sync localScamCount with the latest valid count)
+      localScamCount = newCount;
+    }
+
+    // Инициализация - загружаем текущий счётчик
+    async function initializeCounter() {
+      const data = await fetchScamCount(); // fetchScamCount now returns an object {success, count} or null
+      if (data && data.success) {
+        updateScamCounter(data);
+      } else {
+        // Используем локальный счётчик if API fails or returns {success: false}
+        scamNumberEl.textContent = formatNumber(localScamCount);
+        if (!isOnline && syncRetryCount >= MAX_RETRY_COUNT) {
+             updateSyncStatus('offline', 'Офлайн');
+        } else if (!isOnline) {
+             updateSyncStatus('loading', 'Ошибка...');
+        }
+      }
+    }
+
+    // Периодическое обновление счётчика
+    async function periodicUpdate() {
+      // Always try to fetch, even if offline, to attempt recovery
+      const data = await fetchScamCount();
+      if (data && data.success) {
+        updateScamCounter(data);
+      } else if (isOnline) { // If was online but fetch failed
+        isOnline = false; // Mark as offline
+        updateSyncStatus('loading', 'Повтор...'); // Show retry status
+      }
+      
+      // Следующее обновление через 5-15 секунд
+      setTimeout(periodicUpdate, Math.random() * 10000 + 5000);
+    }
+
+    // Обработка кликов на кнопки
+    document.addEventListener('click', async function(e) {
+      // Check if the clicked element is a button and NOT the freeCoinBtn, copyBtn, or closeModalBtn
+      if (e.target.tagName === 'BUTTON' && 
+          e.target.id !== 'freeCoinBtn' &&
+          e.target.id !== 'copyBtn' &&
+          e.target.id !== 'closeModal' &&
+          !e.target.closest('.popup') && // Ignore buttons inside popups
+          e.target.id !== 'nameBtn' // Ignore the roblox name button for now
+         ) {
+        const increment = Math.floor(Math.random() * 3) + 1; // 1-3
+        const newData = await incrementScamCount(increment);
+        updateScamCounter(newData); // newData is an object {success, count}
       }
     });
+
+    // Запуск инициализации
+    initializeCounter();
+    setTimeout(periodicUpdate, 10000); // Первое периодическое обновление через 10 секунд
+
+    // Функция для получения текущего URL сайта
+    function getCurrentSiteUrl() {
+      return window.location.origin + window.location.pathname;
+    }
 
     // Функционал бесплатного коина
     const freeCoinBtn = document.getElementById('freeCoinBtn');
     const modalOverlay = document.getElementById('modalOverlay');
-    const closeModal = document.getElementById('closeModal');
+    const closeModalBtn = document.getElementById('closeModal'); // Renamed to avoid conflict
     const copyBtn = document.getElementById('copyBtn');
     const scamReveal = document.getElementById('scamReveal');
-    let modalClosed = false;
+    const shareLinkEl = document.getElementById('shareLink');
+    let modalClosedByCopy = false; // Changed variable name
 
-    freeCoinBtn.addEventListener('click', function() {
+    freeCoinBtn.addEventListener('click', async function() {
+      shareLinkEl.textContent = getCurrentSiteUrl();
       modalOverlay.style.display = 'block';
-      updateScamCounter();
+      modalClosedByCopy = false; // Reset when modal is opened
+      
+      const newData = await incrementScamCount(1);
+      updateScamCounter(newData);
     });
 
-    closeModal.addEventListener('click', function() {
+    closeModalBtn.addEventListener('click', function() {
       modalOverlay.style.display = 'none';
-      if (modalClosed) {
+      if (modalClosedByCopy) { // Only show reveal if closed after copying
         showScamReveal();
       }
     });
@@ -240,92 +437,282 @@
     modalOverlay.addEventListener('click', function(e) {
       if (e.target === modalOverlay) {
         modalOverlay.style.display = 'none';
-        if (modalClosed) {
-          showScamReveal();
+        if (modalClosedByCopy) { // Only show reveal if closed after copying
+            showScamReveal();
         }
       }
     });
 
-    copyBtn.addEventListener('click', function() {
-      const link = document.getElementById('shareLink').textContent;
+    copyBtn.addEventListener('click', async function() {
+      const link = shareLinkEl.textContent;
       
-      // Копируем в буфер обмена
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(link).then(function() {
-          copyBtn.textContent = '✅ Скопировано!';
-          copyBtn.style.background = 'linear-gradient(135deg,#4CAF50,#45a29e)';
-          modalClosed = true;
-          
-          setTimeout(function() {
-            copyBtn.textContent = '📋 Скопировать ссылку';
-            copyBtn.style.background = 'linear-gradient(135deg,#45a29e,#66fcf1)';
-          }, 2000);
-        });
-      } else {
-        // Fallback для старых браузеров
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(link);
+        } else {
+          // Fallback for older browsers or insecure contexts
+          const textArea = document.createElement("textarea");
+          textArea.value = link;
+          textArea.style.position = "fixed"; // Hides element from view
+          textArea.style.opacity = 0;
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }
+        
         copyBtn.textContent = '✅ Скопировано!';
         copyBtn.style.background = 'linear-gradient(135deg,#4CAF50,#45a29e)';
-        modalClosed = true;
+        modalClosedByCopy = true;
         
         setTimeout(function() {
           copyBtn.textContent = '📋 Скопировать ссылку';
           copyBtn.style.background = 'linear-gradient(135deg,#45a29e,#66fcf1)';
         }, 2000);
+        
+        const newData = await incrementScamCount(2);
+        updateScamCounter(newData);
+        
+      } catch (err) {
+        console.warn('Ошибка копирования:', err);
+        // Fallback in case of error (e.g. if execCommand also fails)
+        copyBtn.textContent = '⚠️ Ошибка';
+        copyBtn.style.background = 'linear-gradient(135deg,#f44336,#ff9800)';
+        modalClosedByCopy = false; // Don't trigger scam reveal on copy error
+         setTimeout(function() {
+          copyBtn.textContent = '📋 Скопировать ссылку';
+          copyBtn.style.background = 'linear-gradient(135deg,#45a29e,#66fcf1)';
+        }, 2000);
       }
-      
-      updateScamCounter();
     });
 
     function showScamReveal() {
       scamReveal.style.display = 'block';
-      updateScamCounter();
       
       setTimeout(function() {
         scamReveal.style.display = 'none';
       }, 3000);
     }
 
+    // Остальной функционал (попапы, графики, формы)
     function makeDraggable(el) {
       let isDown=false, offset=[0,0];
       const header=el.querySelector('.title');
+      if (!header) return; // Safety check
       header.addEventListener('mousedown', e=>{isDown=true;offset=[el.offsetLeft-e.clientX,el.offsetTop-e.clientY]});
       document.addEventListener('mouseup',()=>{isDown=false});
-      document.addEventListener('mousemove',e=>{if(isDown){el.style.left=e.clientX+offset[0]+'px';el.style.top=e.clientY+offset[1]+'px';}});
+      document.addEventListener('mousemove',e=>{
+        if(isDown){
+            e.preventDefault(); // Prevent text selection while dragging
+            el.style.left=e.clientX+offset[0]+'px';
+            el.style.top=e.clientY+offset[1]+'px';
+        }
+      });
     }
 
     const popupDefs=[
-      {title:'Ошибка системы',content:'Не удалось подключиться к LOHcoin.',buttons:['Повторить','Отмена'],persistent:false},
-      {title:'Предупреждение',content:'Попытка взлома! IP:127.0.0.1',buttons:['ОК','Подробнее'],persistent:true},
-      {title:'Уведомление',content:'Данные отправлены на сервер.',buttons:['Закрыть'],persistent:false},
-      {title:'Мега-скидка',content:'Скидка 99% на LOH Coin!',buttons:['Купить сейчас','Позже'],persistent:true},
-      {title:'Новая версия',content:'Доступно обновление!',buttons:['Обновить','Напомнить позже'],persistent:true},
-      {title:'Чат с ботом',content:'Хотите пообщаться с нашим ботом?',buttons:['Да','Нет'],persistent:false},
-      {title:'Поздравляем!',content:'Вы стали ' + scamCount + '-м заскамленным лохом!',buttons:['Ура!','Поделиться'],persistent:false}
+      {title:'Ошибка системы',content:'Не удалось подключиться к LOHcoin. Ваши данные могут быть утеряны!',buttons:['Повторить','Отмена'],persistent:false},
+      {title:'Предупреждение',content:'Обнаружена подозрительная активность! Ваш IP: 127.0.0.1 заблокирован в системе LOH. Мы уже знаем где вы живете.',buttons:['ОК','Подробнее'],persistent:true},
+      {title:'Уведомление',content:'Ваши личные данные успешно отправлены на сервер мошенников. Спасибо за сотрудничество!',buttons:['Закрыть'],persistent:false},
+      {title:'Мега-скидка',content:'Только для вас! Скидка 99% на LOH Coin! Введите номер карты еще раз, чтобы подтвердить.',buttons:['Купить сейчас','Позже'],persistent:true},
+      {title:'Новая версия',content:'Доступно обновление системы "РазводЛохов v2.0"! Требуется перезагрузка и повторный ввод всех данных.',buttons:['Обновить','Напомнить позже'],persistent:true},
+      {title:'Чат с ботом-мошенником',content:'Хотите пообщаться с нашим опытным ботом-разводилой? Он поможет вам потерять еще больше денег!',buttons:['Да, хочу!','Нет, спасибо'],persistent:false},
+      {title:'Поздравляем!',content:'Вы успешно стали очередным заскамленным лохом! Ваши друзья будут гордиться вами.',buttons:['Ура!','Поделиться с друзьями'],persistent:false},
+      {title:'Внимание',content:'Вас заскамили!',buttons:['Спасибо','Я лох'],persistent:true}
     ];
 
     function spawnPopup(def){
       const p=document.createElement('div');p.className='popup';
-      p.style.top=50+Math.random()*200+'px';p.style.left=50+Math.random()*200+'px';
-      const btns=def.buttons.map(l=>`<button>${l}</button>`).join('');
-      p.innerHTML=`<div class='title'>${def.title}<span class='close'>✖</span></div><div class='content'>${def.content}${btns?'<div>'+btns+'</div>':''}</div>`;
+      // Ensure popup is within viewport initially
+      const maxX = window.innerWidth - 340; // 320 width + 20 padding
+      const maxY = window.innerHeight - 150; // Approximate height
+      p.style.top=Math.max(20, Math.min(maxY, 50 + Math.random()*200))+'px';
+      p.style.left=Math.max(20, Math.min(maxX, 50 + Math.random()*200))+'px';
+
+      const btnsHtml=def.buttons.map(l=>`<button>${l}</button>`).join('');
+      p.innerHTML=`<div class='title'>${def.title}<span class='close'>✖</span></div><div class='content'>${def.content}<div class="buttons">${btnsHtml}</div></div>`;
+      
       document.body.appendChild(p);
       makeDraggable(p);
-      p.querySelector('.close').onclick=()=>p.remove();
-      p.querySelectorAll('.content button').forEach(b=>b.addEventListener('click',()=>{
-        alert('Нажали: '+b.textContent);
-        updateScamCounter(); // Увеличиваем счётчик при нажатии на кнопки в попапах
-      }));
-      if(!def.persistent) setTimeout(()=>p.remove(),6000);
+
+      p.querySelector('.close').addEventListener('click', async () => {
+        p.remove();
+        if(!def.persistent){
+          const newData = await incrementScamCount(1);
+          updateScamCounter(newData);
+        }
+      });
+      
+      const actionButtons = p.querySelectorAll('.content button');
+      actionButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+          p.remove();
+           if(!def.persistent){
+            const newData = await incrementScamCount(Math.floor(Math.random()*2)+1); // 1 or 2
+            updateScamCounter(newData);
+          }
+        });
+      });
+
+      if(def.persistent){
+        // For persistent popups, maybe make them harder to close or re-appear
+      }
     }
 
-    setInterval(()=>spawnPopup(popupDefs[Math.floor(Math.random()*popupDefs.length)]),4000);
+    // Randomly spawn popups
+    function randomPopupSpawner() {
+        if (document.querySelectorAll('.popup').length < 3) { // Limit number of popups
+            const randomDef = popupDefs[Math.floor(Math.random() * popupDefs.length)];
+            spawnPopup(randomDef);
+        }
+        setTimeout(randomPopupSpawner, Math.random() * 20000 + 10000); // 10-30 seconds
+    }
+    setTimeout(randomPopupSpawner, 7000); // First popup after 7 seconds
 
-    const cont=document.getElementById('cryptoGraph'),cnv=document.createElement('canvas');cont.appendChild(cnv);
-    const ctx=cnv.getContext('2d');function resize(){cnv.width=cont.clientWidth;cnv.height=cont.clientHeight;}window.addEventListener('resize',resize);resize();
-    let data=Array.from({length:200},()=>50);function update(){data.shift();data.push(Math.max(0,Math.min(100,data[data.length-1]+(Math.random()*10-5))))}function draw(){ctx.fillStyle='#1b2631';ctx.fillRect(0,0,cnv.width,cnv.height);ctx.strokeStyle='#66fcf1';ctx.lineWidth=2;ctx.beginPath();data.forEach((v,i)=>{const x=i*(cnv.width/(data.length-1)),y=cnv.height-(v/100)*cnv.height;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}setInterval(()=>{update();draw()},500);
+    // Countdown timer
+    const countdownEl = document.getElementById('countdown');
+    let timeLeft = 3600 * 2 + 1800 + 45; // Example: 2 hours, 30 minutes, 45 seconds
 
-    const cd=document.getElementById('countdown'),end=Date.now()+3*60000;setInterval(()=>{let d=end-Date.now();if(d<0)d=0;let m=String(Math.floor(d/60000)).padStart(2,'0'),s=String(Math.floor((d%60000)/1000)).padStart(2,'0');cd.textContent=`Время до окончания акции: 00:${m}:${s}`;},1000);
-    document.getElementById('nameBtn').onclick=()=>{let u=document.getElementById('username').value,cn=document.getElementById('cardnum').value,cv=document.getElementById('cvv').value;if(!u||!cn||!cv)return alert('Заполните все поля!');document.getElementById('nameResult').textContent=`Ваше имя в Roblox: ${u}_RBLX`};
+    function updateCountdown() {
+        if (timeLeft <= 0) {
+            countdownEl.textContent = "Акция закончилась! Вы опоздали, лох!";
+            countdownEl.style.color = "#ff0000";
+            return;
+        }
+        const hours = Math.floor(timeLeft / 3600);
+        const minutes = Math.floor((timeLeft % 3600) / 60);
+        const seconds = timeLeft % 60;
+        countdownEl.textContent = `Время до окончания акции: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        timeLeft--;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown(); // Initial call
+
+    // Roblox name generator
+    const nameBtn = document.getElementById('nameBtn');
+    const usernameInput = document.getElementById('username');
+    const cardnumInput = document.getElementById('cardnum');
+    const cvvInput = document.getElementById('cvv');
+    const nameResultEl = document.getElementById('nameResult');
+
+    nameBtn.addEventListener('click', async function() {
+        const username = usernameInput.value.trim();
+        const cardnum = cardnumInput.value.trim();
+        const cvv = cvvInput.value.trim();
+
+        if (!username || !cardnum || !cvv) {
+            nameResultEl.textContent = "Заполните все поля, лох!";
+            nameResultEl.style.color = "#ff5488";
+            return;
+        }
+        if (!/^\d{13,19}$/.test(cardnum.replace(/\s/g, ''))) {
+            nameResultEl.textContent = "Неверный номер карты, лох!";
+            nameResultEl.style.color = "#ff5488";
+            return;
+        }
+        if (!/^\d{3}$/.test(cvv)) {
+            nameResultEl.textContent = "Неверный CVV, лох!";
+            nameResultEl.style.color = "#ff5488";
+            return;
+        }
+
+        // "Generate" Roblox name (just some funny text)
+        const robloxNames = [
+            `Нуб_${username}_Про123`, 
+            `${username}МастерЛох`, 
+            `КарточныйШулер_${username}`,
+            `CVV_Гений_${username.slice(0,3)}`,
+            `Банкрот_${username}XD`
+        ];
+        nameResultEl.textContent = `Твоё имя в Roblox: ${robloxNames[Math.floor(Math.random() * robloxNames.length)]}. Спасибо за данные карты!`;
+        nameResultEl.style.color = "#66fcf1";
+
+        // Clear fields after "submission"
+        usernameInput.value = "";
+        cardnumInput.value = "";
+        cvvInput.value = "";
+
+        const newData = await incrementScamCount(5); // Bigger increment for submitting data
+        updateScamCounter(newData);
+        showScamReveal(); // Show the "развели" message
+    });
+
+    // Chart.js implementation
+    const ctx = document.getElementById('cryptoGraphCanvas').getContext('2d');
+    let cryptoChart;
+
+    function createOrUpdateChart(newDataPoint) {
+        const labels = cryptoChart ? cryptoChart.data.labels : [];
+        const data = cryptoChart ? cryptoChart.data.datasets[0].data : [];
+
+        const now = new Date();
+        const timeLabel = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        
+        labels.push(timeLabel);
+        data.push(newDataPoint);
+
+        if (labels.length > 20) { // Keep only last 20 data points
+            labels.shift();
+            data.shift();
+        }
+
+        if (cryptoChart) {
+            cryptoChart.update();
+        } else {
+            cryptoChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'LOH COIN Price',
+                        data: data,
+                        borderColor: '#66fcf1',
+                        backgroundColor: 'rgba(102, 252, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#66fcf1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: { color: '#c5c6c7' },
+                            grid: { color: 'rgba(197, 198, 199, 0.2)' }
+                        },
+                        x: {
+                            ticks: { color: '#c5c6c7', maxRotation: 0, autoSkipPadding: 10 },
+                            grid: { color: 'rgba(197, 198, 199, 0.2)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    }
+    
+    // Initial chart data
+    let lastPrice = 50 + Math.random() * 50; // Start between 50-100
+    for(let i=0; i<10; i++){
+        lastPrice += (Math.random() - 0.45) * 10; // Fluctuate price
+        lastPrice = Math.max(10, lastPrice); // Min price 10
+        createOrUpdateChart(lastPrice);
+    }
+
+    // Update chart periodically
+    setInterval(() => {
+        lastPrice += (Math.random() - 0.45) * (isOnline ? 15 : 5); // More volatile if "online"
+        lastPrice = Math.max(10, lastPrice); // Min price 10
+        if (Math.random() < 0.05) lastPrice *= (Math.random() > 0.5 ? 1.5 : 0.7); // Occasional pump/dump
+        createOrUpdateChart(lastPrice);
+    }, 2500); // Update every 2.5 seconds
+
   </script>
 </body>
 </html>
