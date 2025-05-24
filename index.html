@@ -189,11 +189,74 @@
   }
 
 
-  /* Услуги */
-  .footer-services{background:#1f2833;padding:30px 20px;margin-top:40px;color:#c5c6c7;}
-  .footer-services h3{margin-bottom:15px;color:#66fcf1;text-align:center;}
-  .footer-services ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:15px;}
-  .footer-services li{background:#0b0c10;padding:10px 15px;border-radius:4px;box-shadow:0 0 10px rgba(0,0,0,0.7);}
+  /* Услуги - Обновленные стили */
+  .footer-services {
+    background: #1f2833;
+    padding: 30px 0 40px 0; /* Adjusted padding */
+    margin-top: 40px;
+    color: #c5c6c7;
+    text-align: center; /* Center the h3 */
+  }
+  .footer-services h3 {
+    margin-bottom: 25px; /* Increased margin */
+    color: #66fcf1;
+    text-shadow: 0 0 5px #66fcf1;
+    font-size: 22px; /* Slightly larger h3 */
+  }
+
+  .services-marquee-container {
+    width: 100%;
+    overflow: hidden; /* Crucial for marquee effect */
+    margin-bottom: 30px; /* Space before copyright */
+  }
+
+  .services-marquee-container:hover .services-list {
+    animation-play-state: paused; /* Pause animation on hover */
+  }
+
+  .services-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Lay out <li> items in a single row */
+    animation: marquee-scroll 90s linear infinite; /* Adjust duration for speed (e.g., 60s, 90s, 120s) */
+  }
+
+  .services-list li {
+    background: #0b0c10;
+    padding: 12px 20px; /* Slightly more padding */
+    border-radius: 6px; /* Slightly more rounded */
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8), 0 0 5px rgba(102, 252, 241, 0.2); /* Enhanced shadow */
+    white-space: nowrap; /* Prevent text wrapping within a service item */
+    margin-right: 20px; /* Space between service items */
+    flex-shrink: 0; /* Prevent items from shrinking */
+    color: #c5c6c7;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  .services-list li:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.9), 0 0 10px rgba(102,252,241,0.4);
+  }
+
+
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      /* This scrolls one full set of the duplicated items.
+         If your .services-list contains N unique items, duplicated once (total 2N items),
+         then the first N items (one set) occupy 50% of the total width of the ul. */
+      transform: translateX(-50%);
+    }
+  }
+
+  .footer-copyright {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #82a1ae; /* A slightly different shade for copyright */
+    text-align: center;
+  }
 
 </style>
 </head>
@@ -321,15 +384,55 @@
   </div>
 
   <div class="footer-services">
-    <h3>Наши услуги для лохов:</h3>
-    <ul>
-      <li>Консультации по финансовому краху</li>
-      <li>Продажа биткоинов-лохов</li>
-      <li>Гадание по остаткам счета</li>
-      <li>Пакеты «100% проигрыш»</li>
-      <li>Обучение лохотронным схемам</li>
-      <li>VIP доступ к «пустому» ICO</li>
-    </ul>
+    <h3>Наши эксклюзивные услуги для лохов:</h3>
+    <div class="services-marquee-container">
+      <ul class="services-list">
+        <!-- Original & New Services - Set 1 -->
+        <li>Консультации по финансовому краху</li>
+        <li>Продажа биткоинов-лохов</li>
+        <li>Гадание по остаткам счета</li>
+        <li>Пакеты «100% проигрыш»</li>
+        <li>Обучение лохотронным схемам</li>
+        <li>VIP доступ к «пустому» ICO</li>
+        <li>Экспресс-курсы "Как потерять всё за 24 часа"</li>
+        <li>Аренда виртуальных лопат для закапывания денег</li>
+        <li>Мастер-классы по инвестициям в финансовые пирамиды</li>
+        <li>Эксклюзивные NFT-картинки пустоты</li>
+        <li>Страхование от случайной прибыли</li>
+        <li>Подписка на ежедневные "плохие" финансовые советы</li>
+        <li>Проверка на лояльность: переведи нам деньги (ты лох)</li>
+        <li>Услуга "Самообман как искусство"</li>
+        <li>Персональный менеджер по исчезновению активов</li>
+        <li>Создание фальшивых историй успеха для соцсетей</li>
+        <li>Гарантированное обнуление банковского счета</li>
+        <li>Курсы по доверию незнакомцам в интернете</li>
+        <li>Инвестиции в воздух (с гарантией улетучивания)</li>
+        <li>Лотерея "Проиграй свою зарплату"</li>
+
+        <!-- Duplicate of Services - Set 2 (for seamless scrolling) -->
+        <li>Консультации по финансовому краху</li>
+        <li>Продажа биткоинов-лохов</li>
+        <li>Гадание по остаткам счета</li>
+        <li>Пакеты «100% проигрыш»</li>
+        <li>Обучение лохотронным схемам</li>
+        <li>VIP доступ к «пустому» ICO</li>
+        <li>Экспресс-курсы "Как потерять всё за 24 часа"</li>
+        <li>Аренда виртуальных лопат для закапывания денег</li>
+        <li>Мастер-классы по инвестициям в финансовые пирамиды</li>
+        <li>Эксклюзивные NFT-картинки пустоты</li>
+        <li>Страхование от случайной прибыли</li>
+        <li>Подписка на ежедневные "плохие" финансовые советы</li>
+        <li>Проверка на лояльность: переведи нам деньги (ты лох)</li>
+        <li>Услуга "Самообман как искусство"</li>
+        <li>Персональный менеджер по исчезновению активов</li>
+        <li>Создание фальшивых историй успеха для соцсетей</li>
+        <li>Гарантированное обнуление банковского счета</li>
+        <li>Курсы по доверию незнакомцам в интернете</li>
+        <li>Инвестиции в воздух (с гарантией улетучивания)</li>
+        <li>Лотерея "Проиграй свою зарплату"</li>
+      </ul>
+    </div>
+    <p class="footer-copyright">РазводЛохов © 2077. Все лохи зарезервированы.</p>
   </div>
 
   <script>
