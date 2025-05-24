@@ -8,6 +8,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --wheel-size-desktop: 350px;
+      --wheel-size-tablet: 300px;
+      --wheel-size-mobile: 250px;
+
+      /* Отступы для текста от центра колеса */
+      --text-offset-desktop: 65px;
+      --text-offset-tablet: 55px;
+      --text-offset-mobile: 45px;
+
+      --wheel-spin-duration: 7s; /* Длительность анимации вращения */
+    }
+
     body {
       margin: 0;
       padding: 20px;
@@ -35,25 +48,20 @@
     .header-title {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: 3.5em;
+      font-size: 3.2em;
       color: #ff00ff;
-      text-shadow: 0 0 5px #fff,
-                   0 0 10px #ff00ff,
-                   0 0 20px #ff00ff,
-                   0 0 30px #ff00ff,
-                   0 0 40px #ff45a2,
-                   0 0 70px #ff45a2;
+      text-shadow: 0 0 5px #fff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff45a2, 0 0 70px #ff45a2;
       margin-bottom: 15px;
       animation: flicker-title 2s infinite alternate;
     }
 
     @keyframes flicker-title {
-      0%, 100% { opacity: 1; transform: scale(1); text-shadow: 0 0 5px #fff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff45a2, 0 0 60px #ff45a2; }
-      50% { opacity: 0.7; transform: scale(1.02); text-shadow: 0 0 8px #fff, 0 0 15px #ff00ff, 0 0 25px #ff00ff, 0 0 40px #ff45a2, 0 0 70px #ff45a2; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.02); }
     }
 
     .sub-title {
-      font-size: 1.8em;
+      font-size: 1.6em;
       color: #66fcf1;
       text-shadow: 0 0 3px #fff, 0 0 8px #66fcf1, 0 0 12px #66fcf1, 0 0 18px #45a29e;
       margin-bottom: 30px;
@@ -61,8 +69,8 @@
 
     .wheel-container {
       position: relative;
-      width: 350px;
-      height: 350px;
+      width: var(--wheel-size-desktop);
+      height: var(--wheel-size-desktop);
       margin-bottom: 35px;
     }
 
@@ -71,281 +79,161 @@
       height: 100%;
       border-radius: 50%;
       border: 3px solid #45a29e;
-      background: conic-gradient( /* Using variables for easier changes if needed */
-        var(--c1, #ff00ff) 0% 12.5%,
-        var(--c2, #00ffff) 12.5% 25%,
-        var(--c3, #00ff00) 25% 37.5%,
-        var(--c4, #ffff00) 37.5% 50%,
-        var(--c5, #ff8000) 50% 62.5%,
-        var(--c6, #ff0000) 62.5% 75%,
-        var(--c7, #8000ff) 75% 87.5%,
-        var(--c8, #0080ff) 87.5% 100%
+      background: conic-gradient(
+        #ff00ff 0% 12.5%, #00ffff 12.5% 25%,
+        #00ff00 25% 37.5%, #ffff00 37.5% 50%,
+        #ff8000 50% 62.5%, #ff0000 62.5% 75%,
+        #8000ff 75% 87.5%, #0080ff 87.5% 100%
       );
-      box-shadow: 0 0 8px rgba(0,0,0,0.2), /* Simplified shadow */
-                  inset 0 0 10px rgba(0,0,0,0.4);
-      transition: transform 6s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 0 8px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.4);
+      transition: transform var(--wheel-spin-duration) cubic-bezier(0.25, 0.1, 0.25, 1); /* Standard ease-out, will stop more abruptly */
+      /* Alternative for very slow stop: cubic-bezier(0, 0, 0, 1) or specific like cubic-bezier(0.33, 1, 0.68, 1) */
       position: relative;
-      /* hardware acceleration hint */
-      transform: translateZ(0);
+      transform: translateZ(0) rotate(0deg); /* Initial rotation for JS */
       will-change: transform;
     }
 
     .wheel-hub {
-        width: 60px;
-        height: 60px;
-        background: #0b0c10;
-        border-radius: 50%;
-        border: 3px solid #f9e900;
-        box-shadow: 0 0 8px #f9e900, inset 0 0 4px rgba(0,0,0,0.5);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 2;
+        width: 18%; height: 18%; background: #0b0c10; border-radius: 50%;
+        border: 2px solid #f9e900; box-shadow: 0 0 8px #f9e900, inset 0 0 4px rgba(0,0,0,0.5);
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
     }
+    .wheel-lines { position: absolute; top:0; left:0; right:0; bottom:0; z-index: 2; pointer-events: none;}
+    .line-diag1, .line-diag2 {
+        position: absolute; background-color: rgba(0,0,0,0.25); z-index: 2;
+        width: 2px; height: 100%; left: calc(50% - 1px); top: 0;
+    }
+    .line-diag1 { transform: rotate(45deg); }
+    .line-diag2 { transform: rotate(-45deg); }
+
 
     .wheel-segment {
       position: absolute;
-      width: 50%;
-      height: 50%;
-      top: 0;
-      left: 25%;
-      transform-origin: 50% 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      font-weight: bold;
-      font-size: 0.8em; /* Base size, will adjust for mobile */
-      color: rgba(0,0,0,0.9);
-      text-shadow: 0 0 2px white;
-      overflow: hidden;
+      width: 100%; height: 100%; /* Cover the whole wheel initially */
+      top: 0; left: 0;
+      transform-origin: center center;
+      overflow: hidden; /* Important for clip-path */
       z-index: 1;
-      /* hardware acceleration hint for segments */
       transform: translateZ(0);
       will-change: transform;
     }
 
-    .wheel-segment span {
-        display: block;
-        transform-origin: center center;
-        padding: 3px;
-        white-space: normal;
-        line-height: 1.1;
-        text-align: center;
-        max-width: 90%;
-        /* hardware acceleration hint for text */
-        transform: translateZ(0);
-        will-change: transform;
+    .wheel-segment .text-wrapper {
+        position: absolute;
+        width: 50%; /* Half the wheel diameter */
+        height: 100%; /* Full wheel height */
+        top: 0;
+        left: 50%; /* Start from center */
+        transform-origin: left center; /* Pivot from the center of the wheel */
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Align text towards the edge */
+        padding-left: var(--text-offset-current, var(--text-offset-desktop)); /* Push text out */
+        box-sizing: border-box;
     }
 
-    /* Segment positioning and text rotation */
-    /* Base translation for text towards edge: translateY(-50px) for 350px wheel */
-    /* This will be adjusted in media queries */
-    .wheel-segment:nth-child(1) { transform: rotate(0deg); }
-    .wheel-segment:nth-child(1) span { transform: translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(2) { transform: rotate(45deg); }
-    .wheel-segment:nth-child(2) span { transform: rotate(-45deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(3) { transform: rotate(90deg); }
-    .wheel-segment:nth-child(3) span { transform: rotate(-90deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(4) { transform: rotate(135deg); }
-    .wheel-segment:nth-child(4) span { transform: rotate(-135deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(5) { transform: rotate(180deg); }
-    .wheel-segment:nth-child(5) span { transform: rotate(-180deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(6) { transform: rotate(225deg); }
-    .wheel-segment:nth-child(6) span { transform: rotate(-225deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(7) { transform: rotate(270deg); }
-    .wheel-segment:nth-child(7) span { transform: rotate(-270deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
-    .wheel-segment:nth-child(8) { transform: rotate(315deg); }
-    .wheel-segment:nth-child(8) span { transform: rotate(-315deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
-
+    .wheel-segment .text-wrapper span {
+        display: block;
+        font-weight: bold;
+        font-size: 0.75em;
+        color: rgba(0,0,0,0.9);
+        text-shadow: 0 0 2px white;
+        line-height: 1.1;
+        padding: 2px;
+        max-width: 100px;
+        transform: rotate(90deg); /* Make text perpendicular to the radius line initially */
+        transform-origin: center center;
+        white-space: normal;
+        text-align: center;
+    }
 
     .pointer {
       position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 18px solid transparent;
-      border-right: 18px solid transparent;
-      border-top: 28px solid #f9e900;
-      filter: drop-shadow(0px -2px 5px rgba(249,233,0,0.8));
-      z-index: 10;
+      top: -18px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 15px solid transparent;
+      border-right: 15px solid transparent; border-top: 25px solid #f9e900;
+      filter: drop-shadow(0px -2px 5px rgba(249,233,0,0.8)); z-index: 10;
     }
 
     .btn-spin {
-      padding: 18px 35px;
-      font-size: 1.7em;
-      font-weight: 700;
-      font-family: 'Orbitron', sans-serif;
-      color: #0b0c10;
-      background: linear-gradient(135deg, #f9e900, #ffae00);
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 0 10px #f9e900, 0 0 20px #ffae00, 0 5px 15px rgba(0,0,0,0.3), inset 0 0 8px rgba(255,255,255,0.6);
-      transition: all 0.2s ease-out;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
+      padding: 16px 32px; font-size: 1.6em; font-weight: 700; font-family: 'Orbitron', sans-serif;
+      color: #0b0c10; background: linear-gradient(135deg, #f9e900, #ffae00);
+      border: none; border-radius: 10px; cursor: pointer;
+      box-shadow: 0 0 10px #f9e900, 0 0 20px #ffae00, 0 4px 12px rgba(0,0,0,0.25), inset 0 0 7px rgba(255,255,255,0.6);
+      transition: all 0.2s ease-out; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;
     }
-
-    .btn-spin:hover:not(:disabled) {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 0 18px #f9e900, 0 0 30px #ffae00, 0 8px 20px rgba(0,0,0,0.4), inset 0 0 10px rgba(255,255,255,0.7);
-    }
-    .btn-spin:active:not(:disabled) {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 0 8px #f9e900, 0 0 15px #ffae00, 0 3px 10px rgba(0,0,0,0.2), inset 0 0 12px rgba(255,255,255,0.8);
-    }
-    .btn-spin:disabled {
-      background: linear-gradient(135deg, #666, #444);
-      color: #999;
-      cursor: not-allowed;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
-      transform: scale(1);
-    }
+    .btn-spin:hover:not(:disabled) { transform: translateY(-2px) scale(1.03); }
+    .btn-spin:active:not(:disabled) { transform: translateY(0px) scale(1); }
+    .btn-spin:disabled { background: linear-gradient(135deg, #666, #444); color: #999; cursor: not-allowed; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); transform: scale(1); }
 
     .result-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 90%;
-      max-width: 500px;
-      box-sizing: border-box;
+      position: fixed; top: 50%; left: 50%; width: 90%; max-width: 480px; box-sizing: border-box;
       transform: translate(-50%, -50%) scale(0.3) rotate(-5deg);
       background: linear-gradient(145deg, #2a3b4a, #111c24);
-      border: 3px solid #66fcf1;
-      border-radius: 15px;
-      padding: 30px 35px;
-      box-shadow: 0 0 30px rgba(102,252,241,0.4), 0 10px 40px rgba(0,0,0,0.5);
-      z-index: 100;
-      text-align: center;
-      opacity: 0;
-      visibility: hidden;
+      border: 2px solid #66fcf1; border-radius: 12px; padding: 25px 30px;
+      box-shadow: 0 0 25px rgba(102,252,241,0.35), 0 8px 30px rgba(0,0,0,0.4);
+      z-index: 100; text-align: center; opacity: 0; visibility: hidden;
       transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-out, visibility 0.5s;
     }
-    .result-popup.show {
-      transform: translate(-50%, -50%) scale(1) rotate(0deg);
-      opacity: 1;
-      visibility: visible;
-    }
-    .result-popup h2 {
-      color: #f9e900;
-      text-shadow: 0 0 8px #f9e900, 0 0 15px #f9e900;
-      margin-top: 0;
-      font-size: 2.2em;
-      font-family: 'Orbitron', sans-serif;
-    }
-    .result-popup p {
-      font-size: 1.4em;
-      color: #e0e1e2;
-      margin-bottom: 25px;
-      line-height: 1.5;
-    }
+    .result-popup.show { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; visibility: visible; }
+    .result-popup h2 { color: #f9e900; text-shadow: 0 0 7px #f9e900, 0 0 12px #f9e900; margin-top: 0; font-size: 2em; font-family: 'Orbitron', sans-serif; }
+    .result-popup p { font-size: 1.3em; color: #e0e1e2; margin-bottom: 20px; line-height: 1.4; }
     .result-popup .close-popup {
-      padding: 12px 25px;
-      font-size: 1.1em;
-      font-weight: bold;
-      background: linear-gradient(135deg, #ff4b2b, #ff416c);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 3px 10px rgba(255, 75, 43, 0.4);
+      padding: 10px 22px; font-size: 1em; font-weight: bold; background: linear-gradient(135deg, #ff4b2b, #ff416c);
+      color: white; border: none; border-radius: 7px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(255, 75, 43, 0.35);
     }
-    .result-popup .close-popup:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 75, 43, 0.6);
-    }
+    .result-popup .close-popup:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255, 75, 43, 0.5); }
 
     .back-link {
-      display: inline-block;
-      margin-top: 25px;
-      color: #66fcf1;
-      text-decoration: none;
-      font-size: 1.1em;
-      padding: 8px 15px;
-      border: 1px solid #66fcf1;
-      border-radius: 5px;
-      transition: background-color 0.3s, color 0.3s;
+      display: inline-block; margin-top: 20px; color: #66fcf1; text-decoration: none; font-size: 1em;
+      padding: 7px 13px; border: 1px solid #66fcf1; border-radius: 5px; transition: background-color 0.3s, color 0.3s;
     }
-    .back-link:hover {
-      background-color: #66fcf1;
-      color: #0b0c10;
-      text-shadow: none;
-    }
+    .back-link:hover { background-color: #66fcf1; color: #0b0c10; text-shadow: none; }
 
-    .stars-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
+    .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
     .star {
-      position: absolute;
-      background-color: white;
-      border-radius: 50%;
-      animation: twinkle-star-anim linear infinite;
-      /* hardware acceleration hint for stars */
-      transform: translateZ(0);
-      will-change: transform, opacity;
+      position: absolute; background-color: white; border-radius: 50%; animation: twinkle-star-anim linear infinite;
+      transform: translateZ(0); will-change: transform, opacity;
     }
     @keyframes twinkle-star-anim {
       0% { opacity: 0; transform: translateY(0px) scale(0.5); }
-      20% { opacity: 0.8; transform: translateY(-3px) scale(1); } /* Reduced opacity and movement */
-      80% { opacity: 0.8; transform: translateY(3px) scale(1); }
+      20% { opacity: 0.7; transform: translateY(-2px) scale(1); }
+      80% { opacity: 0.7; transform: translateY(2px) scale(1); }
       100% { opacity: 0; transform: translateY(0px) scale(0.5); }
     }
 
-
-    /* Mobile Optimizations */
     @media (max-width: 768px) {
-      .header-title { font-size: 2.8em; margin-bottom: 10px;}
-      .sub-title { font-size: 1.5em; margin-bottom: 25px; }
-      
-      .wheel-container { width: 300px; height: 300px; margin-bottom: 30px; --text-offset: -42px; } /* Text offset for 300px wheel */
-      .wheel { box-shadow: 0 0 6px rgba(0,0,0,0.2), inset 0 0 8px rgba(0,0,0,0.3); border-width: 2px; } /* Simpler shadow for mobile */
-      .wheel-hub { width: 50px; height: 50px; }
-      .wheel-segment { font-size: 0.7em; }
-      
-      .pointer { top: -18px; border-left-width: 15px; border-right-width: 15px; border-top-width: 25px; }
-      .btn-spin { font-size: 1.5em; padding: 15px 30px; }
-      .result-popup h2 { font-size: 1.8em; }
-      .result-popup p { font-size: 1.2em; }
-      .result-popup .close-popup { font-size: 1em; padding: 10px 20px;}
-      .back-link { font-size: 1em; }
+      :root {
+        --wheel-spin-duration: 6.5s;
+      }
+      .header-title { font-size: 2.5em; }
+      .sub-title { font-size: 1.3em; }
+      .wheel-container { width: var(--wheel-size-tablet); height: var(--wheel-size-tablet); }
+      .wheel-segment .text-wrapper { padding-left: var(--text-offset-tablet); }
+      .wheel-segment .text-wrapper span { font-size: 0.7em; }
+      .pointer { top: -16px; border-left-width: 13px; border-right-width: 13px; border-top-width: 22px; }
+      .btn-spin { font-size: 1.4em; padding: 14px 28px; }
+      .result-popup h2 { font-size: 1.7em; }
+      .result-popup p { font-size: 1.15em; }
     }
 
     @media (max-width: 480px) {
-      body { padding: 15px; }
-      .header-title { font-size: 2em; }
-      .sub-title { font-size: 1.2em; margin-bottom: 20px; }
-
-      .wheel-container { width: 250px; height: 250px; margin-bottom: 25px; --text-offset: -35px; } /* Text offset for 250px wheel */
-      .wheel-hub { width: 35px; height: 35px; border-width: 2px;}
-      .wheel-segment { font-size: 0.65em; } /* Slightly larger for better readability on small wheels */
-      .wheel-segment span { padding: 2px; line-height: 1; max-width: 95%; } /* Tighter text control */
-      
-      .pointer { top: -15px; border-left-width: 12px; border-right-width: 12px; border-top-width: 20px; }
-      .btn-spin { font-size: 1.3em; padding: 12px 25px; }
-      .result-popup { padding: 20px 25px; }
-      .result-popup h2 { font-size: 1.6em; }
-      .result-popup p { font-size: 1.1em; }
-      .result-popup .close-popup { font-size: 0.9em; padding: 8px 18px;}
-      .back-link { font-size: 0.9em; padding: 6px 12px; margin-top: 20px;}
+      :root {
+        --wheel-spin-duration: 6s;
+      }
+      body { padding: 10px; }
+      .header-title { font-size: 1.8em; }
+      .sub-title { font-size: 1.1em; }
+      .wheel-container { width: var(--wheel-size-mobile); height: var(--wheel-size-mobile); }
+      .wheel-segment .text-wrapper { padding-left: var(--text-offset-mobile); }
+      .wheel-segment .text-wrapper span { font-size: 0.65em; max-width: 70px; }
+      .pointer { top: -14px; border-left-width: 11px; border-right-width: 11px; border-top-width: 18px; }
+      .btn-spin { font-size: 1.2em; padding: 11px 22px; }
+      .result-popup { padding: 20px; }
+      .result-popup h2 { font-size: 1.5em; }
+      .result-popup p { font-size: 1em; }
+      .back-link { font-size: 0.9em;}
     }
   </style>
 </head>
@@ -359,15 +247,11 @@
     <div class="pointer"></div>
     <div class="wheel" id="prizeWheel">
       <div class="wheel-hub"></div>
-      <!-- Segments with prizes -->
-      <div class="wheel-segment"><span>НИЧЕГО</span></div>
-      <div class="wheel-segment"><span>+1 LOH Coin</span></div>
-      <div class="wheel-segment"><span>Долг 1000 LOH</span></div>
-      <div class="wheel-segment"><span>Супер ЛОХ Статус</span></div>
-      <div class="wheel-segment"><span>Бан на сайте</span></div>
-      <div class="wheel-segment"><span>Ещё раз НИЧЕГО</span></div>
-      <div class="wheel-segment"><span>-5 LOH Coin</span></div>
-      <div class="wheel-segment"><span>Приз "Утешение"</span></div>
+      <div class="wheel-lines">
+          <div class="line-diag1"></div>
+          <div class="line-diag2"></div>
+      </div>
+      <!-- Сегменты генерируются JS -->
     </div>
   </div>
 
@@ -382,27 +266,78 @@
   <a href="index.html" class="back-link">Вернуться на главную</a>
 
   <script>
-    const wheel = document.getElementById('prizeWheel');
+    const wheelElement = document.getElementById('prizeWheel');
     const spinButton = document.getElementById('spinButton');
     const resultPopup = document.getElementById('resultPopup');
     const prizeResultText = document.getElementById('prizeResultText');
     const closeResultPopup = document.getElementById('closeResultPopup');
     const starsContainer = document.getElementById('starsContainer');
+    const rootStyle = document.documentElement.style;
 
-    const segmentsText = [
-      "НИЧЕГО (ха-ха!)",
-      "+1 LOH Coin (бесполезный)",
-      "Долг в 1000 LOH Coin (вы нам должны!)",
-      "Почётный статус 'Супер-ЛОХ'",
-      "Бан на сайте (шутка... может быть)",
-      "Опять НИЧЕГО (невезучий!)",
-      "-5 LOH Coin (да, мы забираем!)",
-      "Приз 'Утешение' (ещё одна порция обмана)"
+    const segmentPrizes = [
+      "НИЧЕГО (ха-ха!)", "+1 LOH Coin (бесполезный)", "Долг в 1000 LOH Coin (вы нам должны!)",
+      "Почётный статус 'Супер-ЛОХ'", "Бан на сайте (шутка... может быть)", "Опять НИЧЕГО (невезучий!)",
+      "-5 LOH Coin (да, мы забираем!)", "Приз 'Утешение' (ещё одна порция обмана)"
     ];
-    const numSegments = segmentsText.length;
-    const segmentAngle = 360 / numSegments; // 45 degrees
-    let currentRotation = 0;
+    const numSegments = segmentPrizes.length;
+    const segmentAngleDegrees = 360 / numSegments;
+
+    let finalWheelRotation = 0; // Store the final rotation after a spin
     let isSpinning = false;
+
+    function createSegments() {
+        const fragment = document.createDocumentFragment();
+        // Calculate angles for clip-path polygon
+        // We need one point at the center, and two points on the circumference
+        const angleRad = (segmentAngleDegrees * Math.PI) / 180;
+        const polyX = 50 + 50 * Math.tan(angleRad / 2); // X coord for polygon point on circumference
+                                                        // (relative to a square where 50,0 is top-center)
+
+        for (let i = 0; i < numSegments; i++) {
+            const segmentDiv = document.createElement('div');
+            segmentDiv.classList.add('wheel-segment');
+            
+            // Clip-path for wedge shape
+            // Polygon points: center (50% 50%), then two points on circumference defining the wedge
+            // This is complex; for now, we'll use an overlay approach for text,
+            // as true wedge text positioning with clip-path is very hard.
+            // Instead, we rotate a container for the text.
+            // segmentDiv.style.clipPath = `polygon(50% 50%, 50% 0%, ${polyX}% 0%)`;
+            // segmentDiv.style.transform = `rotate(${i * segmentAngleDegrees}deg)`;
+
+
+            const textWrapperDiv = document.createElement('div');
+            textWrapperDiv.classList.add('text-wrapper');
+            
+            const span = document.createElement('span');
+            span.textContent = segmentPrizes[i];
+            
+            textWrapperDiv.appendChild(span);
+            segmentDiv.appendChild(textWrapperDiv);
+
+            // Rotate the entire segment container (which contains the textWrapper)
+            // to position the textWrapper correctly around the circle.
+            // The textWrapper itself is oriented to point "outwards" from the center.
+            const rotationForSegment = i * segmentAngleDegrees;
+            segmentDiv.style.transform = `rotate(${rotationForSegment}deg)`;
+            
+            fragment.appendChild(segmentDiv);
+        }
+        wheelElement.appendChild(fragment);
+        updateTextOffsetCSSVar();
+    }
+    
+    function updateTextOffsetCSSVar() {
+        let currentOffsetVarName = '--text-offset-desktop';
+        if (window.innerWidth <= 768 && window.innerWidth > 480) {
+            currentOffsetVarName = '--text-offset-tablet';
+        } else if (window.innerWidth <= 480) {
+            currentOffsetVarName = '--text-offset-mobile';
+        }
+        const offsetValue = getComputedStyle(document.documentElement).getPropertyValue(currentOffsetVarName).trim();
+        rootStyle.setProperty('--text-offset-current', offsetValue);
+    }
+
 
     spinButton.addEventListener('click', () => {
       if (isSpinning) return;
@@ -410,78 +345,100 @@
       spinButton.disabled = true;
       resultPopup.classList.remove('show');
 
-      const chosenSegmentIndex = Math.floor(Math.random() * numSegments);
-      const prize = segmentsText[chosenSegmentIndex];
-
-      // Target angle to bring the *center* of the chosen segment to the top (0 degrees / pointer)
-      const angleToCenterSegment = -(chosenSegmentIndex * segmentAngle + (segmentAngle / 2));
-      
-      const fullSpins = (Math.floor(Math.random() * 3) + 6) * 360; // 6-8 full spins for more drama
-      
-      // Calculate the additional rotation needed.
-      // We want currentRotation + rotationDelta to equal fullSpins + angleToCenterSegment
-      // (or be congruent mod 360).
-      let rotationDelta = (fullSpins + angleToCenterSegment) - (currentRotation % 360);
-      
-      // Ensure a minimum amount of forward spin if delta is too small or negative
-      while (rotationDelta < 360 * 3) { // Make sure it spins at least 3 full turns forward from current visible state
-          rotationDelta += 360;
+      // Get current rotation from style (e.g., "rotate(360deg)")
+      const currentTransform = window.getComputedStyle(wheelElement).transform;
+      let currentAngle = 0;
+      if (currentTransform !== 'none') {
+          const matrix = currentTransform.match(/^matrix\((.+)\)$/);
+          if (matrix) {
+              const values = matrix[1].split(', ').map(parseFloat);
+              currentAngle = Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
+              // This gives -180 to 180. We need to add previous full rotations.
+              // finalWheelRotation stores the total accumulated rotation.
+              // So, the visual currentAngle is finalWheelRotation % 360.
+              // For simplicity, we'll just add to finalWheelRotation.
+          }
       }
 
-      currentRotation += rotationDelta;
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      // Random number of full spins (e.g., 10 to 15)
+      const randomFullSpins = (Math.floor(Math.random() * 6) + 10) * 360;
+      // Random additional angle (0 to 359)
+      const randomPartialSpin = Math.floor(Math.random() * 360);
+      
+      const targetRotation = finalWheelRotation + randomFullSpins + randomPartialSpin;
+      
+      finalWheelRotation = targetRotation; // Update the total rotation
+      wheelElement.style.transform = `rotate(${finalWheelRotation}deg)`;
+
+      const spinDurationMs = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wheel-spin-duration')) * 1000;
 
       setTimeout(() => {
         isSpinning = false;
-        // spinButton.disabled = false; // Uncomment if multiple spins are allowed
+        // spinButton.disabled = false; // Re-enable if multiple spins are allowed
 
-        prizeResultText.textContent = `Вы выиграли: ${prize}!`;
+        // Determine the landed segment
+        // Normalize the final rotation to be between 0 and 359.99...
+        // The pointer is at the top (0 degrees).
+        // A positive rotation of the wheel means the top segment moves clockwise.
+        // So, if wheel rotated by `R` degrees, the segment that was at `-R` is now at the top.
+        const normalizedAngle = (360 - (finalWheelRotation % 360)) % 360;
+        
+        // Find which segment this angle falls into.
+        // Segment 0: 0 to angle-1
+        // Segment 1: angle to 2*angle-1
+        // etc.
+        // Or more simply, the middle of segment `i` is at `i * segAngle + segAngle/2`
+        // We need to find `i` such that `normalizedAngle` is closest to middle of segment `i`
+        // or rather, which segment range `normalizedAngle` falls into.
+
+        let landedSegmentIndex = Math.floor(normalizedAngle / segmentAngleDegrees);
+        
+        // Due to potential floating point inaccuracies or edge cases with % 360,
+        // ensure index is within bounds.
+        landedSegmentIndex = Math.max(0, Math.min(numSegments - 1, landedSegmentIndex));
+
+        const prizeWon = segmentPrizes[landedSegmentIndex];
+        prizeResultText.textContent = `Вы выиграли: ${prizeWon}!`;
         resultPopup.classList.add('show');
 
-        console.log("Prize 'won': " + prize);
-        // Example: update a counter on the main page (if you have one there)
-        // This assumes your index.html has a mechanism to receive this
+        console.log(`Final Rotation: ${finalWheelRotation}, Normalized Angle for Pointer: ${normalizedAngle}, Landed Index: ${landedSegmentIndex}, Prize: ${prizeWon}`);
         try {
             let mainPageScams = parseInt(localStorage.getItem('razvodLohovScamCount') || '0');
             localStorage.setItem('razvodLohovScamCount', mainPageScams + 1);
-        } catch (e) {
-            console.error("Could not update localStorage scam count:", e);
-        }
+        } catch (e) { console.error("LS error:", e); }
 
-      }, 6100); // Match CSS transition duration + a small buffer
+      }, spinDurationMs + 100); // Wait for CSS transition to end + small buffer
     });
 
     closeResultPopup.addEventListener('click', () => {
       resultPopup.classList.remove('show');
-      // spinButton.disabled = false; // Uncomment if multiple spins are allowed
     });
 
     function createStars(count) {
-        const numStars = window.innerWidth <= 480 ? Math.floor(count / 2) : count; // Fewer stars on mobile
+        const numStars = window.innerWidth <= 480 ? Math.floor(count / 2.5) : count;
+        const fragment = document.createDocumentFragment();
         for (let i = 0; i < numStars; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
-            const size = Math.random() * (window.innerWidth <= 480 ? 2 : 3) + 1;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            const duration = Math.random() * 5 + 4; // Slightly longer, smoother
-            const delay = Math.random() * 5;
-            star.style.animationDuration = `${duration}s`;
-            star.style.animationDelay = `${delay}s`;
-            
-            if (Math.random() < 0.15) { // Fewer colored stars
+            const size = Math.random() * (window.innerWidth <= 480 ? 1.5 : 2.5) + 0.5;
+            star.style.width = `${size}px`; star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${Math.random() * 5 + 4}s`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            if (Math.random() < 0.1) {
                 const colors = ['#ff00ff', '#00ffff', '#66fcf1'];
                 star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                if (size > 1.5) { // Only add shadow to slightly larger colored stars
-                   star.style.boxShadow = `0 0 ${size*1.5}px ${star.style.backgroundColor}`;
-                }
+                if (size > 1) { star.style.boxShadow = `0 0 ${size*1.5}px ${star.style.backgroundColor}`; }
             }
-            starsContainer.appendChild(star);
+            fragment.appendChild(star);
         }
+        starsContainer.appendChild(fragment);
     }
-    createStars(40); // Base number of stars for desktop
+
+    createSegments();
+    createStars(35);
+    window.addEventListener('resize', updateTextOffsetCSSVar);
 
   </script>
 </body>
