@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>РазводЛохов.ru - LOH Coin & Roblox</title>
 <script defer data-domain="andreikakopeika.github.io/razvodloxov" src="https://plausible.io/js/script.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Added Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#0b0c10;color:#c5c6c7;overflow-x:hidden;}
   .header{background:#1f2833;padding:20px;text-align:center;border-bottom:3px solid #66fcf1;}
-  .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 12px #66fcf1;}
+  .header h1{margin:0;font-size:44px;color:#45a29e;text-shadow:0 0 8px #66fcf1;} /* Уменьшено свечение */
   .container{width:100%;max-width:1100px;margin:20px auto;padding:0 20px;box-sizing:border-box;}
 
   /* Счётчик заскамленных лохов */
@@ -31,7 +31,7 @@
 
   /* График */
   .graph{position:relative;width:100%;height:360px;background:linear-gradient(135deg,#1b2631,#0b0c10);border-radius:6px;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.8);margin-bottom:20px;}
-  .graph canvas{display:block;width:100%!important;height:100%!important;} /* Ensure canvas takes full space */
+  .graph canvas{display:block;width:100%!important;height:100%!important;}
   .graph-label{position:absolute;top:12px;left:12px;padding:4px 8px;background:rgba(0,0,0,0.5);border-radius:4px;font-size:16px;color:#66fcf1;font-weight:bold;z-index:10;}
 
   /* Супер-кнопка желтая сияет */
@@ -99,26 +99,29 @@
   .scam-reveal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ff0844,#ff6b6b);color:#fff;padding:40px;border-radius:15px;text-align:center;font-size:28px;font-weight:bold;z-index:2000;box-shadow:0 0 50px rgba(255,8,68,0.8);animation:scamReveal 0.6s ease-out;display:none;}
   @keyframes scamReveal{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-10deg);}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);}}
 
-  /* Отзывы */
+  /* Отзывы - Стили для слайдера */
   .reviews-section {
     background: #1f2833;
     padding: 30px 20px;
     border-radius: 8px;
     box-shadow: 0 0 25px rgba(102, 252, 241, 0.35);
     margin: 40px auto;
-    max-width: 1100px;
+    max-width: 800px; /* Можно ограничить ширину для лучшего вида одной карточки */
+    overflow: hidden; /* Скрываем то, что выходит за пределы секции (важно для слайдера) */
   }
   .reviews-section h3 {
     color: #66fcf1;
     text-align: center;
     font-size: 28px;
     margin-bottom: 35px;
-    text-shadow: 0 0 8px #66fcf1, 0 0 15px #66fcf1, 0 0 25px #66fcf1;
+    text-shadow: 0 0 6px #66fcf1, 0 0 12px rgba(102, 252, 241, 0.7); /* Уменьшено свечение */
   }
   .reviews-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
+    position: relative; /* Для абсолютного позиционирования карточек внутри */
+    width: 100%;
+    min-height: 220px; /* Примерная минимальная высота, чтобы контейнер не схлопывался до загрузки JS или если карточки пустые. Отрегулируйте по необходимости. */
+                    /* Высота будет подстраиваться под активную карточку с помощью JS, если карточки разной высоты. */
+                    /* Либо можно задать фиксированную высоту, если все карточки примерно одинаковы. */
   }
   .review-card {
     background: #0b0c10;
@@ -126,13 +129,21 @@
     border-radius: 8px;
     padding: 22px;
     box-shadow: 0 0 12px rgba(69, 162, 158, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
+    display: flex; /* Используем flex для внутреннего контента */
     flex-direction: column;
+    position: absolute; /* Все карточки накладываются друг на друга */
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+    /* Убрали hover transform, т.к. слайдер */
   }
-  .review-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 0 20px rgba(102, 252, 241, 0.7);
+  .review-card.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative; /* Активная карточка становится "видимой" для потока и определяет высоту контейнера */
   }
   .review-header {
     display: flex;
@@ -159,21 +170,26 @@
     font-size: 0.95em;
     line-height: 1.65;
     font-style: italic;
-    flex-grow: 1;
+    flex-grow: 1; /* Позволяет тексту занимать доступное пространство */
     margin-top: 5px;
   }
-  @media (max-width: 360px) {
-      .reviews-container {
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 15px;
+  @media (max-width: 768px) {
+    .reviews-section {
+        max-width: 90%;
+    }
+  }
+  @media (max-width: 480px) {
+      .reviews-section h3 {
+          font-size: 24px;
       }
       .review-card {
           padding: 18px;
       }
-      .reviews-section h3 {
-          font-size: 24px;
+      .reviews-container {
+          min-height: 250px; /* Может понадобиться больше для мобильных */
       }
   }
+
 
   /* Услуги */
   .footer-services{background:#1f2833;padding:30px 20px;margin-top:40px;color:#c5c6c7;}
@@ -457,7 +473,7 @@
     async function periodicUpdate() {
       const data = await fetchScamCount();
       updateScamCounter(data);
-      setTimeout(periodicUpdate, Math.random() * 10000 + 8000); // 8-18 секунд
+      setTimeout(periodicUpdate, Math.random() * 10000 + 8000);
     }
 
     document.addEventListener('click', async function(e) {
@@ -793,6 +809,43 @@
 
         createOrUpdateChart();
     }, 1000);
+
+    // Слайдер отзывов
+    const reviewsContainerEl = document.querySelector('.reviews-container');
+    const reviewCards = Array.from(reviewsContainerEl.querySelectorAll('.review-card'));
+    let currentReviewIndex = 0;
+    let reviewInterval;
+
+    function showReview(index) {
+        reviewCards.forEach((card, i) => {
+            if (i === index) {
+                card.classList.add('active');
+                // Динамически устанавливаем высоту контейнера по высоте активной карточки
+                // Это нужно, если карточки могут иметь разную высоту
+                reviewsContainerEl.style.minHeight = card.offsetHeight + 'px';
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+
+    function nextReview() {
+        currentReviewIndex = (currentReviewIndex + 1) % reviewCards.length;
+        showReview(currentReviewIndex);
+    }
+
+    if (reviewCards.length > 0) {
+        showReview(currentReviewIndex); // Показать первый отзыв
+        reviewInterval = setInterval(nextReview, 5000); // Переключать каждые 5 секунд
+
+        Опционально: останавливать/возобновлять слайдер при наведении/уходе мыши
+         reviewsContainerEl.addEventListener('mouseenter', () => {
+             clearInterval(reviewInterval);
+         });
+         reviewsContainerEl.addEventListener('mouseleave', () => {
+             reviewInterval = setInterval(nextReview, 5000);
+         });
+    }
 
   </script>
 </body>
