@@ -36,7 +36,7 @@
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
       font-size: 3.5em;
-      color: #ff00ff; /* Neon Pink */
+      color: #ff00ff;
       text-shadow: 0 0 5px #fff,
                    0 0 10px #ff00ff,
                    0 0 20px #ff00ff,
@@ -54,7 +54,7 @@
 
     .sub-title {
       font-size: 1.8em;
-      color: #66fcf1; /* Neon Cyan */
+      color: #66fcf1;
       text-shadow: 0 0 3px #fff, 0 0 8px #66fcf1, 0 0 12px #66fcf1, 0 0 18px #45a29e;
       margin-bottom: 30px;
     }
@@ -70,27 +70,24 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 4px solid #45a29e;
-      background: conic-gradient(
-        #ff00ff 0% 12.5%,   /* Neon Pink */
-        #00ffff 12.5% 25%,  /* Neon Cyan */
-        #00ff00 25% 37.5%,  /* Neon Green */
-        #ffff00 37.5% 50%,  /* Neon Yellow */
-        #ff8000 50% 62.5%,  /* Neon Orange */
-        #ff0000 62.5% 75%,  /* Neon Red */
-        #8000ff 75% 87.5%,  /* Neon Purple */
-        #0080ff 87.5% 100% /* Neon Blue */
+      border: 3px solid #45a29e;
+      background: conic-gradient( /* Using variables for easier changes if needed */
+        var(--c1, #ff00ff) 0% 12.5%,
+        var(--c2, #00ffff) 12.5% 25%,
+        var(--c3, #00ff00) 25% 37.5%,
+        var(--c4, #ffff00) 37.5% 50%,
+        var(--c5, #ff8000) 50% 62.5%,
+        var(--c6, #ff0000) 62.5% 75%,
+        var(--c7, #8000ff) 75% 87.5%,
+        var(--c8, #0080ff) 87.5% 100%
       );
-      box-shadow: 0 0 10px rgba(0,0,0,0.3),
-                  0 0 20px #ff00ff,
-                  0 0 25px #00ffff,
-                  0 0 30px #00ff00,
-                  inset 0 0 15px rgba(0,0,0,0.5);
-      transition: transform 6s cubic-bezier(0.22, 1, 0.36, 1); /* Smoother, longer spin */
+      box-shadow: 0 0 8px rgba(0,0,0,0.2), /* Simplified shadow */
+                  inset 0 0 10px rgba(0,0,0,0.4);
+      transition: transform 6s cubic-bezier(0.22, 1, 0.36, 1);
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      /* hardware acceleration hint */
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     .wheel-hub {
@@ -99,65 +96,75 @@
         background: #0b0c10;
         border-radius: 50%;
         border: 3px solid #f9e900;
-        box-shadow: 0 0 10px #f9e900, inset 0 0 5px rgba(0,0,0,0.5);
+        box-shadow: 0 0 8px #f9e900, inset 0 0 4px rgba(0,0,0,0.5);
         position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         z-index: 2;
     }
 
     .wheel-segment {
       position: absolute;
-      width: 50%; /* (radius) */
-      height: 50%; /* (radius) */
-      top: 0; /* Aligns pivot to top edge of square */
-      left: 25%; /* Aligns pivot to center of square horizontally */
-      transform-origin: 50% 100%; /* Pivot at bottom-center of the segment square */
+      width: 50%;
+      height: 50%;
+      top: 0;
+      left: 25%;
+      transform-origin: 50% 100%;
       display: flex;
-      align-items: center; /* Center text vertically for this new setup */
+      align-items: center;
       justify-content: center;
       box-sizing: border-box;
       font-weight: bold;
-      font-size: 0.8em;
-      color: rgba(0,0,0,0.85);
-      text-shadow: 0 0 3px white, 0 0 5px white;
+      font-size: 0.8em; /* Base size, will adjust for mobile */
+      color: rgba(0,0,0,0.9);
+      text-shadow: 0 0 2px white;
       overflow: hidden;
       z-index: 1;
+      /* hardware acceleration hint for segments */
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     .wheel-segment span {
         display: block;
         transform-origin: center center;
-        padding: 5px;
-        white-space: normal; /* Allow text to wrap if needed */
-        line-height: 1.2;
+        padding: 3px;
+        white-space: normal;
+        line-height: 1.1;
         text-align: center;
-        max-width: 80%; /* Prevent text from hitting edges */
+        max-width: 90%;
+        /* hardware acceleration hint for text */
+        transform: translateZ(0);
+        will-change: transform;
     }
 
-    /* Positioning segments and rotating text to be upright */
-    /* Angle = 360 / 8 = 45 deg. Text rotation is negative of segment's base rotation. */
+    /* Segment positioning and text rotation */
+    /* Base translation for text towards edge: translateY(-50px) for 350px wheel */
+    /* This will be adjusted in media queries */
     .wheel-segment:nth-child(1) { transform: rotate(0deg); }
-    .wheel-segment:nth-child(1) span { transform: rotate(0deg) translateY(-55px) rotate(0deg); } /* Pushed towards edge */
+    .wheel-segment:nth-child(1) span { transform: translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(2) { transform: rotate(45deg); }
-    .wheel-segment:nth-child(2) span { transform: rotate(-45deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(2) span { transform: rotate(-45deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(3) { transform: rotate(90deg); }
-    .wheel-segment:nth-child(3) span { transform: rotate(-90deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(3) span { transform: rotate(-90deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(4) { transform: rotate(135deg); }
-    .wheel-segment:nth-child(4) span { transform: rotate(-135deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(4) span { transform: rotate(-135deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(5) { transform: rotate(180deg); }
-    .wheel-segment:nth-child(5) span { transform: rotate(-180deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(5) span { transform: rotate(-180deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(6) { transform: rotate(225deg); }
-    .wheel-segment:nth-child(6) span { transform: rotate(-225deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(6) span { transform: rotate(-225deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(7) { transform: rotate(270deg); }
-    .wheel-segment:nth-child(7) span { transform: rotate(-270deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(7) span { transform: rotate(-270deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
     .wheel-segment:nth-child(8) { transform: rotate(315deg); }
-    .wheel-segment:nth-child(8) span { transform: rotate(-315deg) translateY(-55px) rotate(0deg); }
+    .wheel-segment:nth-child(8) span { transform: rotate(-315deg) translateY(var(--text-offset, -50px)) rotate(0deg); }
 
 
     .pointer {
@@ -169,8 +176,8 @@
       height: 0;
       border-left: 18px solid transparent;
       border-right: 18px solid transparent;
-      border-top: 28px solid #f9e900; /* Bright Yellow Pointer */
-      filter: drop-shadow(0px -3px 8px rgba(249,233,0,0.9));
+      border-top: 28px solid #f9e900;
+      filter: drop-shadow(0px -2px 5px rgba(249,233,0,0.8));
       z-index: 10;
     }
 
@@ -180,7 +187,7 @@
       font-weight: 700;
       font-family: 'Orbitron', sans-serif;
       color: #0b0c10;
-      background: linear-gradient(135deg, #f9e900, #ffae00); /* Yellow/Gold */
+      background: linear-gradient(135deg, #f9e900, #ffae00);
       border: none;
       border-radius: 12px;
       cursor: pointer;
@@ -278,7 +285,6 @@
       text-shadow: none;
     }
 
-    /* Decorative stars */
     .stars-bg {
       position: fixed;
       top: 0;
@@ -293,11 +299,14 @@
       background-color: white;
       border-radius: 50%;
       animation: twinkle-star-anim linear infinite;
+      /* hardware acceleration hint for stars */
+      transform: translateZ(0);
+      will-change: transform, opacity;
     }
     @keyframes twinkle-star-anim {
       0% { opacity: 0; transform: translateY(0px) scale(0.5); }
-      20% { opacity: 1; transform: translateY(-5px) scale(1); }
-      80% { opacity: 1; transform: translateY(5px) scale(1); }
+      20% { opacity: 0.8; transform: translateY(-3px) scale(1); } /* Reduced opacity and movement */
+      80% { opacity: 0.8; transform: translateY(3px) scale(1); }
       100% { opacity: 0; transform: translateY(0px) scale(0.5); }
     }
 
@@ -306,11 +315,12 @@
     @media (max-width: 768px) {
       .header-title { font-size: 2.8em; margin-bottom: 10px;}
       .sub-title { font-size: 1.5em; margin-bottom: 25px; }
-      .wheel-container { width: 300px; height: 300px; margin-bottom: 30px; }
+      
+      .wheel-container { width: 300px; height: 300px; margin-bottom: 30px; --text-offset: -42px; } /* Text offset for 300px wheel */
+      .wheel { box-shadow: 0 0 6px rgba(0,0,0,0.2), inset 0 0 8px rgba(0,0,0,0.3); border-width: 2px; } /* Simpler shadow for mobile */
       .wheel-hub { width: 50px; height: 50px; }
       .wheel-segment { font-size: 0.7em; }
-      .wheel-segment span { translateY: -45px; } /* Adjusted for smaller wheel */
-
+      
       .pointer { top: -18px; border-left-width: 15px; border-right-width: 15px; border-top-width: 25px; }
       .btn-spin { font-size: 1.5em; padding: 15px 30px; }
       .result-popup h2 { font-size: 1.8em; }
@@ -323,11 +333,12 @@
       body { padding: 15px; }
       .header-title { font-size: 2em; }
       .sub-title { font-size: 1.2em; margin-bottom: 20px; }
-      .wheel-container { width: 240px; height: 240px; margin-bottom: 25px; }
-      .wheel-hub { width: 40px; height: 40px; }
-      .wheel-segment { font-size: 0.6em; }
-      .wheel-segment span { translateY: -35px; } /* Adjusted for smaller wheel */
 
+      .wheel-container { width: 250px; height: 250px; margin-bottom: 25px; --text-offset: -35px; } /* Text offset for 250px wheel */
+      .wheel-hub { width: 35px; height: 35px; border-width: 2px;}
+      .wheel-segment { font-size: 0.65em; } /* Slightly larger for better readability on small wheels */
+      .wheel-segment span { padding: 2px; line-height: 1; max-width: 95%; } /* Tighter text control */
+      
       .pointer { top: -15px; border-left-width: 12px; border-right-width: 12px; border-top-width: 20px; }
       .btn-spin { font-size: 1.3em; padding: 12px 25px; }
       .result-popup { padding: 20px 25px; }
@@ -336,7 +347,6 @@
       .result-popup .close-popup { font-size: 0.9em; padding: 8px 18px;}
       .back-link { font-size: 0.9em; padding: 6px 12px; margin-top: 20px;}
     }
-
   </style>
 </head>
 <body>
@@ -398,78 +408,80 @@
       if (isSpinning) return;
       isSpinning = true;
       spinButton.disabled = true;
-      resultPopup.classList.remove('show'); // Hide previous result if any
+      resultPopup.classList.remove('show');
 
       const chosenSegmentIndex = Math.floor(Math.random() * numSegments);
       const prize = segmentsText[chosenSegmentIndex];
 
-      // Calculate the target angle for the wheel's transform
-      // This is the angle that will put the *middle* of chosenSegmentIndex directly under the pointer (top = 0 degrees).
-      // The middle of segment i is at i * segmentAngle + segmentAngle / 2.
-      // To bring this to 0, we need to rotate by -(i * segmentAngle + segmentAngle / 2).
+      // Target angle to bring the *center* of the chosen segment to the top (0 degrees / pointer)
       const angleToCenterSegment = -(chosenSegmentIndex * segmentAngle + (segmentAngle / 2));
-
-      // Add multiple full spins for effect + the target angle
-      // Ensure the wheel spins a noticeable amount from its current position
-      const fullSpins = (Math.floor(Math.random() * 4) + 5) * 360; // 5-8 full spins
       
-      // Calculate new rotation. We want it to spin forward.
-      // currentRotation is the current visual rotation.
-      // We want to land on 'angleToCenterSegment' (absolute).
-      // So, the additional rotation = (target_absolute_angle - current_visual_angle) + more_spins
-      // Ensure target_absolute_angle is always "in front" of current_visual_angle
+      const fullSpins = (Math.floor(Math.random() * 3) + 6) * 360; // 6-8 full spins for more drama
+      
+      // Calculate the additional rotation needed.
+      // We want currentRotation + rotationDelta to equal fullSpins + angleToCenterSegment
+      // (or be congruent mod 360).
       let rotationDelta = (fullSpins + angleToCenterSegment) - (currentRotation % 360);
-      if (rotationDelta < 360 * 2 ) rotationDelta += 360 * Math.ceil((360*2 - rotationDelta) / 360) ; // ensure at least 2 positive spins
+      
+      // Ensure a minimum amount of forward spin if delta is too small or negative
+      while (rotationDelta < 360 * 3) { // Make sure it spins at least 3 full turns forward from current visible state
+          rotationDelta += 360;
+      }
 
       currentRotation += rotationDelta;
       wheel.style.transform = `rotate(${currentRotation}deg)`;
 
       setTimeout(() => {
         isSpinning = false;
-        // Re-enable button only if you want multiple spins. For a one-time prize, keep it disabled.
-        // spinButton.disabled = false; 
+        // spinButton.disabled = false; // Uncomment if multiple spins are allowed
 
         prizeResultText.textContent = `Вы выиграли: ${prize}!`;
         resultPopup.classList.add('show');
 
         console.log("Prize 'won': " + prize);
-        // You could add logic here to update the scam counter on the main page via localStorage or an API call
-        // For example:
-        // let scams = parseInt(localStorage.getItem('totalScamsPrizePage') || '0');
-        // localStorage.setItem('totalScamsPrizePage', scams + 1);
+        // Example: update a counter on the main page (if you have one there)
+        // This assumes your index.html has a mechanism to receive this
+        try {
+            let mainPageScams = parseInt(localStorage.getItem('razvodLohovScamCount') || '0');
+            localStorage.setItem('razvodLohovScamCount', mainPageScams + 1);
+        } catch (e) {
+            console.error("Could not update localStorage scam count:", e);
+        }
+
       }, 6100); // Match CSS transition duration + a small buffer
     });
 
     closeResultPopup.addEventListener('click', () => {
       resultPopup.classList.remove('show');
-      // If you want to allow another spin after closing:
-      // spinButton.disabled = false;
+      // spinButton.disabled = false; // Uncomment if multiple spins are allowed
     });
 
-    // Create animated stars
     function createStars(count) {
-        for (let i = 0; i < count; i++) {
+        const numStars = window.innerWidth <= 480 ? Math.floor(count / 2) : count; // Fewer stars on mobile
+        for (let i = 0; i < numStars; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
-            const size = Math.random() * 3 + 1; // Star size 1px to 4px
+            const size = Math.random() * (window.innerWidth <= 480 ? 2 : 3) + 1;
             star.style.width = `${size}px`;
             star.style.height = `${size}px`;
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
-            const duration = Math.random() * 5 + 3; // Animation duration 3s to 8s
-            const delay = Math.random() * 5; // Animation delay 0s to 5s
+            const duration = Math.random() * 5 + 4; // Slightly longer, smoother
+            const delay = Math.random() * 5;
             star.style.animationDuration = `${duration}s`;
             star.style.animationDelay = `${delay}s`;
             
-            if (Math.random() < 0.2) { // Some stars with neon colors
-                const colors = ['#ff00ff', '#00ffff', '#00ff00', '#f9e900'];
+            if (Math.random() < 0.15) { // Fewer colored stars
+                const colors = ['#ff00ff', '#00ffff', '#66fcf1'];
                 star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                star.style.boxShadow = `0 0 ${size*2}px ${star.style.backgroundColor}`;
+                if (size > 1.5) { // Only add shadow to slightly larger colored stars
+                   star.style.boxShadow = `0 0 ${size*1.5}px ${star.style.backgroundColor}`;
+                }
             }
             starsContainer.appendChild(star);
         }
     }
-    createStars(50); // Create 50 stars
+    createStars(40); // Base number of stars for desktop
 
   </script>
 </body>
