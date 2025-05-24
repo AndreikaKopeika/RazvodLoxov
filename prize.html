@@ -12,19 +12,19 @@
     :root {
       --wheel-size-desktop: 360px;
       --wheel-size-tablet: 300px;
-      --wheel-size-mobile: 270px; /* Немного увеличил для мобильных */
+      --wheel-size-mobile: 270px;
 
       --wheel-border-width: 8px;
       --hub-size-desktop: 60px;
       --hub-size-tablet: 50px;
       --hub-size-mobile: 45px;
 
-      --pointer-width-desktop: 35px;
-      --pointer-height-desktop: 45px;
-      --pointer-width-tablet: 30px;
-      --pointer-height-tablet: 40px;
+      --pointer-width-desktop: 38px; 
+      --pointer-height-desktop: 30px;
+      --pointer-width-tablet: 32px;
+      --pointer-height-tablet: 26px;
       --pointer-width-mobile: 28px;
-      --pointer-height-mobile: 36px;
+      --pointer-height-mobile: 24px;
       
       --spin-duration: 7.5s;
       --spin-ease-out: cubic-bezier(0.15, 0.85, 0.25, 1);
@@ -54,11 +54,8 @@
       padding: 20px;
       box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
-      background-color: #0c0d1f;
-      background-image: 
-        radial-gradient(ellipse at 10% 15%, rgba(80, 40, 150, 0.25), transparent 60%),
-        radial-gradient(ellipse at 90% 85%, rgba(40, 100, 150, 0.25), transparent 60%),
-        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1c29' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background-color: #080915;
+      position: relative;
       color: #e8efff;
       display: flex;
       flex-direction: column;
@@ -67,6 +64,33 @@
       min-height: 100vh;
       overflow: hidden;
       text-align: center;
+    }
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -2;
+        background: linear-gradient(45deg, 
+            hsl(260, 60%, 10%), 
+            hsl(220, 70%, 8%), 
+            hsl(300, 60%, 10%), 
+            hsl(180, 70%, 8%));
+        background-size: 400% 400%;
+        animation: gradientBG 25s ease infinite;
+    }
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -1;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1c29' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.7;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .content-wrapper {
@@ -106,20 +130,24 @@
     }
 
     .pointer {
-      width: 0; height: 0;
-      border-top: calc(var(--current-pointer-height) * 0.5) solid transparent;
-      border-bottom: calc(var(--current-pointer-height) * 0.5) solid transparent;
-      border-right: calc(var(--current-pointer-width) * 1.1) solid #ffe040;
+      width: var(--current-pointer-height); 
+      height: var(--current-pointer-width); 
+      background: linear-gradient(135deg, #ffe040, #ffc107);
+      clip-path: polygon(100% 50%, 0 0, 0 100%); /* Треугольник, указывающий ВЛЕВО */
       position: absolute;
-      left: calc( (var(--current-pointer-width) * -0.7) - (var(--wheel-border-width) / 2) ); /* С учетом рамки колеса */
+      /* Сдвигаем стрелку правее колеса, чтобы она указывала НА колесо */
+      right: calc( (var(--current-pointer-height) / 2 ) * -1 - var(--wheel-border-width) - 5px ); /* 5px - доп. отступ */
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(-50%) rotate(180deg); /* Поворачиваем, чтобы острый конец был к колесу */
       z-index: 10;
       filter: 
-        drop-shadow(-3px 0px 8px rgba(0,0,0,0.4)) 
-        drop-shadow(0 0 10px #ffe040)
-        drop-shadow(0 0 15px #fff59d);
+        drop-shadow(2px 0px 6px rgba(0,0,0,0.3)) /* Тень теперь справа */
+        drop-shadow(0 0 8px #ffe040)
+        drop-shadow(0 0 12px #fff59d);
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
     }
+
 
     .wheel-container {
       width: var(--current-wheel-size);
@@ -147,22 +175,22 @@
     }
     
     .segment-line {
-        position: absolute; width: 1.5px; height: 50%;
-        background-color: rgba(0,0,0,0.2);
-        left: calc(50% - 0.75px); top: 0;
+        position: absolute; width: 2px; height: 50%;
+        background-color: rgba(0,0,0,0.25);
+        left: calc(50% - 1px); top: 0;
         transform-origin: 50% 100%; z-index: 1;
     }
 
     .segment-text {
         position: absolute;
-        font-size: 0.78em; /* Базовый размер текста */
+        font-size: 0.78em;
         font-weight: 700;
         padding: 2px 4px;
         z-index: 2; pointer-events: none;
         white-space: normal; text-align: center;
         line-height: 1.15;
         max-width: calc(var(--current-wheel-size) * 0.32);
-        transform-origin: center center; /* Важно для правильного translate */
+        transform-origin: center center;
     }
 
     .wheel-hub {
@@ -182,7 +210,7 @@
     }
 
     .btn-spin {
-      padding: 18px 40px; font-size: 1.8em; font-weight: 900; font-family: 'Orbitron', sans-serif;
+      padding: 18px 45px; font-size: 1.9em; font-weight: 900; font-family: 'Orbitron', sans-serif;
       color: #fff; background: linear-gradient(145deg, #ff4081, #f50057);
       border: none; border-radius: 50px; cursor: pointer;
       box-shadow: 0 5px 15px rgba(245, 0, 87, 0.4), 0 0 25px rgba(255, 64, 129, 0.5), inset 0 -3px 5px rgba(0,0,0,0.2);
@@ -200,7 +228,7 @@
       border: 3px solid;
       border-image-slice: 1;
       border-image-source: linear-gradient(to left, #ff4081, #00e5ff);
-      border-radius: 15px; padding: 30px 35px;
+      border-radius: 15px; padding: 35px 40px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255, 64, 129,0.2), 0 0 30px rgba(0, 229, 255,0.2) ;
       z-index: 1000; text-align: center; opacity: 0; visibility: hidden;
       transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.4s ease-out;
@@ -212,13 +240,13 @@
     }
     .result-popup p { font-size: 1.4em; color: #e8efff; margin-bottom: 25px; line-height: 1.5; }
     .result-popup .close-popup {
-      padding: 12px 25px; font-size: 1.1em; font-weight: bold;
-      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      padding: 14px 28px; font-size: 1.15em; font-weight: bold;
+      background: linear-gradient(135deg, #f4511e, #ff7043);
       color: white; border: none; border-radius: 8px; cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+      box-shadow: 0 3px 10px rgba(255, 112, 67, 0.4);
     }
-    .result-popup .close-popup:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6); }
+    .result-popup .close-popup:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 112, 67, 0.6); }
 
     .back-link {
       display: inline-block; margin-top: 25px; color: #00e5ff; text-decoration: none; font-size: 1.1em;
@@ -228,16 +256,15 @@
     }
     .back-link:hover { background-color: #00e5ff; color: #0c0d1f; text-shadow: none; }
 
-    /* Звезды - опционально */
-    .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+    .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; } /* Позади body::before/after */
     .star {
-      position: absolute; background-color: rgba(255,255,255,0.7); border-radius: 50%;
+      position: absolute; background-color: rgba(220,225,255,0.6); border-radius: 50%;
       animation: twinkle-star-anim linear infinite;
       transform: translateZ(0); will-change: transform, opacity;
     }
     @keyframes twinkle-star-anim {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: 1; transform: scale(1); }
+      0%, 100% { opacity: 0; transform: scale(0.3) translateY(20px); }
+      50% { opacity: 0.8; transform: scale(1) translateY(0px); }
     }
 
     @media (max-width: 768px) {
@@ -248,10 +275,10 @@
         --current-pointer-height: var(--pointer-height-tablet);
         --spin-duration: 7s;
       }
-      .header-title { font-size: 2.8em; } .sub-title { font-size: 1.35em; }
-      .segment-text { font-size: 0.72em; }
-      .btn-spin { font-size: 1.5em; padding: 15px 32px; }
-      .result-popup h2 { font-size: 2em; } .result-popup p { font-size: 1.3em; }
+      .header-title { font-size: 2.6em; } .sub-title { font-size: 1.3em; }
+      .segment-text { font-size: 0.7em; }
+      .btn-spin { font-size: 1.6em; padding: 16px 35px; }
+      .result-popup h2 { font-size: 2em; } .result-popup p { font-size: 1.25em; }
     }
     @media (max-width: 480px) {
       :root {
@@ -263,12 +290,12 @@
       }
       body { padding: 15px; }
       .title-area { margin-bottom: 25px; }
-      .header-title { font-size: 2em; } .sub-title { font-size: 1.1em; }
+      .header-title { font-size: 2em; } .sub-title { font-size: 1.05em; }
       .wheel-assembly { margin-bottom: 30px; }
-      .segment-text { font-size: 0.62em; max-width: calc(var(--current-wheel-size) * 0.35); }
-      .btn-spin { font-size: 1.25em; padding: 12px 28px; margin-top: 20px; }
+      .segment-text { font-size: 0.62em; max-width: calc(var(--current-wheel-size) * 0.38); } /* Чуть больше места тексту */
+      .btn-spin { font-size: 1.35em; padding: 14px 30px; margin-top: 20px; }
       .result-popup { padding: 25px 20px; }
-      .result-popup h2 { font-size: 1.7em; } .result-popup p { font-size: 1.1em; }
+      .result-popup h2 { font-size: 1.6em; } .result-popup p { font-size: 1.05em; }
       .back-link { font-size: 1em; }
     }
   </style>
@@ -310,13 +337,12 @@
     const root = document.documentElement;
     const starsContainer = document.getElementById('starsContainer');
 
-
     const segmentPrizes = [
       "Дырка от бублика", "Поездка в Магадан", "Ведро слёз", "Сертификат ЛОХА",
       "Минус счёт", "Пустота в душе", "Вечный бан", "Почётное НИЧЕГО"
     ];
     const segmentTextColorsCssVars = ['--t1', '--t2', '--t3', '--t4', '--t5', '--t6', '--t7', '--t8'];
-    const lightSegmentIndices = [2, 3, 4]; // 0-based index for segments needing dark text on light bg
+    const lightSegmentIndices = [2, 3, 4]; 
 
     const numSegments = segmentPrizes.length;
     const segmentAngleDegrees = 360 / numSegments;
@@ -348,74 +374,75 @@
         root.style.setProperty('--current-pointer-height', getComputedStyle(root).getPropertyValue(pointerHeightVar).trim());
     }
 
-
     function placeElementsOnWheel() {
-        updateCssVariablesForDevice(); // Устанавливаем CSS переменные перед расчетами
+        updateCssVariablesForDevice();
         wheelElement.querySelectorAll('.segment-text, .segment-line').forEach(el => el.remove());
         
         const fragmentTexts = document.createDocumentFragment();
         const fragmentLines = document.createDocumentFragment();
-        const wheelRadius = wheelElement.offsetWidth / 2;
-        // Фактор, определяющий, насколько далеко текст от центра (0.6-0.7 обычно хорошо)
-        const textDistanceFactor = 0.68; 
-
-        for (let i = 0; i < numSegments; i++) {
-            // Линии
-            const lineDiv = document.createElement('div');
-            lineDiv.classList.add('segment-line');
-            // Линии должны быть на границах сегментов, а не в центре
-            lineDiv.style.transform = `rotate(${i * segmentAngleDegrees - (segmentAngleDegrees / 2)}deg)`; 
-            fragmentLines.appendChild(lineDiv);
-
-            // Текст
-            const textElement = document.createElement('span');
-            textElement.classList.add('segment-text');
-            textElement.textContent = segmentPrizes[i];
-            
-            textElement.style.color = `var(${segmentTextColorsCssVars[i]})`;
-            textElement.style.textShadow = lightSegmentIndices.includes(i) ? 'var(--text-shadow-light)' : 'var(--text-shadow-dark)';
-
-            // Угол до центра сегмента
-            const angleToCenterRad = ((i * segmentAngleDegrees) + (segmentAngleDegrees / 2)) * (Math.PI / 180);
-            
-            // Рассчитываем позицию центра текстового элемента
-            const textCenterX = wheelRadius + wheelRadius * textDistanceFactor * Math.cos(angleToCenterRad);
-            const textCenterY = wheelRadius + wheelRadius * textDistanceFactor * Math.sin(angleToCenterRad);
-            
-            textElement.style.left = `${textCenterX}px`;
-            textElement.style.top = `${textCenterY}px`;
-            
-            // Поворачиваем текст, чтобы он был "читаемым" (примерно горизонтально или слегка наклонен)
-            let textRotationDegrees = angleToCenterRad * (180 / Math.PI); 
-            // Если текст оказывается в левой половине колеса (между 90 и 270 градусами),
-            // его лучше перевернуть на 180, чтобы он не был вверх ногами.
-            if (textRotationDegrees > 90 && textRotationDegrees < 270) {
-                textRotationDegrees += 180;
+        // Задержка для получения offsetWidth, если он не сразу доступен
+        requestAnimationFrame(() => {
+            const wheelRadius = wheelElement.offsetWidth / 2;
+            if (wheelRadius === 0) { // Если радиус все еще 0, попробуем через небольшую задержку
+                setTimeout(placeElementsOnWheel, 50);
+                return;
             }
-            textElement.style.transform = `translate(-50%, -50%) rotate(${textRotationDegrees}deg)`;
-            
-            fragmentTexts.appendChild(textElement);
-        }
-        // Вставляем линии и тексты перед хабом, чтобы хаб был сверху
-        const hub = wheelElement.querySelector('.wheel-hub');
-        wheelElement.insertBefore(fragmentLines, hub);
-        wheelElement.insertBefore(fragmentTexts, hub);
+            const textDistanceFactor = 0.68; 
+
+            for (let i = 0; i < numSegments; i++) {
+                // Линии
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('segment-line');
+                lineDiv.style.transform = `rotate(${i * segmentAngleDegrees}deg)`; 
+                fragmentLines.appendChild(lineDiv);
+
+                // Текст
+                const textElement = document.createElement('span');
+                textElement.classList.add('segment-text');
+                textElement.textContent = segmentPrizes[i];
+                
+                textElement.style.color = `var(${segmentTextColorsCssVars[i]})`;
+                textElement.style.textShadow = lightSegmentIndices.includes(i) ? 'var(--text-shadow-light)' : 'var(--text-shadow-dark)';
+
+                const angleToCenterRad = ((i * segmentAngleDegrees) + (segmentAngleDegrees / 2)) * (Math.PI / 180);
+                
+                const textCenterX = wheelRadius + wheelRadius * textDistanceFactor * Math.cos(angleToCenterRad);
+                const textCenterY = wheelRadius + wheelRadius * textDistanceFactor * Math.sin(angleToCenterRad);
+                
+                textElement.style.left = `${textCenterX}px`;
+                textElement.style.top = `${textCenterY}px`;
+                
+                let textRotationDegrees = angleToCenterRad * (180 / Math.PI); 
+                if (textRotationDegrees > 90 && textRotationDegrees < 270) {
+                    textRotationDegrees += 180;
+                }
+                textElement.style.transform = `translate(-50%, -50%) rotate(${textRotationDegrees}deg)`;
+                
+                fragmentTexts.appendChild(textElement);
+            }
+            const hub = wheelElement.querySelector('.wheel-hub');
+            wheelElement.insertBefore(fragmentLines, hub);
+            wheelElement.insertBefore(fragmentTexts, hub);
+        });
     }
     
     spinButton.addEventListener('click', () => {
       if (isSpinning) return;
       isSpinning = true;
       spinButton.disabled = true;
-      resultPopup.style.visibility = 'hidden'; resultPopup.style.opacity = '0';
+      resultPopup.classList.remove('show'); // Используем .show класс
 
-      let randomFullSpins = (Math.floor(Math.random() * 7) + 18); // 18-24 оборотов для ощущения скорости
+      let randomFullSpins = (Math.floor(Math.random() * 8) + 18); // 18-25 оборотов
       if (window.innerWidth <= 480) {
-          randomFullSpins = (Math.floor(Math.random() * 5) + 15); 
+          randomFullSpins = (Math.floor(Math.random() * 6) + 15); // 15-20
       }
       const totalRandomSpinsAngle = randomFullSpins * 360;
       const randomPartialSpinAngle = Math.floor(Math.random() * 360);
       
-      const targetRotation = accumulatedRotation + totalRandomSpinsAngle + randomPartialSpinAngle;
+      // Добавляем небольшую случайность к конечной позиции для "реализма"
+      const finalJitter = (Math.random() - 0.5) * (segmentAngleDegrees * 0.4); // +/- 20% ширины сегмента
+
+      const targetRotation = accumulatedRotation + totalRandomSpinsAngle + randomPartialSpinAngle + finalJitter;
       accumulatedRotation = targetRotation;
       
       wheelElement.style.transform = `rotate(${accumulatedRotation}deg)`;
@@ -426,78 +453,82 @@
         isSpinning = false;
         // spinButton.disabled = false; // Если разрешены повторы
 
-        const pointerTargetAngle = 270; // Указатель слева
-        const finalEffectiveRotation = accumulatedRotation % 360;
+        const pointerEffectiveAngle = 270; // Указатель слева
+        const finalWheelShift = accumulatedRotation % 360;
         
-        let angleAtPointer = (pointerTargetAngle - finalEffectiveRotation + 360) % 360;
-
-        let landedSegmentIndex = Math.floor(angleAtPointer / segmentAngleDegrees);
+        let anglePointedByArrow = (pointerEffectiveAngle - finalWheelShift + 360) % 360;
+        
+        let landedSegmentIndex = Math.floor(anglePointedByArrow / segmentAngleDegrees);
         landedSegmentIndex = Math.max(0, Math.min(numSegments - 1, landedSegmentIndex));
 
         const prizeWon = segmentPrizes[landedSegmentIndex];
         prizeResultText.textContent = `Твой "приз": ${prizeWon}!`;
-        resultPopup.style.visibility = 'visible'; resultPopup.style.opacity = '1';
+        resultPopup.classList.add('show'); // Используем .show класс
         
-        launchConfetti(); // Запускаем конфетти!
+        launchConfetti();
 
-        console.log(`Accumulated: ${accumulatedRotation}, Effective: ${finalEffectiveRotation}, AngleAtPointer: ${angleAtPointer}, Index: ${landedSegmentIndex}`);
+        console.log(`Accumulated: ${accumulatedRotation}, FinalWheelShift: ${finalWheelShift}, AnglePointedByArrow: ${anglePointedByArrow}, Index: ${landedSegmentIndex}`);
         
-        try { /* localStorage update */ } catch (e) { console.error("LS error:", e); }
+        try {
+            let mainPageScams = parseInt(localStorage.getItem('razvodLohovScamCount') || '0');
+            localStorage.setItem('razvodLohovScamCount', mainPageScams + 1);
+        } catch (e) { console.error("LS error:", e); }
 
-      }, spinDurationMs + 150); // Чуть больше буфер
+      }, spinDurationMs + 150); 
     });
 
     closeResultPopup.addEventListener('click', () => {
-        resultPopup.style.visibility = 'hidden'; resultPopup.style.opacity = '0';
+        resultPopup.classList.remove('show'); // Используем .show класс
     });
     
     function launchConfetti() {
       if (typeof confetti !== 'function') { return; }
-      const duration = 3 * 1000; const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 35, spread: 360, ticks: 70, zIndex: 1001, scalar: 1.1 };
+      const duration = 2.5 * 1000; const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1001, scalar: 1 };
       function randomInRange(min, max) { return Math.random() * (max - min) + min; }
       const interval = setInterval(function() {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) { return clearInterval(interval); }
-        const particleCount = 60 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-      }, 250);
+        const particleCount = 40 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.2, 0.4), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.6, 0.8), y: Math.random() - 0.2 } }));
+      }, 200);
     }
 
     function createStars(count) {
         if (!starsContainer) return;
-        const numStars = window.innerWidth <= 480 ? Math.floor(count / 1.5) : count;
+        const numStarsToCreate = window.innerWidth <= 480 ? Math.floor(count * 0.6) : count;
         const fragment = document.createDocumentFragment();
-        for (let i = 0; i < numStars; i++) {
+        for (let i = 0; i < numStarsToCreate; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
-            const size = Math.random() * (window.innerWidth <= 480 ? 1.5 : 2.2) + 0.5;
+            const size = Math.random() * (window.innerWidth <= 480 ? 1.2 : 1.8) + 0.4;
             star.style.width = `${size}px`; star.style.height = `${size}px`;
             star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`;
-            star.style.animationDuration = `${Math.random() * 7 + 5}s`; // 5-12s
-            star.style.animationDelay = `${Math.random() * 12}s`; // 0-12s
-            if (Math.random() < 0.15) {
-                const colors = ['#ff4081', '#00e5ff', '#ffe040', 'rgba(200,200,255,0.7)'];
+            star.style.animationDuration = `${Math.random() * 8 + 6}s`; 
+            star.style.animationDelay = `${Math.random() * 10}s`;
+            if (Math.random() < 0.2) {
+                const colors = ['#ff4081', '#00e5ff', '#ffe040', 'rgba(220,225,255,0.6)'];
                 star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                if (size > 1) { star.style.boxShadow = `0 0 ${size*2}px ${star.style.backgroundColor}`; }
+                if (size > 0.8) { star.style.boxShadow = `0 0 ${size*2}px ${size*3}px ${star.style.backgroundColor.replace(')', ', 0.3)').replace('rgb(','rgba(')}`; }
             }
             fragment.appendChild(star);
         }
-        starsContainer.innerHTML = ''; // Очищаем старые звезды перед добавлением новых (для resize)
+        starsContainer.innerHTML = ''; 
         starsContainer.appendChild(fragment);
     }
 
     // Инициализация
     window.addEventListener('resize', () => {
-        placeElementsOnWheel();
-        createStars(25); // Пересоздаем звезды, чтобы они соответствовали новым размерам, если нужно
+        requestAnimationFrame(() => { // Используем rAF и здесь для консистентности
+            placeElementsOnWheel();
+            createStars(30); 
+        });
     });
     
-    // Используем requestAnimationFrame для первого рендеринга, чтобы размеры были доступны
     requestAnimationFrame(() => {
         placeElementsOnWheel();
-        createStars(25); // Уменьшил количество звезд для лучшей производительности
+        createStars(30);
     });
 
   </script>
