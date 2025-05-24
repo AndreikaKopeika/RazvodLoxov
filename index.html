@@ -357,7 +357,6 @@
 
     async function fetchScamCount() {
       try {
-        updateSyncStatus('loading', 'Синхронизация...');
         const response = await fetch(`${API_BASE_URL}/api/scam-count`);
         if (!response.ok) {
           throw new Error(`HTTP ${response.status} - ${response.statusText}`);
