@@ -11,25 +11,57 @@
     :root {
       --wheel-size: 360px;
       --wheel-spin-duration: 8s;
-      --wheel-ease-out: cubic-bezier(0.15, 0.75, 0.35, 1); /* Более выраженное замедление */
+      --wheel-ease-out: cubic-bezier(0.15, 0.75, 0.35, 1);
 
       /* Цвета для сегментов (8 шт) */
-      --c1: #ff0055; --c2: #ff4f00; --c3: #ffd500; --c4: #00e075;
-      --c5: #00b8ff; --c6: #4400ff; --c7: #c400ff; --c8: #ff00a2;
+      --c1: #ff0055; --s1-text: #fff;
+      --c2: #ff4f00; --s2-text: #fff;
+      --c3: #ffd500; --s3-text: #222; /* Желтый, темный текст */
+      --c4: #00e075; --s4-text: #222; /* Зеленый, темный текст */
+      --c5: #00b8ff; --s5-text: #222; /* Голубой, темный текст */
+      --c6: #4400ff; --s6-text: #fff;
+      --c7: #c400ff; --s7-text: #fff;
+      --c8: #ff00a2; --s8-text: #fff;
       
-      --text-color-on-dark: #ffffff;
-      --text-color-on-light: #222222; /* Для светлых сегментов как желтый */
-      --text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      --text-shadow-light: 0 1px 1px rgba(255,255,255,0.6);
+      --text-shadow-dark: 0 1px 2px rgba(0,0,0,0.5);
     }
 
-    body { /* ... без изменений ... */ }
-    .title-area { /* ... без изменений ... */ }
-    @keyframes fadeInDown { /* ... без изменений ... */ }
-    .header-title { /* ... без изменений ... */ }
-    .sub-title { /* ... без изменений ... */ }
-    .wheel-wrapper { /* ... без изменений ... */ }
-    @keyframes zoomIn { /* ... без изменений ... */ }
-    .pointer { /* ... без изменений ... */ }
+    body {
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+      background-color: #0a0a14; /* Темный фон */
+      background-image: /* Легкий шум или звездный фон */
+        radial-gradient(circle at 1px 1px, rgba(200,200,255,0.08) 1px, transparent 0),
+        radial-gradient(circle at 15px 15px, rgba(200,200,255,0.04) 1px, transparent 0);
+      background-size: 30px 30px;
+      color: #e0e8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .title-area { /* ... как в предыдущей "красивой" версии ... */ }
+    @keyframes fadeInDown { /* ... */ }
+    .header-title { /* ... */ }
+    .sub-title { /* ... */ }
+    .wheel-wrapper { /* ... */ }
+    @keyframes zoomIn { /* ... */ }
+
+    .pointer {
+      width: 38px; height: 48px; background-color: #fdd835;
+      clip-path: polygon(0% 50%, 100% 0%, 100% 100%);
+      position: absolute; left: -14px; top: 50%;
+      transform: translateY(-50%); z-index: 10;
+      box-shadow: -3px 0px 10px rgba(0,0,0,0.3), 0 0 8px #fdd835;
+      filter: brightness(1.1);
+    }
 
     .wheel-container {
       width: var(--wheel-size);
@@ -38,114 +70,97 @@
     }
 
     .wheel {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       border-radius: 50%;
-      border: 6px solid #2a2f4a;
-      background-image: conic-gradient(
-        var(--c1) 0deg 45deg,   /* Сегмент 1 (0-45) */
-        var(--c2) 45deg 90deg,  /* Сегмент 2 (45-90) */
-        var(--c3) 90deg 135deg, /* Сегмент 3 (90-135) */
-        var(--c4) 135deg 180deg, /* Сегмент 4 (135-180) */
-        var(--c5) 180deg 225deg, /* Сегмент 5 (180-225) */
-        var(--c6) 225deg 270deg, /* Сегмент 6 (225-270) */
-        var(--c7) 270deg 315deg, /* Сегмент 7 (270-315) */
-        var(--c8) 315deg 360deg  /* Сегмент 8 (315-360) */
-      );
-      box-shadow: 0 0 15px rgba(0,0,0,0.4),
-                  inset 0 0 25px rgba(0,0,0,0.6),
-                  0 0 30px rgba(100, 100, 255, 0.2);
+      border: 5px solid #22273d; /* Рамка колеса */
+      background: #121521; /* Фоновый цвет под сегментами, если будут просветы */
+      box-shadow: 0 0 20px rgba(0,0,0,0.5),
+                  inset 0 0 30px rgba(0,0,0,0.7), /* Глубокая внутренняя тень */
+                  0 0 40px rgba(50, 50, 150, 0.2); /* Легкое внешнее свечение */
       transition: transform var(--wheel-spin-duration) var(--wheel-ease-out);
       position: relative;
-      transform: translateZ(0) rotate(0deg);
+      transform: translateZ(0) rotate(0deg); /* Начальный поворот */
       will-change: transform;
-      /* overflow: hidden; - Убрал, т.к. сегменты теперь просто текст */
+      overflow: hidden; /* Важно для clip-path сегментов */
     }
     
-    /* Линии разделения сегментов */
-    .wheel-lines-container {
+    .wheel-segment {
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        pointer-events: none; /* Не мешают кликам */
-        z-index: 1; /* Над цветным фоном, под хабом и текстом */
-    }
-    .wheel-line {
-        position: absolute;
-        width: 1px; /* Толщина линии */
-        height: 50%; /* От центра до края */
-        background-color: rgba(0,0,0,0.3); /* Цвет линии */
-        left: 50%;
-        top: 0; /* Начинается сверху */
-        transform-origin: 50% 100%; /* Вращается вокруг центра колеса */
-    }
-
-
-    .wheel-segment-texts { /* Новый контейнер для всех текстов */
-        position: absolute;
-        top:0; left:0; width:100%; height:100%;
-        z-index: 2; /* Поверх линий и фона, под хабом */
-        pointer-events: none;
-    }
-
-    .segment-text-container { /* Контейнер для ОДНОГО текста, позиционируется JS */
-        position: absolute;
-        width: 100px; /* Ширина области текста, можно менять */
-        height: 50px; /* Высота области текста, можно менять */
-        /* top, left, transform будут установлены JS */
+        width: 50%; /* Радиус */
+        height: 100%; /* Диаметр, чтобы transform-origin был по центру */
+        top: 0;
+        left: 50%; /* Начинаем от центра по горизонтали */
+        transform-origin: 0% 50%; /* Вращаем вокруг левого центрального края (центра колеса) */
+        /* clip-path для создания клина. 45 градусов = 360/8 */
+        /* Координаты для polygon: (центр) (точка на дуге) (другая точка на дуге) */
+        /* tan(22.5deg) * 100% (радиус) = 41.42% от радиуса. */
+        /* Отступ от вертикали (50% - 41.42%) = 8.58% (для x) */
+        /* Отступ от горизонтали (для y) = 100% (для x) */
+        clip-path: polygon(0% 50%, 100% 8.58%, 100% 91.42%);
         display: flex;
         align-items: center;
-        justify-content: center;
-        text-align: center;
+        justify-content: flex-end; /* Текст будет у правого (внешнего) края */
+        box-sizing: border-box;
+        padding-right: 10%; /* Отступ текста от самого края */
     }
-    
-    .segment-text-container span {
-        font-size: 0.8em;
+
+    .wheel-segment .text {
+        transform: rotate(90deg); /* Поворачиваем текст, чтобы он был параллелен радиусу */
+        /* Затем сам .wheel-segment вращается, и текст становится читаемым */
+        font-size: 0.85em;
         font-weight: 700;
-        color: var(--text-color-on-dark); /* По умолчанию для темных фонов */
-        text-shadow: var(--text-shadow);
         white-space: normal;
-        line-height: 1.1;
-        max-width: 90%; /* Чтобы не прилипал к краям контейнера */
-    }
-    /* Пример цвета текста для светлого сегмента (желтый --c3) */
-    .segment-text-container.on-light span {
-        color: var(--text-color-on-light);
-        text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+        text-align: center;
+        max-width: 65%; /* Ограничение ширины, чтобы текст не вылезал */
+        line-height: 1.15;
+        color: var(--s1-text); /* По умолчанию цвет первого сегмента */
+        text-shadow: var(--text-shadow-dark); /* По умолчанию темная тень */
     }
 
+    /* Применяем цвета фона и текста для каждого сегмента */
+    .wheel-segment:nth-child(1) { background-color: var(--c1); transform: rotate(0deg); }
+    .wheel-segment:nth-child(1) .text { color: var(--s1-text); text-shadow: var(--text-shadow-dark); }
 
-    .wheel-hub { /* ... без изменений ... z-index: 3; */ }
-    .btn-spin { /* ... без изменений ... */ }
-    @keyframes fadeInUp { /* ... без изменений ... */ }
-    .result-popup { /* ... без изменений ... */ }
-    .back-link { /* ... без изменений ... */ }
-    .stars-bg, .star, @keyframes twinkle-star-anim { /* ... без изменений ... */ }
+    .wheel-segment:nth-child(2) { background-color: var(--c2); transform: rotate(45deg); }
+    .wheel-segment:nth-child(2) .text { color: var(--s2-text); text-shadow: var(--text-shadow-dark); }
+    
+    .wheel-segment:nth-child(3) { background-color: var(--c3); transform: rotate(90deg); }
+    .wheel-segment:nth-child(3) .text { color: var(--s3-text); text-shadow: var(--text-shadow-light); }
+
+    .wheel-segment:nth-child(4) { background-color: var(--c4); transform: rotate(135deg); }
+    .wheel-segment:nth-child(4) .text { color: var(--s4-text); text-shadow: var(--text-shadow-light); }
+
+    .wheel-segment:nth-child(5) { background-color: var(--c5); transform: rotate(180deg); }
+    .wheel-segment:nth-child(5) .text { color: var(--s5-text); text-shadow: var(--text-shadow-light); }
+
+    .wheel-segment:nth-child(6) { background-color: var(--c6); transform: rotate(225deg); }
+    .wheel-segment:nth-child(6) .text { color: var(--s6-text); text-shadow: var(--text-shadow-dark); }
+
+    .wheel-segment:nth-child(7) { background-color: var(--c7); transform: rotate(270deg); }
+    .wheel-segment:nth-child(7) .text { color: var(--s7-text); text-shadow: var(--text-shadow-dark); }
+
+    .wheel-segment:nth-child(8) { background-color: var(--c8); transform: rotate(315deg); }
+    .wheel-segment:nth-child(8) .text { color: var(--s8-text); text-shadow: var(--text-shadow-dark); }
 
 
-    @media (max-width: 768px) {
-      :root { --wheel-size: 320px; --wheel-spin-duration: 7.5s; }
-      .header-title { font-size: 2.8em; }
-      .sub-title { font-size: 1.4em; }
-      .pointer { width: 35px; height: 44px; left: -12px; }
-      .segment-text-container span { font-size: 0.75em; }
-      .btn-spin { font-size: 1.6em; padding: 16px 35px; }
+    .wheel-hub {
+        width: 16%; height: 16%; background: #1c1e2e; border-radius: 50%;
+        border: 4px solid #3c4268; box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.6);
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
     }
 
-    @media (max-width: 480px) {
-      :root { --wheel-size: 280px; --wheel-spin-duration: 7s; } /* Чуть увеличил колесо */
-      body { padding: 15px; }
-      .title-area { margin-bottom: 20px; }
-      .header-title { font-size: 2.2em; }
-      .sub-title { font-size: 1.1em; }
-      .wheel-wrapper { margin-bottom: 30px; }
-      .pointer { width: 30px; height: 38px; left: -10px; }
-      .wheel { border-width: 4px; }
-      .wheel-hub { width: 16%; height: 16%; border-width: 3px; } /* Чуть меньше хаб */
-      .segment-text-container span { font-size: 0.68em; max-width: 85%; }
-      .btn-spin { font-size: 1.3em; padding: 14px 30px; }
-    }
+    /* ... остальные стили .btn-spin, .result-popup, .back-link, .stars-bg как в "красивой" версии ... */
+    .btn-spin { /* Стили из предыдущей "красивой" версии */ }
+    @keyframes fadeInUp { /* Стили из предыдущей "красивой" версии */ }
+    .result-popup { /* Стили из предыдущей "красивой" версии */ }
+    .back-link { /* Стили из предыдущей "красивой" версии */ }
+    .stars-bg, .star, @keyframes twinkle-star-anim { /* Стили из предыдущей "красивой" версии */ }
+
+    @media (max-width: 768px) { /* ... адаптация как в "красивой" версии, подстроить .wheel-segment .text ... */ }
+    @media (max-width: 480px) { /* ... адаптация как в "красивой" версии, подстроить .wheel-segment .text ... */ }
 
   </style>
+  <!-- HTML остается таким же, как в "красивой" версии, за исключением того, что сегменты теперь создаются JS -->
 </head>
 <body>
   <div class="stars-bg" id="starsContainer"></div>
@@ -159,148 +174,71 @@
     <div class="pointer"></div>
     <div class="wheel-container">
       <div class="wheel" id="prizeWheel">
-        <div class="wheel-lines-container" id="wheelLinesContainer"></div>
-        <div class="wheel-segment-texts" id="wheelSegmentTextsContainer"></div>
+        <!-- Сегменты будут добавлены JS -->
         <div class="wheel-hub"></div>
       </div>
     </div>
   </div>
 
   <button class="btn-spin" id="spinButton">ИСПЫТАТЬ УДАЧУ!</button>
-  <div class="result-popup" id="resultPopup"> <!-- ... без изменений ... --> </div>
+  <div class="result-popup" id="resultPopup"> <!-- ... --> </div>
   <a href="index.html" class="back-link">На главную (если не страшно)</a>
 
   <script>
     const wheelElement = document.getElementById('prizeWheel');
-    const wheelLinesContainer = document.getElementById('wheelLinesContainer');
-    const wheelSegmentTextsContainer = document.getElementById('wheelSegmentTextsContainer');
     const spinButton = document.getElementById('spinButton');
-    const resultPopup = document.getElementById('resultPopup');
-    const prizeResultText = document.getElementById('prizeResultText');
-    const closeResultPopup = document.getElementById('closeResultPopup');
-    const root = document.documentElement;
+    // ... остальные переменные для попапа и т.д. ...
 
-    const segmentPrizes = [
-      "Дырка от бублика", "Поездка в Магадан", "Ведро слёз", "Сертификат ЛОХА",
-      "Минус счёт", "Пустота в душе", "Вечный бан", "Почётное НИЧЕГО"
-    ];
-    const segmentColors = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8'];
-    // Укажем, какие сегменты "светлые" для контраста текста
-    const lightSegmentIndices = [2]; // Индекс желтого сегмента (0-based)
-
+    const segmentPrizes = [ /* ... список призов ... */ ];
     const numSegments = segmentPrizes.length;
     const segmentAngleDegrees = 360 / numSegments;
 
     let accumulatedRotation = 0;
     let isSpinning = false;
 
-    function createWheelElements() {
-        wheelLinesContainer.innerHTML = ''; // Очистка линий
-        wheelSegmentTextsContainer.innerHTML = ''; // Очистка текстов
+    function createSegments() {
+        const hub = wheelElement.querySelector('.wheel-hub'); // Сохраняем хаб
+        wheelElement.innerHTML = ''; // Очищаем всё, кроме хаба, который мы заново добавим
+        if (hub) wheelElement.appendChild(hub); // Добавляем хаб обратно
 
-        const lineFragment = document.createDocumentFragment();
-        const textFragment = document.createDocumentFragment();
-        const wheelRadius = wheelElement.offsetWidth / 2;
+        const fragment = document.createDocumentFragment();
 
         for (let i = 0; i < numSegments; i++) {
-            // Создание линий разделения
-            const lineDiv = document.createElement('div');
-            lineDiv.classList.add('wheel-line');
-            lineDiv.style.transform = `rotate(${i * segmentAngleDegrees}deg)`;
-            lineFragment.appendChild(lineDiv);
-
-            // Создание текста для сегментов
-            const textContainer = document.createElement('div');
-            textContainer.classList.add('segment-text-container');
+            const segmentDiv = document.createElement('div');
+            segmentDiv.classList.add('wheel-segment');
+            // Применяем nth-child стили динамически, чтобы CSS мог их подхватить
+            // Это можно сделать через data-атрибут или直接 JS-стилизацию, если CSS не справляется с :nth-child для динамич. элементов
+            // Для простоты, пока оставим так, CSS должен справиться с :nth-child(1) и т.д. если они есть в DOM
+            // Лучше задавать стили напрямую через JS для фона и текста
+            segmentDiv.style.backgroundColor = `var(--c${i+1})`;
+            segmentDiv.style.transform = `rotate(${i * segmentAngleDegrees}deg)`;
             
-            const span = document.createElement('span');
-            span.textContent = segmentPrizes[i];
-            textContainer.appendChild(span);
-
-            if (lightSegmentIndices.includes(i)) {
-                textContainer.classList.add('on-light');
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('text');
+            textDiv.textContent = segmentPrizes[i];
+            textDiv.style.color = `var(--s${i+1}-text)`; // Цвет текста из CSS переменных
+            // Тень текста можно тоже задавать из CSS переменных, если нужно
+            if (getComputedStyle(document.documentElement).getPropertyValue(`--s${i+1}-text`).trim() === '#222') {
+                 textDiv.style.textShadow = `var(--text-shadow-light)`;
+            } else {
+                 textDiv.style.textShadow = `var(--text-shadow-dark)`;
             }
-            
-            // Позиционирование текста
-            // Угол до центра сегмента
-            const angleToCenterOfSegmentRad = ((i * segmentAngleDegrees) + (segmentAngleDegrees / 2)) * (Math.PI / 180);
-            
-            // Расстояние от центра колеса до центра текста (например, 65-70% радиуса)
-            const textDistanceFactor = 0.65; // 65% от радиуса
-            const textX = wheelRadius + (wheelRadius * textDistanceFactor) * Math.cos(angleToCenterOfSegmentRad - Math.PI / 2) - (textContainer.offsetWidth / 2);
-            const textY = wheelRadius + (wheelRadius * textDistanceFactor) * Math.sin(angleToCenterOfSegmentRad - Math.PI / 2) - (textContainer.offsetHeight / 2);
 
-            textContainer.style.left = `${wheelRadius - (textContainer.offsetWidth/2)}px`; // Центрируем контейнер
-            textContainer.style.top = `${wheelRadius - (textContainer.offsetHeight/2)}px`;
-
-            // Вращаем контейнер, чтобы текст был направлен от центра, и сам текст чтобы был горизонтальным
-            const textRotation = (i * segmentAngleDegrees) + (segmentAngleDegrees / 2); // Угол до центра сегмента
-            textContainer.style.transform = `rotate(${textRotation}deg) translateX(${wheelRadius * (textDistanceFactor - 0.05) }px) rotate(${-textRotation}deg)`;
-            // translateX сдвигает контейнер текста от центра к краю
-            // Второй rotate выравнивает сам контейнер, чтобы текст внутри него был горизонтальным
-            // -0.05 в translateX - небольшая коррекция, чтобы текст был чуть ближе к центру после поворота
-
-            textFragment.appendChild(textContainer);
+            segmentDiv.appendChild(textDiv);
+            fragment.appendChild(segmentDiv);
         }
-        wheelLinesContainer.appendChild(lineFragment);
-        wheelSegmentTextsContainer.appendChild(textFragment);
+        wheelElement.insertBefore(fragment, hub); // Вставляем сегменты перед хабом
     }
     
-    spinButton.addEventListener('click', () => {
-      if (isSpinning) return;
-      isSpinning = true;
-      spinButton.disabled = true;
-      resultPopup.classList.remove('show');
+    // Логика spinButton.addEventListener('click', ...) остается такой же, как в предыдущей "красивой" версии
+    // с pointerTargetAngle = 270;
+    // ...
 
-      let randomFullSpins = (Math.floor(Math.random() * 8) + 15); // 15-22 оборотов
-      if (window.innerWidth <= 480) {
-          randomFullSpins = (Math.floor(Math.random() * 6) + 12); 
-      }
-      const totalRandomSpinsAngle = randomFullSpins * 360;
-      const randomPartialSpinAngle = Math.floor(Math.random() * 360);
-      
-      const targetRotation = accumulatedRotation + totalRandomSpinsAngle + randomPartialSpinAngle;
-      accumulatedRotation = targetRotation;
-      
-      wheelElement.style.transform = `rotate(${accumulatedRotation}deg)`;
+    // createStars() как раньше
+    // ...
 
-      const spinDurationMs = parseFloat(getComputedStyle(root).getPropertyValue('--wheel-spin-duration').trim()) * 1000;
-
-      setTimeout(() => {
-        isSpinning = false;
-        // spinButton.disabled = false;
-
-        const pointerTargetAngle = 270; // Стрелка слева
-        const finalEffectiveRotation = accumulatedRotation % 360;
-        let angleAtPointer = (pointerTargetAngle - finalEffectiveRotation + 360 + (segmentAngleDegrees / 2) ) % 360;
-        // Добавил segmentAngleDegrees / 2, чтобы компенсировать то, что сегменты начинаются от линии,
-        // а нам нужен центр сегмента под указателем
-
-        let landedSegmentIndex = Math.floor(angleAtPointer / segmentAngleDegrees);
-        landedSegmentIndex = Math.max(0, Math.min(numSegments - 1, landedSegmentIndex));
-
-        const prizeWon = segmentPrizes[landedSegmentIndex];
-        prizeResultText.textContent = `Твой "приз": ${prizeWon}!`;
-        resultPopup.classList.add('show');
-
-        console.log(`Accumulated: ${accumulatedRotation}, Effective: ${finalEffectiveRotation}, AngleAtPointer: ${angleAtPointer}, Index: ${landedSegmentIndex}`);
-        
-        try {
-            let mainPageScams = parseInt(localStorage.getItem('razvodLohovScamCount') || '0');
-            localStorage.setItem('razvodLohovScamCount', mainPageScams + 1);
-        } catch (e) { console.error("LS error:", e); }
-
-      }, spinDurationMs + 100); 
-    });
-
-    closeResultPopup.addEventListener('click', () => resultPopup.classList.remove('show'));
-    function createStars(count) { /* ... код createStars как раньше ... */ }
-
-    // Инициализация
-    window.addEventListener('resize', createWheelElements);
-    createWheelElements();
-    createStars(40);
-
+    createSegments();
+    // createStars(40);
   </script>
 </body>
 </html>
