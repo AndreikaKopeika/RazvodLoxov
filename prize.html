@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script defer data-domain="https://andreikakopeika.github.io/razvodloxov/prize.html" src="https://plausible.io/js/script.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Колесо Удачи Лоха v3.5 - Гранд Финал!</title>
+    <title>Колесо Удачи Лоха v3.6 - Бесконечный Развод!</title>
+    <!-- ИСПРАВЛЕННОЕ ПОДКЛЮЧЕНИЕ ШРИФТА ORBITRON -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --neon-blue: #00f2ff; --neon-pink: #ff00ff; --neon-green: #39ff14;
@@ -12,16 +16,11 @@
             --mid-bg: #1a1a2e; --light-text: #f5f5f5;
         }
 
-        @font-face { /* Шрифты */
-            font-family: 'Orbitron'; src: url('https://fonts.gstatic.com/s/orbitron/v25/yMJRMIlzdpvBhQQL_Qq7dy0.woff2') format('woff2'); font-weight: 400;
-        }
-        @font-face {
-            font-family: 'Orbitron'; src: url('https://fonts.gstatic.com/s/orbitron/v25/yMJWMIlzdpvBhQQL_Qrc3HlBY_c.woff2') format('woff2'); font-weight: 700;
-        }
+        /* Удалены старые @font-face, так как шрифт подключается через <link> */
 
-        body { /* Основное тело */
+        body {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background-color: var(--dark-bg); font-family: 'Orbitron', sans-serif;
+            background-color: var(--dark-bg); font-family: 'Orbitron', sans-serif; /* Теперь Orbitron должен работать */
             color: var(--light-text); margin: 0; overflow: hidden; position: relative;
         }
         body::before, body::after { /* Фоновые эффекты */
@@ -37,7 +36,7 @@
         }
         @keyframes bgGrid { 0% { background-position: 0 0; } 100% { background-position: 110px 110px; } }
 
-        /* Стили для элементов колеса и основного интерфейса (без изменений из v3.4) */
+        /* Стили для элементов колеса и основного интерфейса (без изменений из v3.5) */
         .fortune-wheel-container { position: relative; display: flex; flex-direction: column; align-items: center; padding: 30px 35px; background-color: rgba(16, 16, 28, 0.92); border-radius: 30px; border: 3px solid var(--neon-blue); box-shadow: 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 90px var(--neon-pink), inset 0 0 22px rgba(0, 242, 255, 0.65), inset 0 0 10px rgba(255,255,255,0.45); backdrop-filter: blur(7px); }
         h1 { color: var(--neon-pink); text-shadow: 0 0 7px var(--neon-pink), 0 0 15px var(--neon-pink), 0 0 30px var(--neon-pink), 0 0 40px #fff, 0 0 55px #ff00de; margin-bottom: 30px; font-size: 2.3em; letter-spacing: 2.5px; border-bottom: 2px solid rgba(255,0,255,0.65); padding-bottom: 12px; font-weight: 700; text-align: center; }
         .wheel-wrapper { position: relative; width: 360px; height: 360px; margin-bottom: 30px; filter: drop-shadow(0 0 20px var(--neon-blue)); }
@@ -71,79 +70,39 @@
         .result-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .result-popup h2 { color: var(--neon-green); margin-top: 0; margin-bottom: 15px; font-size: 2em; font-weight: 700; text-shadow: 0 0 7px var(--neon-green), 0 0 14px var(--neon-green), 0 0 20px #fff; }
         .result-popup p { font-size: 1.35em; color: var(--light-text); margin-bottom: 20px; min-height: 34px; }
-        .result-popup .popup-buttons { display: flex; justify-content: center; gap: 15px; } /* Контейнер для кнопок */
-        .result-popup button { /* Общие стили для кнопок попапа */
+        .result-popup .popup-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;} /* flex-wrap для маленьких экранов */
+        .result-popup button {
             padding: 12px 25px; font-size: 1em; font-weight: 700; color: var(--dark-bg);
             border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s ease-out;
         }
-        #closePopup { /* Кнопка "Вернуться к разводу" */
+        #closePopup {
             background: linear-gradient(145deg, var(--neon-blue), #00b0b0);
             box-shadow: 0 0 12px var(--neon-blue), 0 0 20px var(--neon-blue), 0 2px 5px rgba(0,0,0,0.25);
         }
-        #closePopup:hover {
-            background: linear-gradient(145deg, #44ffff, #00c8c8);
-            box-shadow: 0 0 16px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 7px #fff;
-            transform: translateY(-2px);
-        }
-        #goHomeButton { /* Новая кнопка "На главную" */
+        #closePopup:hover { background: linear-gradient(145deg, #44ffff, #00c8c8); box-shadow: 0 0 16px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 7px #fff; transform: translateY(-2px); }
+        #goHomeButton {
             background: linear-gradient(145deg, var(--neon-green), #2aaa0e);
             box-shadow: 0 0 12px var(--neon-green), 0 0 20px var(--neon-green), 0 2px 5px rgba(0,0,0,0.25);
         }
-        #goHomeButton:hover {
-            background: linear-gradient(145deg, #4cff2e, #3bc41a);
-            box-shadow: 0 0 16px var(--neon-green), 0 0 25px var(--neon-green), 0 0 7px #fff;
-            transform: translateY(-2px);
-        }
+        #goHomeButton:hover { background: linear-gradient(145deg, #4cff2e, #3bc41a); box-shadow: 0 0 16px var(--neon-green), 0 0 25px var(--neon-green), 0 0 7px #fff; transform: translateY(-2px); }
         .result-popup button:active { transform: translateY(0px) scale(0.97); }
 
-
-        /* УЛУЧШЕННЫЕ СТИЛИ ДЛЯ КОНФЕТТИ */
+        /* СТИЛИ КОНФЕТТИ (как в v3.5) */
         .confetti-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 2000; overflow: hidden;
         }
-        .confetti-particle {
-            position: absolute;
-            opacity: 0;
-            /* Форма и анимация будут задаваться через JS и классы/переменные */
-        }
-        .confetti-particle.rect { /* Прямоугольник */
-            width: var(--w, 8px);
-            height: var(--h, 15px);
-        }
-        .confetti-particle.circle { /* Круг/овал */
-            width: var(--size, 10px);
-            height: var(--size, 10px);
-            border-radius: 50%;
-        }
-        /* Можно добавить еще форм, например, псевдоэлементами для "ленточек" */
-
-        /* 1. Анимация медленного падения (снег) */
+        .confetti-particle { position: absolute; opacity: 0; }
+        .confetti-particle.rect { width: var(--w, 8px); height: var(--h, 15px); }
+        .confetti-particle.circle { width: var(--size, 10px); height: var(--size, 10px); border-radius: 50%; }
         @keyframes snowfall-realistic {
-            0% {
-                transform: translateY(-8vh) translateX(var(--start-x-snow)) rotate(var(--initial-rotate));
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(108vh) translateX(var(--end-x-snow)) rotate(calc(var(--initial-rotate) + var(--sway-rotate)));
-                opacity: 0;
-            }
+            0% { transform: translateY(-8vh) translateX(var(--start-x-snow)) rotate(var(--initial-rotate)); opacity: 1; }
+            100% { transform: translateY(108vh) translateX(var(--end-x-snow)) rotate(calc(var(--initial-rotate) + var(--sway-rotate))); opacity: 0; }
         }
-
-        /* 2. Анимация для угловых и случайных взрывов */
         @keyframes burst-realistic {
-            0% {
-                transform: translate(0,0) scale(0.1) rotate(var(--initial-rotate));
-                opacity: 1;
-            }
-            20% { /* Разлет */
-                transform: translate(var(--vx), var(--vy)) scale(1) rotate(calc(var(--initial-rotate) + var(--spin-amount) / 3));
-                opacity: 0.9;
-            }
-            100% { /* Падение */
-                transform: translate(calc(var(--vx) + var(--drift-x)), calc(var(--vy) + 85vh + var(--drift-y))) scale(0.1) rotate(calc(var(--initial-rotate) + var(--spin-amount)));
-                opacity: 0;
-            }
+            0% { transform: translate(0,0) scale(0.1) rotate(var(--initial-rotate)); opacity: 1; }
+            20% { transform: translate(var(--vx), var(--vy)) scale(1) rotate(calc(var(--initial-rotate) + var(--spin-amount) / 3)); opacity: 0.9; }
+            100% { transform: translate(calc(var(--vx) + var(--drift-x)), calc(var(--vy) + 85vh + var(--drift-y))) scale(0.1) rotate(calc(var(--initial-rotate) + var(--spin-amount))); opacity: 0; }
         }
     </style>
 </head>
@@ -161,7 +120,7 @@
     <div class="result-popup" id="resultPopup">
         <h2>ТВОЙ "СУПЕРПРИЗ"!</h2>
         <p id="prizeText"></p>
-        <div class="popup-buttons"> <!-- Контейнер для кнопок -->
+        <div class="popup-buttons">
             <button id="closePopup">Вернуться к Разводу</button>
             <button id="goHomeButton">На Главную</button>
         </div>
@@ -174,10 +133,9 @@
         const resultPopup = document.getElementById('resultPopup');
         const prizeText = document.getElementById('prizeText');
         const closePopupButton = document.getElementById('closePopup');
-        const goHomeButton = document.getElementById('goHomeButton'); // Новая кнопка
+        const goHomeButton = document.getElementById('goHomeButton');
         const confettiContainer = document.getElementById('confettiContainer');
 
-        // Призы из v3.3
         const prizes = [ /* ... массив призов без изменений ... */
             { text: "Чудо-Воздух!", color: "#FF3E96", textColor: "#fff" }, { text: "Вечный Спам", color: "#FF8C00", textColor: "#fff" },
             { text: "Лунный Песок", color: "#FFD700", textColor: "#111" }, { text: "Дыра от Бублика", color: "#32CD32", textColor: "#fff" },
@@ -187,7 +145,7 @@
             { text: "Гарантия Удачи* (*нет)", color: "#BA55D3", textColor: "#fff" }, { text: "Сертификат Лоха", color: "#6A5ACD", textColor: "#fff" }
         ];
 
-        // JS для колеса и основной логики (без изменений из v3.4, кроме confetti)
+        // JS для колеса и основной логики (без изменений из v3.5, кроме confetti)
         let numSectors = prizes.length; let anglePerSectorDeg = 360 / numSectors; let anglePerSectorRad = (2 * Math.PI) / numSectors;
         let currentWheelRotationDeg = 0; let spinning = false; let winningPrizeIndex = 0; const POINTER_ANGLE_RAD = -Math.PI / 2;
         function adjustColor(hex, percent) { hex = hex.replace(/#/g, ''); const num = parseInt(hex, 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt; return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1); }
@@ -210,132 +168,119 @@
             wheel.style.transition = `transform ${7 + Math.random()*2.5}s cubic-bezier(0.18, 0.95, 0.22, 1)`; wheel.style.transform = `rotate(${currentWheelRotationDeg}deg)`;
             wheel.addEventListener('transitionend', () => {
                 wheel.style.transition = 'none'; prizeText.textContent = prizes[winningPrizeIndex].text; resultPopup.classList.add('show');
-                startConfettiShow(); // Запуск конфетти
+                startConfettiShow();
                 pointer.style.transform = 'translateX(-50%) rotate(-15deg)'; setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(10deg)', 150); setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(-5deg)', 300); setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(0deg)', 450);
                 spinning = false;
             }, { once: true });
         }
         closePopupButton.addEventListener('click', () => { resultPopup.classList.remove('show'); spinButton.disabled = false; });
-        goHomeButton.addEventListener('click', () => { // Обработчик для новой кнопки
-            window.location.href = "index.html"; // Имя вашей главной страницы
-        });
+        goHomeButton.addEventListener('click', () => { window.location.href = "index.html"; /* ИЗМЕНИТЕ "index.html" ПРИ НЕОБХОДИМОСТИ */ });
         spinButton.addEventListener('click', spinWheel);
         setTimeout(() => { createSectors(); wheel.style.transform = `rotate(0deg)`; }, 250);
 
-        // УЛУЧШЕННАЯ СИСТЕМА КОНФЕТТИ V3.5
-        const confettiBaseColors = [ /* ... те же цвета ... */
-             '#00f2ff', '#ff00ff', '#39ff14', '#fff000', '#ff8c00', '#dd00dd', '#00ddff', '#ff6600'
-        ];
+
+        // JS КОНФЕТТИ С УВЕЛИЧЕННОЙ ДЛИТЕЛЬНОСТЬЮ
+        const confettiBaseColors = [ '#00f2ff', '#ff00ff', '#39ff14', '#fff000', '#ff8c00', '#dd00dd', '#00ddff', '#ff6600' ];
         let confettiShowTimeoutId = null;
-        const CONFETTI_DURATION = 8000; // 8 секунд
+        const CONFETTI_DURATION = 12000; // Увеличиваем до 12 секунд
+        const PARTICLE_LIFETIME = CONFETTI_DURATION + 1000; // Время жизни частицы
 
         function createRealisticParticle(options) {
             const particle = document.createElement('div');
             particle.classList.add('confetti-particle');
-
-            const type = Math.random() > 0.5 ? 'rect' : 'circle';
+            const type = Math.random() > 0.4 ? 'rect' : 'circle'; // Чуть больше прямоугольников
             particle.classList.add(type);
             particle.style.backgroundColor = confettiBaseColors[Math.floor(Math.random() * confettiBaseColors.length)];
 
             if (type === 'rect') {
-                particle.style.setProperty('--w', (Math.random() * 8 + 5) + 'px'); // 5-13px
-                particle.style.setProperty('--h', (Math.random() * 15 + 8) + 'px'); // 8-23px
-            } else { // circle
-                particle.style.setProperty('--size', (Math.random() * 8 + 6) + 'px'); // 6-14px
+                particle.style.setProperty('--w', (Math.random() * 7 + 4) + 'px'); // 4-11px
+                particle.style.setProperty('--h', (Math.random() * 13 + 7) + 'px'); // 7-20px
+            } else {
+                particle.style.setProperty('--size', (Math.random() * 7 + 5) + 'px'); // 5-12px
             }
 
-            // Общие CSS переменные для анимации
             particle.style.setProperty('--initial-rotate', (Math.random() * 360) + 'deg');
             particle.style.left = options.startX + 'px';
             particle.style.top = options.startY + 'px';
 
-
             if (options.animationType === 'snow') {
-                const duration = Math.random() * 4 + 4; // 4-8 секунд падение
-                particle.style.setProperty('--start-x-snow', (Math.random() * 10 - 5) + 'vw'); // Начальное смещение для снегопада
-                particle.style.setProperty('--end-x-snow', (parseFloat(particle.style.getPropertyValue('--start-x-snow')) + (Math.random() * 30 - 15)) + 'vw'); // Конечный дрейф
-                particle.style.setProperty('--sway-rotate', (Math.random() * 1080 - 540) + 'deg'); // Сильное вращение при падении
+                const duration = Math.random() * 5 + (CONFETTI_DURATION / 1000 - 4); // Длительность падения ~ до конца шоу
+                particle.style.setProperty('--start-x-snow', (Math.random() * 15 - 7.5) + 'vw');
+                particle.style.setProperty('--end-x-snow', (parseFloat(particle.style.getPropertyValue('--start-x-snow')) + (Math.random() * 40 - 20)) + 'vw');
+                particle.style.setProperty('--sway-rotate', (Math.random() * 1200 - 600) + 'deg');
                 particle.style.animation = `snowfall-realistic ${duration}s linear ${options.delay || 0}ms forwards`;
             } else { // burst
                 const angle = options.angle || Math.random() * Math.PI * 2;
-                const speed = options.speed || (Math.random() * 150 + 120);
-                const duration = Math.random() * 2 + 1.5; // 1.5-3.5с взрыв и начало падения
+                const speed = options.speed || (Math.random() * 160 + 130); // Немного мощнее взрывы
+                const duration = Math.random() * 2.5 + 2; // 2-4.5с взрыв и начало падения
 
                 particle.style.setProperty('--vx', (Math.cos(angle) * speed) + 'px');
-                particle.style.setProperty('--vy', (Math.sin(angle) * speed * (options.isCornerBurst ? 0.7 : 1)) + 'px'); // Угловые летят чуть выше
-                particle.style.setProperty('--spin-amount', (Math.random() * 1440 - 720) + 'deg');
-                particle.style.setProperty('--drift-x', (Math.random() * 100 - 50) + 'px'); // Горизонтальный дрейф при падении
-                particle.style.setProperty('--drift-y', (Math.random() * 50) + 'px'); // Вертикальный дрейф при падении
+                particle.style.setProperty('--vy', (Math.sin(angle) * speed * (options.isCornerBurst ? 0.65 : 0.9)) + 'px');
+                particle.style.setProperty('--spin-amount', (Math.random() * 1600 - 800) + 'deg');
+                particle.style.setProperty('--drift-x', (Math.random() * 120 - 60) + 'px');
+                particle.style.setProperty('--drift-y', (Math.random() * 60) + 'px');
                 particle.style.animation = `burst-realistic ${duration}s ease-out ${options.delay || 0}ms forwards`;
             }
-
             confettiContainer.appendChild(particle);
-            setTimeout(() => particle.remove(), CONFETTI_DURATION + 500); // Удаляем чуть позже окончания шоу
+            setTimeout(() => particle.remove(), PARTICLE_LIFETIME);
         }
 
         function startConfettiShow() {
-            confettiContainer.innerHTML = ''; // Очистка
+            confettiContainer.innerHTML = '';
             clearTimeout(confettiShowTimeoutId);
 
-            // 1. Постоянный снегопад (запускается сразу, частицы имеют разную задержку начала падения)
-            for (let i = 0; i < 70; i++) { // 70 снежинок
+            // 1. Снегопад (распределен по времени)
+            const snowfallParticles = 80; // Больше снега
+            for (let i = 0; i < snowfallParticles; i++) {
                 createRealisticParticle({
                     animationType: 'snow',
-                    startX: Math.random() * window.innerWidth, // Случайная X позиция вверху
-                    startY: -20, // Начинают чуть выше экрана
-                    delay: Math.random() * (CONFETTI_DURATION - 2000) // Распределяем появление снега по времени
+                    startX: Math.random() * window.innerWidth,
+                    startY: -25, // Начинают выше
+                    delay: Math.random() * (CONFETTI_DURATION - 3000) // Распределение появления
                 });
             }
 
-            // 2. Угловые взрывы (запускаются сразу)
-            const cornerBurstParticles = 35;
+            // 2. Угловые взрывы (сразу)
+            const cornerBurstParticles = 40; // Больше частиц в угловых взрывах
             // Левый нижний
             for (let i = 0; i < cornerBurstParticles; i++) {
                 createRealisticParticle({
                     animationType: 'burst', isCornerBurst: true,
-                    startX: Math.random() * 30 + 10, // 10-40px от левого края
-                    startY: window.innerHeight - (Math.random() * 30 + 10), // 10-40px от нижнего края
-                    angle: -Math.PI / 2.2 + (Math.random() * Math.PI / 3) - Math.PI/8, // Направление вверх и к центру
-                    speed: Math.random() * 200 + 150, // Мощнее
-                    delay: Math.random() * 200 // Небольшая рассинхронизация частиц во взрыве
+                    startX: Math.random() * 40 + 5, startY: window.innerHeight - (Math.random() * 40 + 5),
+                    angle: -Math.PI / 2.1 + (Math.random() * Math.PI / 3.2) - Math.PI / 7,
+                    speed: Math.random() * 220 + 160, delay: Math.random() * 250
                 });
             }
             // Правый нижний
             for (let i = 0; i < cornerBurstParticles; i++) {
                 createRealisticParticle({
                     animationType: 'burst', isCornerBurst: true,
-                    startX: window.innerWidth - (Math.random() * 30 + 10),
-                    startY: window.innerHeight - (Math.random() * 30 + 10),
-                    angle: -Math.PI / 2.2 - (Math.random() * Math.PI / 3) + Math.PI/8,
-                    speed: Math.random() * 200 + 150,
-                    delay: Math.random() * 200
+                    startX: window.innerWidth - (Math.random() * 40 + 5), startY: window.innerHeight - (Math.random() * 40 + 5),
+                    angle: -Math.PI / 2.1 - (Math.random() * Math.PI / 3.2) + Math.PI / 7,
+                    speed: Math.random() * 220 + 160, delay: Math.random() * 250
                 });
             }
 
-            // 3. Случайные локальные взрывы (распределены по времени в течение ~6 секунд)
-            const numRandomBursts = Math.floor(Math.random() * 6) + 4; // 4-9 взрывов
-            const randomBurstParticles = 25;
+            // 3. Случайные локальные взрывы (распределены по времени)
+            const numRandomBursts = Math.floor(Math.random() * 7) + 5; // 5-11 взрывов
+            const randomBurstParticles = 30; // Больше частиц в случайных
             for (let i = 0; i < numRandomBursts; i++) {
                 setTimeout(() => {
-                    const burstX = Math.random() * (window.innerWidth * 0.7) + (window.innerWidth * 0.15); // Центрированнее
-                    const burstY = Math.random() * (window.innerHeight * 0.6) + (window.innerHeight * 0.2);
+                    const burstX = Math.random() * (window.innerWidth * 0.6) + (window.innerWidth * 0.2);
+                    const burstY = Math.random() * (window.innerHeight * 0.5) + (window.innerHeight * 0.25);
                     for (let j = 0; j < randomBurstParticles; j++) {
                         createRealisticParticle({
-                            animationType: 'burst',
-                            startX: burstX, startY: burstY,
-                            speed: Math.random() * 120 + 80, // Менее мощные, чем угловые
-                            delay: Math.random() * 100
+                            animationType: 'burst', startX: burstX, startY: burstY,
+                            speed: Math.random() * 130 + 90, delay: Math.random() * 150
                         });
                     }
-                }, Math.random() * (CONFETTI_DURATION - 3000) + 500); // Начинаются с задержкой 0.5с, до ~5.5с
+                }, Math.random() * (CONFETTI_DURATION - 4000) + 800); // От 0.8с до ~ (CONF_DURATION - 3.2)с
             }
 
-            // Убедимся, что все частицы точно удалены после шоу
             confettiShowTimeoutId = setTimeout(() => {
-                confettiContainer.innerHTML = '';
-            }, CONFETTI_DURATION + 1000);
+                // confettiContainer.innerHTML = ''; // Можно не очищать здесь, т.к. частицы сами удаляются
+            }, PARTICLE_LIFETIME + 500); // Небольшой запас
         }
-
     </script>
 </body>
 </html>
