@@ -59,7 +59,7 @@
   .extra-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:30px 0 20px;} /* Added margin-top */
   .extra-buttons button{padding:12px 20px;font-size:16px;cursor:pointer;}
 
-  .popup{position:fixed;width:320px;border:1px solid #ccc;background:#fefefe;box-shadow:0 0 20px rgba(0,0,0,0.6);border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif;z-index:20;}
+  .popup{position:fixed;width:320px;border:1px solid #ccc;background:#fefefe;box-shadow:0 0 20px rgba(0,0,0,0.6);border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif;z-index:20; max-width: 90vw; box-sizing: border-box;}
   .popup .title{background:#0078d7;color:#fff;padding:10px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;cursor:move;}
   .popup .title .close{cursor:pointer;color:#fff;font-size:16px;}
   .popup .content{padding:18px;font-size:15px;color:#000;}
@@ -73,7 +73,7 @@
   .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:none;animation:fadeIn 0.3s ease-out;}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-  .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1f2833,#0b0c10);border:2px solid #66fcf1;border-radius:12px;padding:30px;max-width:500px;width:90%;z-index:1001;box-shadow:0 0 30px rgba(102,252,241,0.5);animation:modalSlide 0.4s ease-out;}
+  .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1f2833,#0b0c10);border:2px solid #66fcf1;border-radius:12px;padding:30px;max-width:500px;width:90%;z-index:1001;box-shadow:0 0 30px rgba(102,252,241,0.5);animation:modalSlide 0.4s ease-out;box-sizing: border-box;}
   @keyframes modalSlide{from{opacity:0;transform:translate(-50%,-60%) scale(0.8);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
 
   .modal h3{color:#66fcf1;text-align:center;margin:0 0 20px;font-size:24px;text-shadow:0 0 10px #66fcf1;}
@@ -96,7 +96,7 @@
   .free-coin-btn:hover{transform:scale(1.1) translateY(-3px);box-shadow:0 10px 30px rgba(255,107,107,0.8);}
 
   /* Сообщение о разводе */
-  .scam-reveal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ff0844,#ff6b6b);color:#fff;padding:40px;border-radius:15px;text-align:center;font-size:28px;font-weight:bold;z-index:2000;box-shadow:0 0 50px rgba(255,8,68,0.8);animation:scamReveal 0.6s ease-out;display:none;}
+  .scam-reveal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ff0844,#ff6b6b);color:#fff;padding:40px;border-radius:15px;text-align:center;font-size:28px;font-weight:bold;z-index:2000;box-shadow:0 0 50px rgba(255,8,68,0.8);animation:scamReveal 0.6s ease-out;display:none; width: 80%; box-sizing: border-box;}
   @keyframes scamReveal{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-10deg);}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);}}
 
   /* Отзывы - Стили для слайдера */
@@ -119,7 +119,7 @@
   .reviews-container {
     position: relative;
     width: 100%;
-    min-height: 220px;
+    /* min-height will be set by JS */
   }
   .review-card {
     background: #0b0c10;
@@ -141,7 +141,7 @@
   .review-card.active {
     opacity: 1;
     visibility: visible;
-    position: relative;
+    position: relative; /* Changed from absolute to relative for active card for height calculation */
   }
   .review-header {
     display: flex;
@@ -171,23 +171,6 @@
     flex-grow: 1;
     margin-top: 5px;
   }
-  @media (max-width: 768px) {
-    .reviews-section {
-        max-width: 90%;
-    }
-  }
-  @media (max-width: 480px) {
-      .reviews-section h3 {
-          font-size: 24px;
-      }
-      .review-card {
-          padding: 18px;
-      }
-      .reviews-container {
-          min-height: 250px;
-      }
-  }
-
 
   /* Услуги - Обновленные стили */
   .footer-services {
@@ -244,9 +227,6 @@
       transform: translateX(0%);
     }
     100% {
-      /* This scrolls one full set of the duplicated items.
-         If your .services-list contains N unique items, duplicated once (total 2N items),
-         then the first N items (one set) occupy 50% of the total width of the ul. */
       transform: translateX(-50%);
     }
   }
@@ -355,6 +335,93 @@
     margin-top: 20px;
     font-size: 16px;
     font-style: italic;
+  }
+
+  /* --- MOBILE STYLES --- */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 36px; }
+    .graph { height: 300px; }
+    .btn-invest { font-size: 20px; padding: 14px 40px; }
+    .btn-super { font-size: 24px; padding: 18px; }
+    .free-coin-btn { font-size: 20px; padding: 18px 30px; }
+    .btn-claim-prize { font-size: 24px; padding: 20px 40px; }
+    .reviews-section { max-width: 90%; }
+    .footer-services h3 { font-size: 20px; }
+    .services-list li { padding: 10px 15px; font-size: 0.9em; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 0 10px; margin-top: 15px; }
+    .header { padding: 15px; }
+    .header h1 { font-size: 28px; }
+
+    .scam-counter { padding: 20px; max-width: 95%; }
+    .scam-counter h2 { font-size: 20px; }
+    .scam-counter .number { font-size: 36px; }
+    .scam-counter .subtitle { font-size: 13px; }
+    .sync-status { font-size: 10px; padding: 3px 8px; top: 5px; right: 5px; }
+    .plus-one { font-size: 20px; }
+
+    .graph { height: 220px; margin-bottom: 15px; }
+    .graph-label { font-size: 12px; top: 8px; left: 8px; padding: 3px 6px; }
+
+    #countdown { font-size: 18px; margin: 10px 0; }
+
+    .btn-invest { font-size: 18px; padding: 12px 25px; margin: 10px auto 20px; }
+    .btn-super { font-size: 16px; padding: 15px; width: 95%; margin: 25px auto; }
+    
+    .extra-buttons { gap: 8px; margin: 20px 0 15px; }
+    .extra-buttons button {
+      font-size: 13px;
+      padding: 10px 12px;
+      flex-basis: calc(50% - 8px); /* Two buttons per row, accounting for gap */
+      box-sizing: border-box;
+    }
+
+    .form-section { padding: 15px; max-width: 95%; margin: 20px auto; }
+    .form-section h3 { font-size: 18px; margin-bottom: 10px;}
+    .form-section label { font-size: 14px; margin: 8px 0 4px; }
+    .form-section input { padding: 10px; font-size: 14px; }
+    .form-section button { padding: 12px; font-size: 15px; margin-top: 12px;}
+    #nameResult { font-size: 13px; }
+
+    .free-coin-btn { font-size: 16px; padding: 15px 20px; }
+
+    .popup .content { padding: 12px; font-size: 14px; }
+    .popup .title { font-size: 14px; padding: 8px 10px; }
+    .popup .title .close { font-size: 14px; }
+    .popup .content .buttons { margin-top: 10px; }
+    .popup button { padding: 5px 8px; font-size: 12px; margin: 5px 2px 2px 0; }
+
+    .modal { padding: 20px; }
+    .modal h3 { font-size: 20px; margin-bottom: 15px; }
+    .modal p { font-size: 14px; line-height: 1.4; margin: 10px 0; }
+    .link-container { padding: 10px; margin: 15px 0; }
+    .link-text { font-size: 13px; margin-bottom: 10px; }
+    .copy-btn { padding: 10px 20px; font-size: 14px; }
+    .close-modal { top: 8px; right: 10px; font-size: 20px; }
+
+    .scam-reveal { font-size: 18px; padding: 20px; max-width: 85%; }
+    
+    .reviews-section { padding: 20px 15px; margin: 30px auto; max-width: 95%; }
+    .reviews-section h3 { font-size: 22px; margin-bottom: 20px; }
+    .review-card { padding: 15px; }
+    .review-header { margin-bottom: 10px; padding-bottom: 8px; }
+    .review-author { font-size: 1em; }
+    .review-stars { font-size: 1.1em; }
+    .review-text { font-size: 0.9em; line-height: 1.5; }
+    /* JS will handle .reviews-container min-height */
+
+    .footer-services { padding: 20px 0 30px 0; margin-top: 30px;}
+    .footer-services h3 { font-size: 18px; margin-bottom: 20px; }
+    .services-marquee-container { margin-bottom: 20px; }
+    .services-list li { padding: 8px 12px; font-size: 12px; margin-right: 12px; }
+    .footer-copyright { font-size: 12px; margin-top: 15px; }
+    
+    .prize-button-container { padding: 15px; margin: 30px auto; max-width: 95%; }
+    .btn-claim-prize { font-size: 18px; padding: 18px 30px; letter-spacing: 1px;}
+    .btn-claim-prize .sparkle { font-size: 1.2em; margin: 0 5px; }
+    .prize-button-subtitle { font-size: 13px; margin-top: 12px; }
   }
 
 </style>
@@ -653,8 +720,9 @@
             if (getComputedStyle(scamCounterEl).position === 'static') {
                 scamCounterEl.style.position = 'relative';
             }
-            plusAnimation.style.left = Math.random() * (scamCounterEl.offsetWidth - 50) + 'px';
-            plusAnimation.style.top = '50%';
+            // Ensure plus one is visible
+            plusAnimation.style.left = Math.random() * (scamCounterEl.offsetWidth - 30) + 'px'; // -30 for approx width of element
+            plusAnimation.style.top = (scamCounterEl.offsetHeight / 2 - 15) + 'px'; // Center roughly
             scamCounterEl.appendChild(plusAnimation);
             setTimeout(() => plusAnimation.remove(), 1500);
         } else if (newCount < currentScamNumber && isOnline) { // Server count is lower (e.g. reset)
@@ -792,6 +860,12 @@
     }
 
     function makeDraggable(el) {
+      if (window.innerWidth <= 480 && el.classList.contains('popup')) { // Disable dragging for .popup on small screens
+        const header = el.querySelector('.title');
+        if (header) header.style.cursor = 'default'; // Remove move cursor
+        return;
+      }
+
       let isDown=false, offset=[0,0];
       const header=el.querySelector('.title');
       if (!header) return;
@@ -830,15 +904,28 @@
 
     function spawnPopup(def){
       const p=document.createElement('div');p.className='popup';
-      const maxX = window.innerWidth - 340;
-      const maxY = window.innerHeight - 150;
-      p.style.top=Math.max(20, Math.min(maxY, 50 + Math.random()*200))+'px';
-      p.style.left=Math.max(20, Math.min(maxX, 50 + Math.random()*200))+'px';
-
       const btnsHtml=def.buttons.map(l=>`<button>${l}</button>`).join('');
       p.innerHTML=`<div class='title'>${def.title}<span class='close'>✖</span></div><div class='content'>${def.content}<div class="buttons">${btnsHtml}</div></div>`;
+      document.body.appendChild(p); // Append first to measure if needed
 
-      document.body.appendChild(p);
+      const popupWidth = p.offsetWidth;
+      const popupHeight = p.offsetHeight;
+
+      if (window.innerWidth <= 480) { // Mobile screens
+          p.style.left = '50%';
+          p.style.top = '60px';
+          p.style.transform = 'translateX(-50%)';
+          // p.style.position = 'fixed'; // Already fixed by CSS
+      } else { // Desktop screens
+          const margin = 20;
+          // Ensure popup doesn't go off-screen by limiting random positions
+          const maxX = window.innerWidth - popupWidth - margin;
+          const maxY = window.innerHeight - popupHeight - margin;
+          
+          p.style.left = Math.max(margin, Math.random() * maxX) + 'px';
+          p.style.top = Math.max(margin, Math.random() * maxY) + 'px';
+      }
+      
       makeDraggable(p);
 
       p.querySelector('.close').addEventListener('click', async () => {
@@ -908,11 +995,11 @@
     }
 
     function randomPopupSpawner() {
-        if (document.querySelectorAll('.popup').length < 4) { // Allow a few more popups
+        if (document.querySelectorAll('.popup').length < (window.innerWidth <= 480 ? 2 : 4) ) { // Fewer popups on mobile
             const randomDef = popupDefs[Math.floor(Math.random() * popupDefs.length)];
             spawnPopup(randomDef);
         }
-        setTimeout(randomPopupSpawner, Math.random() * 10000 + 4000); // Slightly adjusted timing
+        setTimeout(randomPopupSpawner, Math.random() * 10000 + (window.innerWidth <= 480 ? 8000 : 4000) );
     }
     setTimeout(randomPopupSpawner, 5000);
 
@@ -1048,12 +1135,16 @@
         labels.push(timeLabel);
         data.push(lastPrice.toFixed(2));
 
-        if (labels.length > 30) { // Keep only last 30 data points
+        const maxDataPoints = window.innerWidth <= 480 ? 15 : 30; // Fewer data points on mobile for clarity
+        if (labels.length > maxDataPoints) { 
             labels.shift();
             data.shift();
         }
 
         if (cryptoChart) {
+            cryptoChart.data.labels = labels;
+            cryptoChart.data.datasets[0].data = data;
+            cryptoChart.options.scales.x.ticks.maxTicksLimit = window.innerWidth <= 480 ? 5 : 10; // Fewer X-axis ticks on mobile
             cryptoChart.update('none'); // 'none' for no animation on update
         } else {
             cryptoChart = new Chart(ctx, {
@@ -1067,25 +1158,31 @@
                         backgroundColor: 'rgba(102, 252, 241, 0.2)',
                         tension: 0.3, // Smoother lines
                         fill: true,
-                        pointRadius: 2,
+                        pointRadius: window.innerWidth <= 480 ? 1 : 2, // Smaller points on mobile
                         pointBackgroundColor: '#66fcf1',
-                        borderWidth: 2
+                        borderWidth: window.innerWidth <= 480 ? 1.5 : 2 // Thinner line on mobile
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 400, // Faster animation for new points
+                        duration: 400, 
                         easing: 'linear'
                     },
                     scales: {
                         y: {
-                            ticks: { color: '#c5c6c7', precision: 0 },
+                            ticks: { color: '#c5c6c7', precision: 0, font: { size: window.innerWidth <= 480 ? 8 : 12 } },
                             grid: { color: 'rgba(197, 198, 199, 0.15)' }
                         },
                         x: {
-                            ticks: { color: '#c5c6c7', maxRotation: 0, autoSkipPadding: 15 }, // autoSkip for better label display
+                            ticks: { 
+                                color: '#c5c6c7', 
+                                maxRotation: 0, 
+                                autoSkipPadding: 15, 
+                                font: { size: window.innerWidth <= 480 ? 8 : 12 },
+                                maxTicksLimit: window.innerWidth <= 480 ? 5 : 10 // Control number of visible ticks
+                            },
                             grid: { display: false }
                         }
                     },
@@ -1094,7 +1191,7 @@
                     },
                     elements: {
                         line: {
-                            cubicInterpolationMode: 'monotone' // Better for financial-like charts
+                            cubicInterpolationMode: 'monotone' 
                         }
                     }
                 }
@@ -1106,28 +1203,27 @@
     for(let i=0; i<10; i++){ // Populate with some initial historical data
         lastPrice += (Math.random() - 0.4) * 5 + (isOnline ? 0.5 : 0.1); // Simulate some initial fluctuation
         lastPrice = Math.max(10, lastPrice); // Floor price
-        createOrUpdateChart(); // Call directly without pushing time label manually
+        // Call createOrUpdateChart, it will handle initial label creation
     }
+    createOrUpdateChart(); // Create initial chart structure
 
 
     setInterval(() => {
         let priceChange;
-        // Price volatility depends on online status (more erratic when "online")
         if (isOnline) {
-            priceChange = (Math.random() - 0.35) * 30 + 2; // Larger swings when "online"
+            priceChange = (Math.random() - 0.35) * 30 + 2; 
         } else {
-            priceChange = (Math.random() - 0.45) * 8 + 0.5; // Smaller, steadier changes when "offline"
+            priceChange = (Math.random() - 0.45) * 8 + 0.5; 
         }
         lastPrice += priceChange;
 
-        // Random "pump" or "dump"
-        if (Math.random() < 0.10 && isOnline) { // 10% chance of a big move if online
-            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8); // 30% pump or 20% dump
+        if (Math.random() < 0.10 && isOnline) { 
+            lastPrice *= (Math.random() > 0.4 ? 1.3 : 0.8); 
             console.log("LOH COIN PUMP/DUMP ACTION!");
         }
 
-        lastPrice = Math.max(5, lastPrice); // Absolute floor price
-        lastPrice = Math.min(100000, lastPrice); // Cap price to prevent extreme values
+        lastPrice = Math.max(5, lastPrice); 
+        lastPrice = Math.min(100000, lastPrice); 
 
         createOrUpdateChart();
     }, 1000); // Update chart every second
@@ -1143,8 +1239,13 @@
         reviewCards.forEach((card, i) => {
             if (i === index) {
                 card.classList.add('active');
-                // Динамически устанавливаем высоту контейнера по высоте активной карточки
-                reviewsContainerEl.style.minHeight = card.offsetHeight + 'px';
+                // Dynamically устанавливаем высоту контейнера по высоте активной карточки
+                // Ensure card is rendered before getting offsetHeight
+                requestAnimationFrame(() => {
+                     if(card.classList.contains('active')) { // Check again in case it changed quickly
+                        reviewsContainerEl.style.minHeight = card.offsetHeight + 'px';
+                     }
+                });
             } else {
                 card.classList.remove('active');
             }
@@ -1169,17 +1270,11 @@
         showReview(currentReviewIndex); // Показать первый отзыв
         startReviewSlider(); // Запустить слайдер
 
-        // Остановка/возобновление слайдера при наведении/уходе мыши
-        reviewsContainerEl.addEventListener('mouseenter', () => {
-            stopReviewSlider();
-        });
-        reviewsContainerEl.addEventListener('mouseleave', () => {
-            startReviewSlider();
-        });
+        reviewsContainerEl.addEventListener('mouseenter', stopReviewSlider);
+        reviewsContainerEl.addEventListener('mouseleave', startReviewSlider);
 
-        // Ensure review container height is recalculated on window resize
         window.addEventListener('resize', () => {
-            if (reviewCards[currentReviewIndex]) {
+            if (reviewCards[currentReviewIndex] && reviewCards[currentReviewIndex].classList.contains('active')) {
                  reviewsContainerEl.style.minHeight = reviewCards[currentReviewIndex].offsetHeight + 'px';
             }
         });
