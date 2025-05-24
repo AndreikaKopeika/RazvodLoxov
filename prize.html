@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Колесо Удачи Лоха v3.2</title>
+    <title>Колесо Удачи Лоха v3.3 - Взрывной Развод!</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -34,38 +34,32 @@
             margin: 0; overflow: hidden; position: relative;
         }
 
-        body::before { /* Фоновые эффекты */
+        /* Фоновые эффекты без изменений */
+        body::before {
             content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-image:
                 linear-gradient(0deg, transparent 0%, rgba(0, 242, 255, 0.025) 50%, transparent 100%),
                 linear-gradient(90deg, transparent 0%, rgba(255, 0, 255, 0.025) 50%, transparent 100%);
-            background-size: 55px 55px, 55px 55px;
-            animation: bgGrid 11s linear infinite;
-            z-index: -2;
+            background-size: 55px 55px, 55px 55px; animation: bgGrid 11s linear infinite; z-index: -2;
         }
-        body::after { /* Сканлайны */
+        body::after {
             content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
             background-size: 100% 3px; opacity: 0.65; z-index: -1; pointer-events: none;
         }
         @keyframes bgGrid { 0% { background-position: 0 0; } 100% { background-position: 110px 110px; } }
 
-        .fortune-wheel-container {
+        .fortune-wheel-container { /* Контейнер */
             position: relative; display: flex; flex-direction: column; align-items: center;
             padding: 30px 35px; background-color: rgba(16, 16, 28, 0.92);
             border-radius: 30px; border: 3px solid var(--neon-blue);
-            box-shadow:
-                0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue),
-                0 0 90px var(--neon-pink), inset 0 0 22px rgba(0, 242, 255, 0.65),
-                inset 0 0 10px rgba(255,255,255,0.45);
+            box-shadow: 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue), 0 0 90px var(--neon-pink), inset 0 0 22px rgba(0, 242, 255, 0.65), inset 0 0 10px rgba(255,255,255,0.45);
             backdrop-filter: blur(7px);
         }
 
         h1 { /* Заголовок */
             color: var(--neon-pink);
-            text-shadow:
-                0 0 7px var(--neon-pink), 0 0 15px var(--neon-pink),
-                0 0 30px var(--neon-pink), 0 0 40px #fff, 0 0 55px #ff00de;
+            text-shadow: 0 0 7px var(--neon-pink), 0 0 15px var(--neon-pink), 0 0 30px var(--neon-pink), 0 0 40px #fff, 0 0 55px #ff00de;
             margin-bottom: 30px; font-size: 2.3em; letter-spacing: 2.5px;
             border-bottom: 2px solid rgba(255,0,255,0.65); padding-bottom: 12px;
             font-weight: 700; text-align: center;
@@ -73,27 +67,24 @@
 
         .wheel-wrapper { /* Обертка колеса */
             position: relative; width: 360px; height: 360px;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 0 20px var(--neon-blue));
+            margin-bottom: 30px; filter: drop-shadow(0 0 20px var(--neon-blue));
         }
 
-        .wheel { /* Само колесо */
-            width: 100%; height: 100%; border-radius: 50%;
-            background-color: #121220;
+        .wheel { /* Колесо */
+            width: 100%; height: 100%; border-radius: 50%; background-color: #121220;
             border: 6px solid var(--neon-blue);
-            box-shadow:
-                0 0 40px var(--neon-blue), 0 0 70px rgba(0, 242, 255, 0.75),
-                inset 0 0 35px rgba(0, 242, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 40px var(--neon-blue), 0 0 70px rgba(0, 242, 255, 0.75), inset 0 0 35px rgba(0, 242, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.7);
             position: relative; overflow: hidden;
             transition: transform 7.8s cubic-bezier(0.18, 0.95, 0.22, 1);
         }
-        .wheel::before { /* Декоративные кольца */
+        .wheel::before, .wheel::after { /* Декоративные кольца */
             content: ''; position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;
+        }
+        .wheel::before {
             width: calc(100% - 32px); height: calc(100% - 32px); border: 2px dashed var(--neon-green);
             opacity: 0.7; animation: rotateRing 17s linear infinite, pulseRing 1.7s infinite ease-in-out;
         }
         .wheel::after {
-             content: ''; position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;
              width: calc(100% + 8px); height: calc(100% + 8px); border: 2px dotted var(--neon-pink);
              opacity: 0.8; animation: rotateRing 21s linear infinite reverse;
         }
@@ -101,106 +92,104 @@
         @keyframes pulseRing { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.9; } }
 
         .sector { /* Сектор */
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            overflow: visible;
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; overflow: visible;
         }
 
         .prize-label { /* Текст на секторе */
             display: block; position: absolute; box-sizing: border-box; text-align: center;
-            font-size: 9px; font-weight: 700; color: #fff;
+            font-size: 10px; /* Немного увеличим, т.к. тексты короче */
+            font-weight: 700; color: #fff;
             text-shadow: 0 0 3px rgba(0,0,0,1), 0 0 5px rgba(0,0,0,0.8);
-            letter-spacing: 0.3px; white-space: normal; word-break: break-word;
-            padding: 0px 1px; line-height: 1.1; pointer-events: none;
+            letter-spacing: 0.5px; /* Чуть больше интервал */
+            white-space: normal; word-break: break-word;
+            padding: 0px 2px; line-height: 1.15; pointer-events: none;
         }
 
         .wheel-center { /* Центр колеса */
             position: absolute; width: 80px; height: 80px;
             background: radial-gradient(circle, var(--mid-bg) 20%, var(--dark-bg) 80%);
             border-radius: 50%; border: 5px solid var(--neon-pink);
-            top: 50%; left: 50%; transform: translate(-50%, -50%); /* Гарантирует центрирование */
-            box-shadow:
-                0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink),
-                inset 0 0 20px rgba(255, 0, 255, 0.7);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink), inset 0 0 20px rgba(255, 0, 255, 0.7);
             z-index: 2;
         }
         .wheel-center::before { /* Точка в центре */
-            content: ''; position: absolute; border-radius: 50%; top: 50%; left: 50%; /* transform: translate(-50%, -50%); уже есть */
+            content: ''; position: absolute; border-radius: 50%; top: 50%; left: 50%;
             width: 18px; height: 18px; background-color: var(--neon-blue);
             box-shadow: 0 0 12px var(--neon-blue), 0 0 22px var(--neon-blue), 0 0 5px #fff;
             animation: pulseDot 1.3s infinite ease-in-out;
         }
-        @keyframes pulseDot { /* Анимация точки */
+        @keyframes pulseDot {
             0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px var(--neon-blue), 0 0 18px var(--neon-blue); }
             50% { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 6px #fff; }
         }
 
-        /* ИСПРАВЛЕННЫЙ УКАЗАТЕЛЬ */
-        .pointer {
-            position: absolute;
-            top: -17px; /* Регулирует вертикальное положение */
-            left: 50%;  /* Горизонтально по центру родителя */
-            transform: translateX(-50%); /* Точное центрирование по горизонтали */
-            width: 0;
-            height: 0;
-            border-left: 26px solid transparent;
-            border-right: 26px solid transparent;
+        .pointer { /* Указатель */
+            position: absolute; top: -17px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 26px solid transparent; border-right: 26px solid transparent;
             border-top: 40px solid var(--neon-pink);
             filter: drop-shadow(0 -6px 14px var(--neon-pink)) drop-shadow(0 0 7px #fff);
-            z-index: 3;
-            transition: transform 0.3s ease-out; /* Для анимации "отдачи" */
+            z-index: 3; transition: transform 0.3s ease-out;
         }
-        .pointer::after { /* Декоративный элемент на указателе */
+        .pointer::after {
             content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
             width: 4px; height: 8px; background-color: rgba(255,255,255,0.7);
             border-radius: 2px; box-shadow: 0 0 5px #fff;
         }
-
 
         .spin-button { /* Кнопка */
             padding: 17px 38px; font-size: 1.35em; font-weight: 700; color: var(--light-text);
             background: linear-gradient(145deg, var(--neon-pink), #c000c0);
             border: none; border-radius: 15px; cursor: pointer; text-transform: uppercase;
             letter-spacing: 1.8px;
-            box-shadow:
-                0 0 12px var(--neon-pink), 0 0 25px var(--neon-pink),
-                0 0 35px rgba(255, 0, 255, 0.75),
-                inset 0 0 10px rgba(255, 255, 255, 0.55),
-                0 3px 6px rgba(0,0,0,0.25);
+            box-shadow: 0 0 12px var(--neon-pink), 0 0 25px var(--neon-pink), 0 0 35px rgba(255, 0, 255, 0.75), inset 0 0 10px rgba(255, 255, 255, 0.55), 0 3px 6px rgba(0,0,0,0.25);
             transition: all 0.2s ease-out; position: relative; overflow: hidden; margin-top: 28px;
         }
-        .spin-button:before { /* Эффект на кнопке */
+        .spin-button:before {
             content: ""; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             background: rgba(255, 255, 255, 0.2); border-radius: 50%; transform: translate(-50%, -50%);
             transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.5s ease-out; opacity: 0;
         }
         .spin-button:hover:not(:disabled):before { width: 250%; height: 250%; opacity: 1; }
-        .spin-button:hover:not(:disabled) { /* Кнопка при наведении */
+        .spin-button:hover:not(:disabled) {
             background: linear-gradient(145deg, #ff1aff, #d000d0);
-            box-shadow:
-                0 0 18px var(--neon-pink), 0 0 35px var(--neon-pink),
-                0 0 60px #fff, inset 0 0 12px rgba(255, 255, 255, 0.85),
-                0 5px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 0 18px var(--neon-pink), 0 0 35px var(--neon-pink), 0 0 60px #fff, inset 0 0 12px rgba(255, 255, 255, 0.85), 0 5px 10px rgba(0,0,0,0.2);
             transform: translateY(-2px);
         }
-        .spin-button:active:not(:disabled) { /* Кнопка при нажатии */
+        .spin-button:active:not(:disabled) {
             transform: translateY(0px) scale(0.97);
             box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), inset 0 0 10px rgba(0,0,0,0.4);
         }
-        .spin-button:disabled { /* Неактивная кнопка */
-            background: #555; color: #999; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
+        .spin-button:disabled { background: #555; color: #999; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
 
-        .confetti-particle { /* Конфетти */
-            position: fixed; width: 10px; height: 10px; border-radius: 50%;
-            opacity: 0; pointer-events: none; animation: fall 3s linear forwards;
+        /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КОНФЕТТИ */
+        .confetti-particle {
+            position: fixed; /* Для позиционирования на весь экран */
+            width: var(--size, 10px);
+            height: var(--size, 10px);
+            opacity: 0;
+            pointer-events: none;
             z-index: 2000;
-        }
-        @keyframes fall {
-            0% { transform: translateY(-20vh) translateX(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(120vh) translateX(var(--fall-x, 0px)) rotate(720deg); opacity: 0; }
+            border-radius: 20% 50%; /* Разные формы */
+            animation: explodeAndFall 2.5s ease-out forwards;
         }
 
-        .result-popup { /* Попап результата */
+        @keyframes explodeAndFall {
+            0% { /* Начало взрыва */
+                transform: translate(var(--start-x), var(--start-y)) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            25% { /* Максимальный разлет */
+                transform: translate(var(--explode-x), var(--explode-y)) scale(1) rotate(var(--rotate-val));
+                opacity: 0.9;
+            }
+            100% { /* Падение и исчезновение */
+                transform: translate(var(--fall-x), 120vh) scale(0.4) rotate(calc(var(--rotate-val) * 2));
+                opacity: 0;
+            }
+        }
+
+        .result-popup { /* Попап */
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.7);
             padding: 35px 50px; background-color: rgba(18, 18, 30, 0.98); border: 3px solid var(--neon-blue);
             border-radius: 24px; box-shadow: 0 0 45px var(--neon-blue), 0 0 75px var(--neon-pink), 0 0 100px rgba(0, 242, 255, 0.7);
@@ -208,20 +197,18 @@
             transition: transform 0.48s cubic-bezier(0.34, 1.7, 0.64, 1), opacity 0.38s ease-out;
         }
         .result-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .result-popup h2 { /* Заголовок попапа */
+        .result-popup h2 {
             color: var(--neon-green); margin-top: 0; margin-bottom: 18px; font-size: 2.1em; font-weight: 700;
             text-shadow: 0 0 7px var(--neon-green), 0 0 14px var(--neon-green), 0 0 20px #fff;
         }
-        .result-popup p { /* Текст приза в попапе */
-            font-size: 1.4em; color: var(--light-text); margin-bottom: 28px; min-height: 36px;
-        }
-        .result-popup button { /* Кнопка в попапе */
+        .result-popup p { font-size: 1.4em; color: var(--light-text); margin-bottom: 28px; min-height: 36px; }
+        .result-popup button {
             padding: 14px 30px; font-size: 1.05em; font-weight: 700; color: var(--dark-bg);
             background: linear-gradient(145deg, var(--neon-blue), #00b0b0);
             border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s ease-out;
             box-shadow: 0 0 12px var(--neon-blue), 0 0 20px var(--neon-blue), 0 2px 5px rgba(0,0,0,0.25);
         }
-        .result-popup button:hover { /* Кнопка в попапе при наведении */
+        .result-popup button:hover {
             background: linear-gradient(145deg, #44ffff, #00c8c8);
             box-shadow: 0 0 16px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 7px #fff;
             transform: translateY(-2px);
@@ -236,7 +223,7 @@
         <div class="wheel-wrapper">
             <div class="wheel" id="wheel"></div>
             <div class="wheel-center"></div>
-            <div class="pointer" id="pointer"></div> <!-- Убедимся, что он здесь -->
+            <div class="pointer" id="pointer"></div>
         </div>
         <button class="spin-button" id="spinButton">КРУТАНУТЬ!</button>
     </div>
@@ -250,42 +237,37 @@
     <script>
         const wheel = document.getElementById('wheel');
         const spinButton = document.getElementById('spinButton');
-        const pointer = document.getElementById('pointer');
+        const pointer = document.getElementById('pointer'); // Указатель остается для визуального ориентира
         const resultPopup = document.getElementById('resultPopup');
         const prizeText = document.getElementById('prizeText');
         const closePopupButton = document.getElementById('closePopup');
 
+        // ОБНОВЛЕННЫЕ КОРОТКИЕ И СМЕШНЫЕ ПРИЗЫ
         const prizes = [
-            { text: "Эксклюзивный воздух (из-под шпрот)", color: "#FF3E96", textColor: "#fff" },
-            { text: "Чудо-таблетки для роста кошелька (плацебо)", color: "#FF8C00", textColor: "#fff" },
-            { text: "Автограф несуществующей звезды", color: "#FFD700", textColor: "#111" },
-            { text: "Инвестиция в уже проданный мост", color: "#32CD32", textColor: "#fff" },
-            { text: "Участок на Луне (вид на кратер)", color: "#1E90FF", textColor: "#fff" },
-            { text: "Вечный двигатель (на святом духе)", color: "#9370DB", textColor: "#fff" },
-            { text: "Курс 'Миллионер без усилий' (урок платный)", color: "#FF1493", textColor: "#fff" },
-            { text: "Предсказание будущего (на вчера)", color: "#00CED1", textColor: "#111" },
-            { text: "Шапка-невидимка (потеряна)", color: "#FF4500", textColor: "#fff" },
-            { text: "Золотая рыбка (желания не исполняет)", color: "#ADFF2F", textColor: "#111" },
-            { text: "Тур на остров (билет в один конец)", color: "#BA55D3", textColor: "#fff" },
-            { text: "Ключ от города (которого нет)", color: "#6A5ACD", textColor: "#fff" }
+            { text: "Чудо-Воздух!", color: "#FF3E96", textColor: "#fff" },
+            { text: "Вечный Спам", color: "#FF8C00", textColor: "#fff" },
+            { text: "Лунный Песок", color: "#FFD700", textColor: "#111" },
+            { text: "Дыра от Бублика", color: "#32CD32", textColor: "#fff" },
+            { text: "Пыль Единорога", color: "#1E90FF", textColor: "#fff" },
+            { text: "Смех Сквозь Слёзы", color: "#9370DB", textColor: "#fff" },
+            { text: "Билет в Завтра*", color: "#FF1493", textColor: "#fff" }, // *но оно не наступит
+            { text: "Налог на Глупость", color: "#00CED1", textColor: "#111" },
+            { text: "Объятия с Кактусом", color: "#FF4500", textColor: "#fff" },
+            { text: "Путевка в Сказку (без возврата)", color: "#ADFF2F", textColor: "#111" },
+            { text: "Гарантия Удачи* (*нет)", color: "#BA55D3", textColor: "#fff" },
+            { text: "Сертификат Лоха", color: "#6A5ACD", textColor: "#fff" }
         ];
 
         let numSectors = prizes.length;
         let anglePerSectorDeg = 360 / numSectors;
         let anglePerSectorRad = (2 * Math.PI) / numSectors;
-        let currentWheelRotationDeg = 0; // Текущий угол поворота колеса
+        let currentWheelRotationDeg = 0;
         let spinning = false;
         let winningPrizeIndex = 0;
-
-        // Базовый угол, куда указывает указатель (верхняя точка = 270 градусов или -90 или -PI/2)
         const POINTER_ANGLE_RAD = -Math.PI / 2;
 
         function adjustColor(hex, percent) { /* ... без изменений ... */
-            hex = hex.replace(/#/g, '');
-            const num = parseInt(hex, 16),
-            amt = Math.round(2.55 * percent),
-            R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
-            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+            hex = hex.replace(/#/g, ''); const num = parseInt(hex, 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt; return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
         }
 
         function createSectors() {
@@ -295,21 +277,14 @@
             prizes.forEach((prize, i) => {
                 const sector = document.createElement('div');
                 sector.classList.add('sector');
-                const color1 = prize.color;
-                const color2 = adjustColor(prize.color, -30);
+                const color1 = prize.color; const color2 = adjustColor(prize.color, -30);
                 sector.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
 
-                // Углы для вершин сектора на окружности (относительно POINTER_ANGLE_RAD)
-                // Сектор i начинается от (POINTER_ANGLE_RAD - anglePerSectorRad / 2 + i * anglePerSectorRad)
-                // и заканчивается на (POINTER_ANGLE_RAD - anglePerSectorRad / 2 + (i + 1) * anglePerSectorRad)
-                const P0x = 50, P0y = 50; // Центр колеса
+                const P0x = 50, P0y = 50;
                 const startAngle = POINTER_ANGLE_RAD - anglePerSectorRad / 2 + i * anglePerSectorRad;
                 const endAngle = POINTER_ANGLE_RAD - anglePerSectorRad / 2 + (i + 1) * anglePerSectorRad;
-
-                const P1x = 50 + 50 * Math.cos(startAngle);
-                const P1y = 50 + 50 * Math.sin(startAngle);
-                const P2x = 50 + 50 * Math.cos(endAngle);
-                const P2y = 50 + 50 * Math.sin(endAngle);
+                const P1x = 50 + 50 * Math.cos(startAngle); const P1y = 50 + 50 * Math.sin(startAngle);
+                const P2x = 50 + 50 * Math.cos(endAngle); const P2y = 50 + 50 * Math.sin(endAngle);
                 sector.style.clipPath = `polygon(${P0x}% ${P0y}%, ${P1x}% ${P1y}%, ${P2x}% ${P2y}%)`;
                 wheel.appendChild(sector);
 
@@ -318,96 +293,96 @@
                 prizeLabel.textContent = prize.text;
                 prizeLabel.style.color = prize.textColor || '#fff';
 
-                // Угол для центра текста сектора i
                 const textAngleRad = POINTER_ANGLE_RAD + i * anglePerSectorRad;
-                const textRotationDeg = (textAngleRad * 180 / Math.PI) + 90; // +90 для радиального текста
-                const textRadius = wheelRadius * 0.57; // Сдвигаем текст чуть ближе к центру
+                const textRotationDeg = (textAngleRad * 180 / Math.PI) + 90;
+                const textRadius = wheelRadius * 0.6; // Сдвинем чуть дальше от центра для коротких текстов
 
-                let labelWidth = anglePerSectorRad * textRadius * 0.9; // 90% от длины дуги
-                labelWidth = Math.min(labelWidth, wheelRadius * 0.65); // Не шире 65% радиуса
+                let labelWidth = anglePerSectorRad * textRadius * 0.95; // 95% от длины дуги
+                labelWidth = Math.min(labelWidth, wheelRadius * 0.7);
                 prizeLabel.style.width = `${labelWidth}px`;
-
-                if (prize.text.length > 18 || (numSectors >= 12 && prize.text.length > 14)) {
-                    prizeLabel.style.fontSize = '7.5px'; prizeLabel.style.lineHeight = '1';
-                } else if (prize.text.length > 14 || numSectors >= 10) {
-                     prizeLabel.style.fontSize = '8.5px'; prizeLabel.style.lineHeight = '1.05';
+                // С короткими текстами можно попробовать шрифт побольше
+                prizeLabel.style.fontSize = '10px';
+                 if (numSectors >= 12 && prize.text.length > 15) { // Если вдруг длинный текст остался
+                    prizeLabel.style.fontSize = '8px';
                 }
 
-                prizeLabel.style.left = '50%';
-                prizeLabel.style.top = '50%';
+
+                prizeLabel.style.left = '50%'; prizeLabel.style.top = '50%';
                 prizeLabel.style.transformOrigin = 'center center';
                 prizeLabel.style.transform = `translate(-50%, -50%) translate(${textRadius * Math.cos(textAngleRad)}px, ${textRadius * Math.sin(textAngleRad)}px) rotate(${textRotationDeg}deg)`;
                 wheel.appendChild(prizeLabel);
             });
         }
 
-
-        function triggerConfetti() { /* ... без изменений ... */
-            const confettiCount = 90;
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ КОНФЕТТИ
+        function triggerConfetti() {
+            const confettiCount = 120; // Больше конфетти для взрыва
             const confettiColors = [
                 getComputedStyle(document.documentElement).getPropertyValue('--neon-blue').trim(),
                 getComputedStyle(document.documentElement).getPropertyValue('--neon-pink').trim(),
                 getComputedStyle(document.documentElement).getPropertyValue('--neon-green').trim(),
                 getComputedStyle(document.documentElement).getPropertyValue('--neon-yellow').trim(),
                 getComputedStyle(document.documentElement).getPropertyValue('--neon-orange').trim(),
-                '#cc00cc', '#00ccff'
+                '#cc00cc', '#00ccff', '#ff5500'
             ];
+            // Точка "взрыва" - центр экрана
+            const explosionOriginX = window.innerWidth / 2;
+            const explosionOriginY = window.innerHeight / 2;
+
+
             for (let i = 0; i < confettiCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('confetti-particle');
+                const particleSize = Math.random() * 10 + 7; // от 7 до 17px
+                particle.style.setProperty('--size', particleSize + 'px');
                 particle.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                particle.style.left = (Math.random() * 100) + 'vw';
-                particle.style.setProperty('--fall-x', (Math.random() * 250 - 125) + 'px');
-                particle.style.width = (Math.random() * 10 + 6) + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDelay = (Math.random() * 0.6) + 's';
-                particle.style.opacity = Math.random() * 0.5 + 0.5;
+
+                // Начальная позиция для CSS (относительно viewport)
+                particle.style.setProperty('--start-x', (explosionOriginX - particleSize/2) + 'px');
+                particle.style.setProperty('--start-y', (explosionOriginY - particleSize/2) + 'px');
+
+                // Рассчитываем конечную точку "взрыва" и падения
+                const angle = Math.random() * Math.PI * 2; // Случайный угол в радианах
+                const explosionRadius = Math.random() * (Math.min(window.innerWidth, window.innerHeight) * 0.4) + 50; // Дальность взрыва
+                const explodeX = explosionOriginX + Math.cos(angle) * explosionRadius;
+                const explodeY = explosionOriginY + Math.sin(angle) * explosionRadius - (explosionRadius * 0.3); // Небольшой подъем
+
+                particle.style.setProperty('--explode-x', explodeX + 'px');
+                particle.style.setProperty('--explode-y', explodeY + 'px');
+                particle.style.setProperty('--fall-x', explodeX + (Math.random() * 100 - 50) + 'px'); // Куда упадет по X
+                particle.style.setProperty('--rotate-val', (Math.random() * 720 - 360) + 'deg');
+
+
                 document.body.appendChild(particle);
-                setTimeout(() => { particle.remove(); }, 3800);
+                setTimeout(() => {
+                    particle.remove();
+                }, 2500); // Время жизни частицы
             }
         }
 
 
-        function spinWheel() {
+        function spinWheel() { /* ... логика вращения без изменений ... */
             if (spinning) return;
-            spinning = true;
-            spinButton.disabled = true;
-            pointer.style.transform = 'translateX(-50%) rotate(0deg)'; // Сброс анимации указателя
+            spinning = true; spinButton.disabled = true;
+            pointer.style.transform = 'translateX(-50%) rotate(0deg)';
             winningPrizeIndex = Math.floor(Math.random() * numSectors);
-
-            const totalSpins = Math.floor(Math.random() * 5) + 9; // 9-13 оборотов
-
-            // Целевой угол для колеса: мы хотим, чтобы сектор winningPrizeIndex оказался под указателем.
-            // "Естественный" угол центра сектора winningPrizeIndex на неподвижном колесе:
-            // (POINTER_ANGLE_RAD + winningPrizeIndex * anglePerSectorRad) рад.
-            // Указатель физически на POINTER_ANGLE_RAD.
-            // Колесо должно повернуться так, чтобы (NaturalAngle + КолесоПоворот) = POINTER_ANGLE_RAD (mod 2PI)
-            // КолесоПоворот_рад = POINTER_ANGLE_RAD - (POINTER_ANGLE_RAD + winningPrizeIndex * anglePerSectorRad)
-            // КолесоПоворот_рад = -winningPrizeIndex * anglePerSectorRad
-            // В градусах, для CSS (положительное по часовой): (360 - (winningPrizeIndex * anglePerSectorDeg)) % 360
+            const totalSpins = Math.floor(Math.random() * 5) + 9;
             let targetWheelLandingAngleDeg = (360 - (winningPrizeIndex * anglePerSectorDeg)) % 360;
-
-            const randomOffsetDeg = (Math.random() - 0.5) * (anglePerSectorDeg * 0.3); // Небольшой сдвиг
+            const randomOffsetDeg = (Math.random() - 0.5) * (anglePerSectorDeg * 0.3);
             targetWheelLandingAngleDeg = (targetWheelLandingAngleDeg + randomOffsetDeg + 360) % 360;
-
-
             let additionalRotationDeg = (totalSpins * 360) + targetWheelLandingAngleDeg - (currentWheelRotationDeg % 360);
-             // Убедимся, что вращение всегда вперед и достаточно оборотов
-            if (additionalRotationDeg < 360 * 3) { // Гарантируем хотя бы ~3 оборота "чистого" вращения
-                additionalRotationDeg += 360 * Math.ceil((360 * 3 - additionalRotationDeg) / 360);
+            const minRotations = (currentWheelRotationDeg % 360) + 360 * 3;
+            if (additionalRotationDeg < minRotations) {
+                 additionalRotationDeg += 360 * Math.ceil((minRotations - additionalRotationDeg) / 360);
             }
-
             currentWheelRotationDeg += additionalRotationDeg;
-
             wheel.style.transition = `transform ${7 + Math.random()*2.5}s cubic-bezier(0.18, 0.95, 0.22, 1)`;
             wheel.style.transform = `rotate(${currentWheelRotationDeg}deg)`;
-
             wheel.addEventListener('transitionend', () => {
                 wheel.style.transition = 'none';
                 prizeText.textContent = prizes[winningPrizeIndex].text;
                 resultPopup.classList.add('show');
-                triggerConfetti();
-
+                triggerConfetti(); // <--- ЗАПУСК КОНФЕТТИ
                 pointer.style.transform = 'translateX(-50%) rotate(-15deg)';
                 setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(10deg)', 150);
                 setTimeout(() => pointer.style.transform = 'translateX(-50%) rotate(-5deg)', 300);
@@ -417,14 +392,11 @@
         }
 
         closePopupButton.addEventListener('click', () => { /* ... без изменений ... */
-            resultPopup.classList.remove('show');
-            spinButton.disabled = false;
+            resultPopup.classList.remove('show'); spinButton.disabled = false;
         });
         spinButton.addEventListener('click', spinWheel); /* ... без изменений ... */
-
         setTimeout(() => { /* ... без изменений ... */
-            createSectors();
-            wheel.style.transform = `rotate(0deg)`;
+            createSectors(); wheel.style.transform = `rotate(0deg)`;
         }, 250);
 
     </script>
